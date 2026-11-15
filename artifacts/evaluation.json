@@ -1,0 +1,992 @@
+{
+  "data": {
+    "raw_track_rows": 1345066,
+    "repeat_track_ids_in_playlist": 18469,
+    "source_files": 20,
+    "raw_playlists": 20000,
+    "clean_playlists": 20000,
+    "unique_spotify_ids": 268775,
+    "recordings": 268775,
+    "memberships": 1326597,
+    "duplicate_playlist_copies": 17,
+    "verified_metadata_ids": 0,
+    "recordings_with_year": 0,
+    "recordings_with_bpm": 0
+  },
+  "split": {
+    "train": 16242,
+    "test": 1904,
+    "validation": 1854
+  },
+  "frozen_settings": {
+    "seeds": 3,
+    "k": 20,
+    "split_sha256": "87ba8cde926b48b3e1d28d33ece47f22e8ab97b002dbf4e88d355ccd0238a0f0",
+    "title_thresholds": {
+      "sad": 0.95,
+      "chill": 0.9,
+      "upbeat": 0.95,
+      "gym": 0.95,
+      "study": 0.95,
+      "sleep": 0.95,
+      "dance": 0.9,
+      "party": 0.95,
+      "rave": 0.9,
+      "rainy": 0.95,
+      "summer": 0.95,
+      "winter": 0.95
+    },
+    "threshold_label_source": {
+      "sad": "all available validation labels",
+      "chill": "all available validation labels",
+      "upbeat": "all available validation labels",
+      "gym": "reviewed",
+      "study": "all available validation labels",
+      "sleep": "all available validation labels",
+      "dance": "all available validation labels",
+      "party": "all available validation labels",
+      "rave": "all available validation labels",
+      "rainy": "all available validation labels",
+      "summer": "all available validation labels",
+      "winter": "all available validation labels"
+    },
+    "validation_tag_weight_objective": {
+      "0.0": 0.17702403469960196,
+      "0.25": 0.1792792132708454,
+      "0.5": 0.18030789338255448,
+      "1.0": 0.1827441046679664,
+      "2.0": 0.1835749351270669
+    },
+    "tag_weight": 2.0,
+    "candidate_neighbours": 200,
+    "similarity_shrinkage": 10.0,
+    "context_prior_strength": 20,
+    "tag_display_starting_rule": {
+      "min_votes": 5,
+      "min_rate": 0.4,
+      "min_lift_strict": 1.0
+    }
+  },
+  "training": {
+    "tracks": 235331,
+    "title_tags": {
+      "sad": 67,
+      "chill": 556,
+      "upbeat": 144,
+      "gym": 406,
+      "study": 84,
+      "sleep": 77,
+      "dance": 145,
+      "party": 305,
+      "rave": 8,
+      "rainy": 16,
+      "summer": 335,
+      "winter": 41
+    },
+    "title_annotations": {
+      "train": 0,
+      "validation": 78,
+      "test": 76
+    },
+    "tag_priors": {
+      "sad": 0.08769633507853403,
+      "chill": 0.7277486910994765,
+      "upbeat": 0.18848167539267016,
+      "gym": 0.4031777557100298,
+      "study": 0.08341608738828203,
+      "sleep": 0.07646474677259185,
+      "dance": 0.14399205561072492,
+      "party": 0.3028798411122145,
+      "rave": 0.007944389275074478,
+      "rainy": 0.04081632653061224,
+      "summer": 0.8545918367346939,
+      "winter": 0.10459183673469388
+    }
+  },
+  "validation": {
+    "queries": {
+      "queries": 1854,
+      "title_conditioned_queries": 244,
+      "all_seeds_cold": 52,
+      "unseen_reference_occurrences": 17370,
+      "all_reference_occurrences": 123554
+    },
+    "all": {
+      "popularity": {
+        "recall_at_20": 0.012065481086712748,
+        "ndcg_at_20": 0.034329773939777604,
+        "precision_at_20": 0.032308522114347246,
+        "hit_rate_at_20": 0.22761596548004315
+      },
+      "cf": {
+        "recall_at_20": 0.07918542442962018,
+        "ndcg_at_20": 0.21380442649533704,
+        "precision_at_20": 0.1849514563106805,
+        "hit_rate_at_20": 0.7189859762675297
+      },
+      "tags_0.25": {
+        "recall_at_20": 0.07929833004263932,
+        "ndcg_at_20": 0.21410122453815422,
+        "precision_at_20": 0.185355987055017,
+        "hit_rate_at_20": 0.7184466019417476
+      },
+      "tags_0.5": {
+        "recall_at_20": 0.07927589647106126,
+        "ndcg_at_20": 0.21423660638672887,
+        "precision_at_20": 0.18538295577130617,
+        "hit_rate_at_20": 0.7173678532901834
+      },
+      "tags_1": {
+        "recall_at_20": 0.07930927195076827,
+        "ndcg_at_20": 0.21455722966269453,
+        "precision_at_20": 0.18573354908306453,
+        "hit_rate_at_20": 0.7179072276159655
+      },
+      "tags_2": {
+        "recall_at_20": 0.07950809444759334,
+        "ndcg_at_20": 0.21466657304566136,
+        "precision_at_20": 0.18581445523193182,
+        "hit_rate_at_20": 0.7195253505933118
+      }
+    },
+    "tagged_titles": {
+      "popularity": {
+        "recall_at_20": 0.011415017893305525,
+        "ndcg_at_20": 0.03829712583989874,
+        "precision_at_20": 0.037909836065573764,
+        "hit_rate_at_20": 0.29508196721311475
+      },
+      "cf": {
+        "recall_at_20": 0.055383801040244526,
+        "ndcg_at_20": 0.17702403469960196,
+        "precision_at_20": 0.15655737704918046,
+        "hit_rate_at_20": 0.6967213114754098
+      },
+      "tags_0.25": {
+        "recall_at_20": 0.05624169860802113,
+        "ndcg_at_20": 0.17927921327084534,
+        "precision_at_20": 0.15963114754098373,
+        "hit_rate_at_20": 0.6926229508196722
+      },
+      "tags_0.5": {
+        "recall_at_20": 0.05607124024037477,
+        "ndcg_at_20": 0.18030789338255443,
+        "precision_at_20": 0.15983606557377059,
+        "hit_rate_at_20": 0.6844262295081968
+      },
+      "tags_1": {
+        "recall_at_20": 0.05632483917224706,
+        "ndcg_at_20": 0.1827441046679663,
+        "precision_at_20": 0.16250000000000014,
+        "hit_rate_at_20": 0.6885245901639344
+      },
+      "tags_2": {
+        "recall_at_20": 0.057835564209598,
+        "ndcg_at_20": 0.1835749351270668,
+        "precision_at_20": 0.16311475409836076,
+        "hit_rate_at_20": 0.7008196721311475
+      }
+    },
+    "title_tagger": {
+      "rule_agreement": {
+        "titles": 1854,
+        "macro_f1_supported": 0.998250346285631,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 11,
+            "predicted": 11
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 0.9846153846153847,
+            "f1": 0.9922480620155039,
+            "support": 65,
+            "predicted": 64
+          },
+          "upbeat": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 14,
+            "predicted": 14
+          },
+          "gym": {
+            "precision": 0.9772727272727273,
+            "recall": 1.0,
+            "f1": 0.9885057471264368,
+            "support": 43,
+            "predicted": 44
+          },
+          "study": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 6,
+            "predicted": 6
+          },
+          "sleep": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 9,
+            "predicted": 9
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 23,
+            "predicted": 23
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 30,
+            "predicted": 30
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3,
+            "predicted": 3
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 40,
+            "predicted": 40
+          },
+          "winter": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 4,
+            "predicted": 4
+          }
+        }
+      },
+      "rule_agreement_unseen_titles": {
+        "titles": 413,
+        "macro_f1_supported": 0.9923076923076923,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 5,
+            "predicted": 5
+          },
+          "upbeat": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "gym": {
+            "precision": 0.8571428571428571,
+            "recall": 1.0,
+            "f1": 0.9230769230769231,
+            "support": 6,
+            "predicted": 7
+          },
+          "study": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "sleep": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8,
+            "predicted": 8
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3,
+            "predicted": 3
+          },
+          "winter": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          }
+        }
+      },
+      "reviewed_classifier": {
+        "titles": 78,
+        "macro_f1_supported": 0.7386363636363636,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "upbeat": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 3,
+            "predicted": 0
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 0.8333333333333334,
+            "f1": 0.9090909090909091,
+            "support": 6,
+            "predicted": 5
+          },
+          "study": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "sleep": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1,
+            "predicted": 0
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "winter": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          }
+        }
+      },
+      "reviewed_rule_baseline": {
+        "titles": 78,
+        "macro_f1_supported": 0.7386363636363636,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "upbeat": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 3,
+            "predicted": 0
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 0.8333333333333334,
+            "f1": 0.9090909090909091,
+            "support": 6,
+            "predicted": 5
+          },
+          "study": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "sleep": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1,
+            "predicted": 0
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "winter": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          }
+        }
+      }
+    }
+  },
+  "test": {
+    "queries": {
+      "queries": 1904,
+      "title_conditioned_queries": 241,
+      "all_seeds_cold": 57,
+      "unseen_reference_occurrences": 16258,
+      "all_reference_occurrences": 119062
+    },
+    "all": {
+      "popularity": {
+        "recall_at_20": 0.012203531335496837,
+        "ndcg_at_20": 0.03757969410059717,
+        "precision_at_20": 0.03602941176470578,
+        "hit_rate_at_20": 0.22006302521008403
+      },
+      "cf": {
+        "recall_at_20": 0.07640589283560877,
+        "ndcg_at_20": 0.20114214963786847,
+        "precision_at_20": 0.1754464285714291,
+        "hit_rate_at_20": 0.7095588235294118
+      },
+      "tags_0.5": {
+        "recall_at_20": 0.07647180141236852,
+        "ndcg_at_20": 0.20166766080167514,
+        "precision_at_20": 0.175945378151261,
+        "hit_rate_at_20": 0.7100840336134454
+      },
+      "tags_2": {
+        "recall_at_20": 0.07649632566346734,
+        "ndcg_at_20": 0.20223255396053838,
+        "precision_at_20": 0.1762079831932778,
+        "hit_rate_at_20": 0.710609243697479
+      },
+      "selected_ranker": {
+        "recall_at_20": 0.07649632566346734,
+        "ndcg_at_20": 0.20223255396053838,
+        "precision_at_20": 0.1762079831932778,
+        "hit_rate_at_20": 0.710609243697479
+      }
+    },
+    "tagged_titles": {
+      "popularity": {
+        "recall_at_20": 0.014741418023375918,
+        "ndcg_at_20": 0.0469427043471436,
+        "precision_at_20": 0.044190871369294615,
+        "hit_rate_at_20": 0.3070539419087137
+      },
+      "cf": {
+        "recall_at_20": 0.06300775693210078,
+        "ndcg_at_20": 0.15047125489703264,
+        "precision_at_20": 0.13008298755186737,
+        "hit_rate_at_20": 0.6597510373443983
+      },
+      "tags_0.5": {
+        "recall_at_20": 0.06352846203645987,
+        "ndcg_at_20": 0.1546230111455291,
+        "precision_at_20": 0.1340248962655603,
+        "hit_rate_at_20": 0.6639004149377593
+      },
+      "tags_2": {
+        "recall_at_20": 0.06372221379617846,
+        "ndcg_at_20": 0.15908590149605126,
+        "precision_at_20": 0.13609958506224076,
+        "hit_rate_at_20": 0.6680497925311203
+      },
+      "selected_ranker": {
+        "recall_at_20": 0.06372221379617846,
+        "ndcg_at_20": 0.15908590149605126,
+        "precision_at_20": 0.13609958506224076,
+        "hit_rate_at_20": 0.6680497925311203
+      }
+    },
+    "diagnostic_half_weight_minus_cf_ndcg_95_ci_tagged": [
+      0.0011776059921297139,
+      0.006996429258295162
+    ],
+    "title_tagger": {
+      "rule_agreement": {
+        "titles": 1904,
+        "macro_f1_supported": 0.9967558965714257,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 9,
+            "predicted": 9
+          },
+          "chill": {
+            "precision": 0.9811320754716981,
+            "recall": 1.0,
+            "f1": 0.9904761904761905,
+            "support": 52,
+            "predicted": 53
+          },
+          "upbeat": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 15,
+            "predicted": 15
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 54,
+            "predicted": 54
+          },
+          "study": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 9,
+            "predicted": 9
+          },
+          "sleep": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 10,
+            "predicted": 10
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 11,
+            "predicted": 11
+          },
+          "party": {
+            "precision": 0.9705882352941176,
+            "recall": 1.0,
+            "f1": 0.9850746268656716,
+            "support": 33,
+            "predicted": 34
+          },
+          "rave": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 0.9777777777777777,
+            "recall": 1.0,
+            "f1": 0.9887640449438202,
+            "support": 44,
+            "predicted": 45
+          },
+          "winter": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          }
+        }
+      },
+      "rule_agreement_unseen_titles": {
+        "titles": 470,
+        "macro_f1_supported": 0.9616161616161617,
+        "per_tag": {
+          "sad": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2,
+            "predicted": 2
+          },
+          "chill": {
+            "precision": 0.8,
+            "recall": 1.0,
+            "f1": 0.8888888888888888,
+            "support": 4,
+            "predicted": 5
+          },
+          "upbeat": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 6,
+            "predicted": 6
+          },
+          "study": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "sleep": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 4,
+            "predicted": 4
+          },
+          "party": {
+            "precision": 0.8333333333333334,
+            "recall": 1.0,
+            "f1": 0.9090909090909091,
+            "support": 5,
+            "predicted": 6
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 0.875,
+            "recall": 1.0,
+            "f1": 0.9333333333333333,
+            "support": 7,
+            "predicted": 8
+          },
+          "winter": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          }
+        }
+      },
+      "reviewed_classifier": {
+        "titles": 76,
+        "macro_f1_supported": 0.6666666666666666,
+        "per_tag": {
+          "sad": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3,
+            "predicted": 3
+          },
+          "upbeat": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2,
+            "predicted": 0
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 2,
+            "predicted": 1
+          },
+          "study": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "sleep": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 4,
+            "predicted": 2
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 2,
+            "predicted": 1
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "winter": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          }
+        }
+      },
+      "reviewed_rule_baseline": {
+        "titles": 76,
+        "macro_f1_supported": 0.6666666666666666,
+        "per_tag": {
+          "sad": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "chill": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3,
+            "predicted": 3
+          },
+          "upbeat": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2,
+            "predicted": 0
+          },
+          "gym": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 2,
+            "predicted": 1
+          },
+          "study": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "sleep": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "dance": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 4,
+            "predicted": 2
+          },
+          "party": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 2,
+            "predicted": 1
+          },
+          "rave": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "rainy": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          },
+          "summer": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1,
+            "predicted": 1
+          },
+          "winter": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "predicted": 0
+          }
+        }
+      }
+    }
+  }
+}
