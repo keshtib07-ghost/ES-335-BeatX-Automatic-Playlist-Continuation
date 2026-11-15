@@ -1,6 +1,6 @@
 # Next Track website
 
-The public GitHub Pages site includes an interactive explorer of the full MPD held-out results and an illustrative three-seed demo with fictional tracks. Its static files live under `docs/`. Use the local server below to query the actual trained model and your private MPD catalogue.
+The public GitHub Pages site includes interactive explorers of the held-out results and the seed-count study, plus an illustrative playlist demo with fictional tracks. Its static files live under `docs/`. Use the local server below to query the actual trained model and your private MPD catalogue.
 
 ## Run locally
 
@@ -12,7 +12,7 @@ python scripts/export_site_results.py
 python scripts/serve_million_demo.py
 ```
 
-Open `http://127.0.0.1:8000` in your browser. The demo should show **Local trained model**. Search by song or artist, select three distinct tracks, and use a title such as `Rainy Night Study`. The search and recommendations use your own local SQLite and model files. The server binds only to loopback.
+Open `http://127.0.0.1:8000` in your browser. The demo should show **Local trained model**. Search by song or artist or paste a Spotify track link. Select up to twenty distinct seeds and use a title such as `Rainy Night Study`. Switch methods and select **Compare with plain CF** to inspect outputs side by side in the playlist panel. The search and recommendations use your own local SQLite and model files. The server binds only to loopback. The [extended study commands](extended_study.md) generate the seed-count charts and enable playback ordering.
 
 To preview the public site experience, serve just the `docs/` directory:
 

@@ -8,7 +8,7 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 400 15px/1.66 Inter, system-ui, sans-serif; }
 a { color: inherit; text-underline-offset: .25em; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 h1, h2, h3, p { margin: 0; }
@@ -105,6 +105,45 @@ h3 { line-height: 1.2; font-size: 22px; letter-spacing: -.025em; }
 .reproduce-box details { margin-top: 8px; }
 .reproduce-box summary { cursor: pointer; }
 .reproduce-box pre { overflow: auto; padding: 12px; border: 1px solid var(--line); color: var(--muted); }
+.table-wrap { overflow: auto; margin: 14px 0; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 10px 11px; border-bottom: 1px solid var(--line); text-align: left; }
+th { color: var(--muted); font-size: 13px; font-weight: 600; background: #11181e; white-space: nowrap; }
+tr.selected-budget { background: #253528; }
+.features-table td:last-child { min-width: 116px; }
+.features-table strong { color: var(--green); }
+.analysis-detail { margin-top: 19px; }
+.analysis-detail .finding-grid { margin-top: 15px; }
+.analysis-detail .evidence, #seed-gain { margin-top: 12px; }
+.select-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 8px; margin-top: 14px; }
+select { display: block; width: 100%; margin-top: 6px; border: 1px solid var(--line); border-radius: 6px; background: #11181e; color: var(--text); padding: 7px; }
+.output-panel { padding: 0; overflow: hidden; }
+.playlist-cover { display: flex; align-items: end; gap: 20px; min-height: 168px; padding: 24px; background: linear-gradient(135deg,#314f34,#21322c 65%,#18231f); }
+.cover-art { display: flex; flex: 0 0 auto; width: 86px; height: 86px; align-items: center; justify-content: center; gap: 5px; border-radius: 9px; background: linear-gradient(135deg,#d6fa8e,#75a655); box-shadow: 0 10px 20px #091b1760; }
+.cover-art i { display: block; width: 7px; height: 21px; border-radius: 9px; background: #193022; }
+.cover-art i:nth-child(2) { height: 41px; }
+.playlist-cover h3 { font-size: clamp(23px, 4vw, 40px); overflow-wrap: anywhere; }
+.playlist-tools { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 7px; }
+.output-panel .track-list { max-height: none; padding-inline: 20px; }
+.track { grid-template-columns: 29px minmax(0, 1fr) auto; align-items: center; }
+.track a { color: var(--green); font-size: 12px; white-space: nowrap; }
+.live-note { padding: 14px 20px; }
+.segments button:disabled { opacity: .45; cursor: default; }
+[hidden] { display: none !important; }
+.chips { max-height: 104px; overflow: auto; }
+.seed-curve { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 21px 0 3px; }
+.seed-bar-group { display: grid; grid-template-rows: 110px auto; text-align: center; color: var(--muted); font-size: 12px; }
+.seed-bar-pair { display: flex; justify-content: center; align-items: flex-end; gap: 5px; border-bottom: 1px solid var(--line); }
+.seed-bar-pair i { width: min(22px, 35%); display: block; border-radius: 3px 3px 0 0; background: var(--blue); }
+.seed-bar-pair i:last-child { background: var(--green); }
+.seed-legend { margin-bottom: 11px; }
+.marginal { margin-top: 13px; }
+.marginal summary { cursor: pointer; }
+.demo-form .compare-control { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
+.demo-form .compare-control input { width: auto; margin: 0; accent-color: var(--green); }
+.comparison { margin: 15px 20px 0; }
+.comparison summary { cursor: pointer; color: var(--green); }
+.output-panel .comparison .track-list { padding: 4px 0; }
 .footer { border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-block: 22px; color: var(--muted); font-size: 13px; }
 @media (max-width: 850px) {
   .shell { width: calc(100% - 40px); }

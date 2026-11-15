@@ -3,21 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An ES335 experiment in continuing Spotify playlists from three seed tracks and the playlist title.">
+  <meta name="description" content="An ES335 study of seed counts, title context, and playback order on the Spotify Million Playlist Dataset.">
   <title>Next Track · ES335 Playlist Continuation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="experiment.js" defer></script>
+  <script src="seed_experiment.js" defer></script>
+  <script src="sequence_experiment.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="study.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="topbar">
     <div class="shell navigation">
       <a class="brand" href="#top" aria-label="Next Track home"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span> Next Track</a>
-      <nav aria-label="Main navigation"><a href="#results">Results</a><a href="#demo">Demo</a><a href="#method">Method</a><a href="#reproduce">Reproduce</a></nav>
+      <nav aria-label="Main navigation"><a href="#seed-study">Seed study</a><a href="#results">Results</a><a href="#demo">Demo</a><a href="#method">Method</a><a href="#reproduce">Reproduce</a></nav>
       <span class="course">ES335 · Machine Learning</span>
     </div>
   </header>
@@ -26,8 +29,8 @@
       <div class="hero-text">
         <p class="eyebrow">Spotify Million Playlist Dataset</p>
         <h1 id="headline">What should<br>play <em>next?</em></h1>
-        <p class="intro">Give the model three seed tracks and a playlist title. We tested whether context inferred from the title helps recover other tracks from the same playlist.</p>
-        <div class="hero-actions"><a class="button primary" href="#results">Explore results <span aria-hidden="true">↘</span></a><a class="button secondary" href="#demo">Try three seeds</a></div>
+        <p class="intro">How many songs are enough to start a playlist? Explore how more seeds, a playlist title, and track ordering affect the result.</p>
+        <div class="hero-actions"><a class="button primary" href="#seed-study">Explore the seed study <span aria-hidden="true">↘</span></a><a class="button secondary" href="#demo">Make a playlist</a></div>
       </div>
       <aside class="snapshot" aria-label="Dataset at a glance">
         <div class="snapshot-top"><span>EXPERIMENT AT A GLANCE</span><span aria-hidden="true">●</span></div>
@@ -35,12 +38,20 @@
         <p class="hero-caption">playlists processed</p>
         <div class="split-bar" aria-hidden="true"><i></i><i></i><i></i></div>
         <dl class="split-labels"><div><dt>Train</dt><dd>804,485</dd></div><div><dt>Validation</dt><dd>97,704</dd></div><div><dt>Test</dt><dd>97,811</dd></div></dl>
-        <p class="snapshot-note">Three visible songs per query. 5,000 sampled playlists in each held-out evaluation.</p>
+        <p class="snapshot-note">An initial three-seed benchmark and a separate, fixed-reference experiment across six seed counts.</p>
       </aside>
     </section>
 
+    <section class="section shell" id="seed-study" aria-labelledby="seed-study-title">
+      <div class="section-heading"><p class="eyebrow">Research question 1</p><h2 id="seed-study-title">How many songs are enough?</h2><p>At 1, 2, 3, 5, 10, and 20 seeds the same playlists and withheld tracks are scored. The smaller seed sets are prefixes of the same 20-track pool.</p></div>
+      <div class="result-panel" id="seed-study-panel"><p id="seed-study-status" role="status">Run the seed study to populate this section.</p>
+        <div id="seed-study-content" hidden><div class="controls"><div><h3>Seed count versus quality</h3><p id="seed-study-cohort" class="small"></p></div><label>Metric <select id="seed-metric"><option value="ndcg_at_20">NDCG@20</option><option value="recall_at_20">Recall@20</option><option value="artist_diversity">Artist diversity</option><option value="catalogue_coverage">Catalogue coverage</option><option value="popular_track_share">Top 1% popularity share</option></select></label></div>
+          <div class="seed-curve" id="seed-curve" aria-hidden="true"></div><p class="small seed-legend">Blue · plain CF &nbsp; Green · CF + learned tags</p><div class="table-wrap"><table id="seed-table"></table></div><p class="small" id="seed-metric-description"></p><div class="evidence" id="seed-gain"></div><details class="marginal"><summary>Inspect the gain from each added seed</summary><div class="table-wrap"><table id="seed-marginal"></table></div></details></div>
+      </div>
+    </section>
+
     <section class="section shell" id="results" aria-labelledby="results-title">
-      <div class="section-heading"><p class="eyebrow">Held-out evaluation</p><h2 id="results-title">The title helps when it has a signal.</h2><p>Collaborative filtering produces the large gain over popularity. Title-aware reranking adds a smaller improvement, concentrated in queries where a tag was inferred.</p></div>
+      <div class="section-heading"><p class="eyebrow">Research question 2 · Three-seed benchmark</p><h2 id="results-title">How much does the title help?</h2><p>Collaborative filtering produces the large gain over popularity. Title-aware reranking adds a smaller improvement, concentrated in queries where a tag was inferred.</p></div>
       <div class="result-panel">
         <div class="controls"><div><h3>Compare rankers</h3><p id="query-count">5,000 held-out queries</p></div><div class="segments" role="group" aria-label="Playlist cohort"><button type="button" data-cohort="all_queries" aria-pressed="true">All titles</button><button type="button" data-cohort="title_tagged_queries" aria-pressed="false">Inferred tags only</button></div></div>
         <div class="metrics" role="group" aria-label="Evaluation metric"><button type="button" data-metric="ndcg_at_20" aria-pressed="true">NDCG@20</button><button type="button" data-metric="recall_at_20" aria-pressed="false">Recall@20</button><button type="button" data-metric="precision_at_20" aria-pressed="false">Precision@20</button><button type="button" data-metric="hit_rate_at_20" aria-pressed="false">Hit rate@20</button></div>
@@ -53,19 +64,35 @@
     </section>
 
     <section class="section shell" id="demo" aria-labelledby="demo-title">
-      <div class="section-heading"><p class="eyebrow">Playlist demo</p><h2 id="demo-title">Start with three songs.</h2><p id="demo-mode">Try the interaction with a fictional sample catalogue. The measured MPD results are in the section above.</p></div>
+      <div class="section-heading"><p class="eyebrow">Playlist studio</p><h2 id="demo-title">Build a playlist.</h2><p id="demo-mode">Try the interaction with a fictional sample catalogue. The measured MPD results are in the sections above.</p></div>
       <div class="demo-grid">
         <form class="demo-form" id="demo-form">
           <label for="playlist-title">Playlist title</label><input id="playlist-title" name="title" type="text" maxlength="180" value="Rainy Night Study" placeholder="e.g. Rainy Night Study">
-          <div class="seed-heading"><label for="track-search">Seed tracks</label><span id="seed-count">0 / 3</span></div>
+          <div class="select-grid"><label for="demo-method">Method<select id="demo-method"><option value="learned_title">CF + learned title tags</option><option value="keyword_title">CF + keyword title tags</option><option value="cf">Collaborative filtering</option><option value="popularity">Popularity</option></select></label><label for="demo-context">Context<select id="demo-context"><option value="">Infer from title</option><option value="chill">Chill</option><option value="study">Study / focus</option><option value="gym">Workout</option><option value="party">Party</option><option value="rainy">Rainy</option><option value="sad">Sad</option><option value="sleep">Sleep</option></select></label></div>
+          <div class="seed-heading"><label for="track-search">Seed tracks</label><span id="seed-count">0 / 20</span></div>
           <div id="seed-chips" class="chips" aria-label="Selected seed tracks"></div>
-          <input id="track-search" type="search" maxlength="120" placeholder="Search by song or artist" autocomplete="off" aria-controls="track-matches">
+          <input id="track-search" type="search" maxlength="120" placeholder="Song, artist, or Spotify track link" autocomplete="off" aria-controls="track-matches">
           <div class="match-list" id="track-matches" aria-label="Track search results"></div>
+          <button type="button" class="button secondary" id="search-more" hidden>More matches</button>
+          <label class="compare-control"><input type="checkbox" id="compare-cf"> Compare with plain CF</label>
           <button type="submit" class="button primary" id="get-recs">Recommend tracks <span aria-hidden="true">→</span></button>
           <p class="small status" id="demo-status" role="status"></p>
         </form>
-        <div class="output-panel"><div class="output-heading"><h3>Up next</h3><span class="mode-label" id="mode-label">Illustrative demo</span></div><p class="small" id="inferred-tags" aria-live="polite">Try a title and three seeds.</p><ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol></div>
+        <div class="output-panel"><div class="playlist-cover"><div class="cover-art" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Illustrative demo</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add seed tracks to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div><ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol><details class="comparison" id="demo-comparison" hidden><summary id="comparison-summary"></summary><ol class="track-list" id="comparison-list" aria-label="Plain CF recommendations"></ol></details><p class="small live-note">A new playlist has no withheld answer. The demo shows catalogue coverage for the seeds and observed transition evidence where available.</p></div>
       </div>
+    </section>
+
+    <section class="section shell" id="features" aria-labelledby="features-title">
+      <div class="section-heading"><p class="eyebrow">Preprocessing and feature scope</p><h2 id="features-title">What went into the model.</h2><p>The staging run removed 881,652 repeat track occurrences within playlists, leaving 65,464,776 distinct playlist–track memberships.</p></div>
+      <div class="result-panel"><div class="table-wrap"><table class="features-table"><thead><tr><th>Feature or field</th><th>What it measures</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Track ID and playlist membership</td><td>Which recordings appeared together</td><td><strong>Kept</strong></td></tr>
+        <tr><td>Playlist title</td><td>Context inferred through keywords or learned tags</td><td><strong>Compared</strong></td></tr>
+        <tr><td>Artist, track and album names</td><td>Catalogue display and artist-diversity analysis</td><td>Metadata</td></tr>
+        <tr><td>Track position</td><td>Directed transitions in the original playlists</td><td>Playback layer</td></tr>
+        <tr><td>BPM, energy, and release era</td><td>Audio characteristics and release metadata</td><td>Unevaluated</td></tr>
+        <tr><td>Repeat IDs within a playlist</td><td>Extra copies of the same exact track</td><td>Removed</td></tr>
+        <tr><td>Same recording under different IDs</td><td>Alternate releases of a recording</td><td>Needs verified map</td></tr>
+      </tbody></table></div></div>
     </section>
 
     <section class="section shell" id="method" aria-labelledby="method-title">
@@ -85,6 +112,8 @@
         <article><h3>Unseen tracks</h3><p>Seven test queries had all three seeds absent from training. Those queries fall back to popularity. There were also 5,922 unseen reference occurrences among 316,437 total.</p></article>
         <article><h3>What the metric measures</h3><p>The scores measure recovery of held-out tracks. How well the music fits a listener's intent needs a separate study. We used exact Spotify track IDs, so alternate releases may count separately.</p></article>
       </div>
+      <div class="result-panel analysis-detail" id="seed-audit" hidden><h3>Where reranking helped and hurt</h3><p id="seed-audit-counts" class="small"></p><div class="finding-grid" id="seed-cases"></div></div>
+      <div class="result-panel analysis-detail"><h3>Does playback order matter?</h3><p class="small">Playback flow reorders the same recommendations using adjacent songs observed in training playlists. A separate order-recovery test checks how many original directed transitions it recovers from the same 20 tracks, with the first track fixed.</p><p id="sequence-study-status" class="evidence" role="status">Run the transition experiment to populate this comparison.</p></div>
     </section>
 
     <section class="section shell" id="reproduce" aria-labelledby="reproduce-title">

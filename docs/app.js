@@ -93,9 +93,13 @@ let selected = fictional.slice(0, 3);
 let timer;
 let searchGeneration = 0;
 let recommendGeneration = 0;
+let nextOffset = 0;
+let lastResult = null;
+let playbackMode = false;
+const maxSeeds = 20;
 
 function showSeeds() {
-  select('seed-count').textContent = `${selected.length} / 3`;
+  select('seed-count').textContent = `${selected.length} / ${maxSeeds}`;
   select('seed-chips').replaceChildren(...selected.map((track) => {
     const button = node('button', `${track.title} ×`, 'chip');
     button.type = 'button';
@@ -110,50 +114,90 @@ function showSeeds() {
   }));
 }
 
-async function searchTracks() {
+async function searchTracks(append = false) {
   const query = select('track-search').value.trim();
   const generation = ++searchGeneration;
   const list = select('track-matches');
-  list.replaceChildren();
-  if (selected.length === 3 || (realMode && query.length < 2)) return;
+  const more = select('search-more');
+  more.hidden = true;
+  if (!append) {
+    nextOffset = 0;
+    list.replaceChildren();
+  }
+  if (selected.length >= maxSeeds || (realMode && query.length < 2)) return;
   try {
-    let matches;
+    let matches, hasMore;
     if (realMode) {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&offset=${nextOffset}`);
       if (!response.ok) throw new Error('Search failed');
-      matches = (await response.json()).tracks;
+      const result = await response.json();
+      matches = result.tracks;
+      hasMore = result.more;
     } else {
-      matches = fictional.filter((track) => `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase()));
+      const all = fictional.filter((track) => `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase()));
+      matches = all.slice(nextOffset, nextOffset + 12);
+      hasMore = all.length > nextOffset + 12;
     }
     if (generation !== searchGeneration) return;
-    matches = matches.filter((candidate) => !selected.some((track) => track.id === candidate.id)).slice(0, 7);
-    if (!matches.length) list.append(node('p', 'No matching tracks.', 'small'));
+    nextOffset += matches.length;
+    matches = matches.filter((candidate) => !selected.some((track) => track.id === candidate.id));
+    if (!matches.length && !append) list.append(node('p', hasMore ? 'More tracks are available on the next page.' : 'No additional matches in this catalogue.', 'small'));
     for (const track of matches) {
       const button = node('button', `${track.title} · ${track.artist}`);
       button.type = 'button';
       button.addEventListener('click', () => {
-        if (selected.length >= 3) return;
+        if (selected.length >= maxSeeds) return;
         selected.push(track);
         select('track-search').value = '';
         showSeeds();
         searchTracks();
-        select(selected.length === 3 ? 'get-recs' : 'track-search').focus();
+        select(selected.length === maxSeeds ? 'get-recs' : 'track-search').focus();
       });
       list.append(button);
     }
+    more.hidden = !hasMore;
   } catch (error) {
     if (generation === searchGeneration) list.append(node('p', 'Track search is unavailable.', 'small'));
   }
 }
 
-function demoRecommendation(title, seeds) {
-  const inferred = Object.entries(demoRules).filter(([, rule]) => rule.test(title.toLowerCase())).map(([label]) => label);
+function demoRecommendation(title, seeds, method, context) {
+  const inferred = ['popularity', 'cf'].includes(method) ? [] : context ? [context]
+    : Object.entries(demoRules).filter(([, rule]) => rule.test(title.toLowerCase())).map(([label]) => label);
   const seedTags = seeds.flatMap((track) => track.tags);
-  const value = (track) => track.tags.reduce((sum, tag) => sum + seedTags.filter((t) => t === tag).length, 0)
+  const value = (track) => (method === 'popularity' ? 0 : track.tags.reduce((sum, tag) => sum + seedTags.filter((t) => t === tag).length, 0))
     + 2 * track.tags.filter((tag) => inferred.includes(tag)).length;
   const tracks = fictional.filter((track) => !seeds.some((seed) => seed.id === track.id))
     .sort((a, b) => value(b) - value(a)).slice(0, 20);
-  return {tags: inferred, tracks, cold: 0};
+  return {tags: inferred, tracks, seed_count: seeds.length, transition_evidence: null};
+}
+
+function renderPlaylist() {
+  if (!lastResult) return;
+  const list = [...lastResult.tracks];
+  if (playbackMode) list.sort((a, b) => a.playback_position - b.playback_position);
+  select('track-list').replaceChildren(...list.map((track) => {
+    const li = node('li', undefined, 'track');
+    const info = node('div');
+    const artist = playbackMode && track.rank ? `${track.artist} · relevance #${track.rank}` : track.artist;
+    info.append(node('strong', track.title), node('small', artist));
+    li.append(info);
+    if (realMode && /^[A-Za-z0-9]{22}$/.test(track.id)) {
+      const link = node('a', 'Spotify ↗');
+      link.href = `https://open.spotify.com/track/${track.id}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', `Open ${track.title} in Spotify`);
+      li.append(link);
+    }
+    return li;
+  }));
+  select('relevance-order').setAttribute('aria-pressed', String(!playbackMode));
+  select('playback-order').setAttribute('aria-pressed', String(playbackMode));
+  select('playback-order').disabled = lastResult.transition_evidence === null;
+  const support = realMode ? ` · ${lastResult.known_seeds}/${lastResult.seed_count} seeds seen in training` : '';
+  const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported, including the last seed` : '';
+  select('generation-evidence').textContent = `${list.length} additions${support}${transitions}`;
 }
 
 async function recommend(event) {
@@ -162,30 +206,45 @@ async function recommend(event) {
   const button = select('get-recs');
   const status = select('demo-status');
   status.textContent = '';
-  if (selected.length !== 3) {
-    status.textContent = 'Select three distinct tracks first.';
+  if (selected.length < 1 || selected.length > maxSeeds) {
+    status.textContent = 'Select 1–20 distinct seed tracks first.';
     return;
   }
   button.disabled = true;
   try {
     const title = select('playlist-title').value;
-    let result;
-    if (realMode) {
+    const method = select('demo-method').value;
+    const context = select('demo-context').value;
+    const seeds = [...selected];
+    async function getRanking(approach) {
+      if (!realMode) return demoRecommendation(title, seeds, approach, context);
       const response = await fetch('/api/recommend', {method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({title, seeds: selected.map((track) => track.id)})});
-      result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Recommendation failed.');
-    } else result = demoRecommendation(title, selected);
+        body: JSON.stringify({title, seeds: seeds.map((track) => track.id), method: approach, context})});
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Recommendation failed.');
+      return payload;
+    }
+    const result = await getRanking(method);
+    const baseline = select('compare-cf').checked && method !== 'cf' ? await getRanking('cf') : null;
     if (generation !== recommendGeneration) return;
-    select('inferred-tags').textContent = result.tags.length ? `Title tags · ${result.tags.join(', ')}` : 'No title tags inferred.';
-    select('track-list').replaceChildren(...result.tracks.map((track) => {
-      const li = node('li', undefined, 'track');
-      const info = node('div');
-      info.append(node('strong', track.title), node('small', track.artist));
-      li.append(info);
-      return li;
-    }));
-    status.textContent = result.cold ? `${result.cold} seed track(s) were unseen during training.` : `${result.tracks.length} suggestions`;
+    select('generated-title').textContent = title.trim() || 'Your playlist';
+    select('inferred-tags').textContent = result.tags.length ? `Applied context · ${result.tags.join(', ')}` : 'No context applied.';
+    lastResult = result;
+    playbackMode = false;
+    renderPlaylist();
+    select('demo-comparison').hidden = !baseline;
+    if (baseline) {
+      const common = new Set(baseline.tracks.map((track) => track.id));
+      const overlap = result.tracks.filter((track) => common.has(track.id)).length;
+      select('comparison-summary').textContent = `Plain CF ranking · ${overlap} of ${result.tracks.length} suggestions in common`;
+      select('comparison-list').replaceChildren(...baseline.tracks.map((track) => {
+        const row = node('li', undefined, 'track');
+        const info = node('div');
+        info.append(node('strong', track.title), node('small', track.artist));
+        row.append(info);
+        return row;
+      }));
+    }
   } catch (error) {
     if (generation === recommendGeneration) status.textContent = error.message || 'Recommendation failed.';
   } finally {
@@ -198,6 +257,10 @@ select('track-search').addEventListener('input', () => {
   clearTimeout(timer);
   timer = setTimeout(searchTracks, 220);
 });
+select('search-more').addEventListener('click', () => searchTracks(true));
+select('relevance-order').addEventListener('click', () => { playbackMode = false; renderPlaylist(); });
+select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
+select('demo-method').addEventListener('change', () => { select('demo-context').disabled = ['cf', 'popularity'].includes(select('demo-method').value); });
 select('demo-form').addEventListener('submit', recommend);
 showSeeds();
 recommend();
@@ -212,12 +275,18 @@ if (['localhost', '127.0.0.1'].includes(location.hostname)) {
   fetch('/api/status').then((response) => response.ok ? response.json() : null).then((status) => {
     if (!status?.trained_model) return;
     realMode = true;
+    searchGeneration += 1;
+    recommendGeneration += 1;
     selected = [];
     select('mode-label').textContent = 'Local trained model';
     select('demo-mode').textContent = 'Search your local MPD catalogue and get predictions from the trained model. This data stays on your machine.';
-    select('inferred-tags').textContent = 'Add three tracks to get started.';
+    select('inferred-tags').textContent = 'Add seed tracks to get started.';
     select('demo-status').textContent = '';
+    select('get-recs').disabled = false;
     select('track-list').replaceChildren();
+    select('generation-evidence').textContent = '';
+    select('demo-comparison').hidden = true;
+    lastResult = null;
     showSeeds();
   }).catch(() => {});
 }

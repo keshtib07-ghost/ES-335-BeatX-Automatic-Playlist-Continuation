@@ -1,0 +1,1206 @@
+window.NEXT_TRACK_SEED_STUDY = {
+  "version": "seed-study-v1",
+  "seed_budgets": [
+    1,
+    2,
+    3,
+    5,
+    10,
+    20
+  ],
+  "chosen_seed_budget": 20,
+  "seed_rule": "Smallest tested budget attaining at least 95% of peak validation NDCG@20 for the learned-title ranker.",
+  "reference_protocol": "Same playlist cohort and reference set at every budget. First 20 deterministic shuffled tracks form the seed pool. Unrevealed seed-pool tracks may be candidates but do not receive credit.",
+  "tag_weight": 1.0,
+  "training_catalogue_tracks": 2032356,
+  "validation": {
+    "queries": 1500,
+    "title_tagged_queries": 182,
+    "budgets": {
+      "1": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.011974211115127083,
+            "ndcg_at_20": 0.03254325022200804,
+            "precision_at_20": 0.029466666666666655,
+            "hit_rate_at_20": 0.23,
+            "artist_diversity": 0.8500999999999997,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 21,
+            "catalogue_coverage": 1.0332835389075536e-05
+          },
+          "cf": {
+            "recall_at_20": 0.05386535814242834,
+            "ndcg_at_20": 0.1295787508523503,
+            "precision_at_20": 0.11416666666666651,
+            "hit_rate_at_20": 0.594,
+            "artist_diversity": 0.5035,
+            "popular_track_share": 0.6748333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17215,
+            "catalogue_coverage": 0.00847046482013978
+          },
+          "keyword_title": {
+            "recall_at_20": 0.05404939628440253,
+            "ndcg_at_20": 0.13059690331290003,
+            "precision_at_20": 0.11469999999999993,
+            "hit_rate_at_20": 0.5946666666666667,
+            "artist_diversity": 0.5042,
+            "popular_track_share": 0.6772333333333332,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17183,
+            "catalogue_coverage": 0.008454719547165949
+          },
+          "learned_title": {
+            "recall_at_20": 0.05404939628440253,
+            "ndcg_at_20": 0.13059690331290003,
+            "precision_at_20": 0.11469999999999993,
+            "hit_rate_at_20": 0.5946666666666667,
+            "artist_diversity": 0.5042,
+            "popular_track_share": 0.6772333333333332,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17183,
+            "catalogue_coverage": 0.008454719547165949
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.019428306133122415,
+            "ndcg_at_20": 0.04523063878092527,
+            "precision_at_20": 0.04148351648351646,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.040255015686785044,
+            "ndcg_at_20": 0.10173835255994346,
+            "precision_at_20": 0.08791208791208792,
+            "hit_rate_at_20": 0.5769230769230769
+          },
+          "keyword_title": {
+            "recall_at_20": 0.04177181356019865,
+            "ndcg_at_20": 0.11012971899304567,
+            "precision_at_20": 0.09230769230769235,
+            "hit_rate_at_20": 0.5824175824175825
+          },
+          "learned_title": {
+            "recall_at_20": 0.04177181356019865,
+            "ndcg_at_20": 0.11012971899304567,
+            "precision_at_20": 0.09230769230769235,
+            "hit_rate_at_20": 0.5824175824175825
+          }
+        },
+        "all_seeds_unseen": 26,
+        "tag_effect": {
+          "improved": 57,
+          "worsened": 36,
+          "unchanged": 1407,
+          "mean_ndcg_delta": 0.0010181524605497405,
+          "paired_ndcg_95_ci_tagged": [
+            0.0035593231985952714,
+            0.013821893107931282
+          ]
+        }
+      },
+      "2": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.011974211115127083,
+            "ndcg_at_20": 0.03255263095936436,
+            "precision_at_20": 0.029466666666666655,
+            "hit_rate_at_20": 0.23,
+            "artist_diversity": 0.8502666666666664,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 22,
+            "catalogue_coverage": 1.0824875169507705e-05
+          },
+          "cf": {
+            "recall_at_20": 0.07163028877785504,
+            "ndcg_at_20": 0.16696762536346269,
+            "precision_at_20": 0.14776666666666718,
+            "hit_rate_at_20": 0.6893333333333334,
+            "artist_diversity": 0.48883333333333334,
+            "popular_track_share": 0.7243333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15300,
+            "catalogue_coverage": 0.007528208640612176
+          },
+          "keyword_title": {
+            "recall_at_20": 0.07150177360657453,
+            "ndcg_at_20": 0.1673061947545551,
+            "precision_at_20": 0.14773333333333383,
+            "hit_rate_at_20": 0.6906666666666667,
+            "artist_diversity": 0.4905666666666667,
+            "popular_track_share": 0.7264333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15261,
+            "catalogue_coverage": 0.007509019089175321
+          },
+          "learned_title": {
+            "recall_at_20": 0.07150177360657453,
+            "ndcg_at_20": 0.1673061947545551,
+            "precision_at_20": 0.14773333333333383,
+            "hit_rate_at_20": 0.6906666666666667,
+            "artist_diversity": 0.4905666666666667,
+            "popular_track_share": 0.7264333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15261,
+            "catalogue_coverage": 0.007509019089175321
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.019428306133122415,
+            "ndcg_at_20": 0.04523063878092527,
+            "precision_at_20": 0.04148351648351646,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.05820860606132307,
+            "ndcg_at_20": 0.1413732499164413,
+            "precision_at_20": 0.12225274725274735,
+            "hit_rate_at_20": 0.6813186813186813
+          },
+          "keyword_title": {
+            "recall_at_20": 0.05714941508923094,
+            "ndcg_at_20": 0.14416365698588512,
+            "precision_at_20": 0.12197802197802211,
+            "hit_rate_at_20": 0.6923076923076923
+          },
+          "learned_title": {
+            "recall_at_20": 0.05714941508923094,
+            "ndcg_at_20": 0.14416365698588512,
+            "precision_at_20": 0.12197802197802211,
+            "hit_rate_at_20": 0.6923076923076923
+          }
+        },
+        "all_seeds_unseen": 7,
+        "tag_effect": {
+          "improved": 67,
+          "worsened": 47,
+          "unchanged": 1386,
+          "mean_ndcg_delta": 0.00033856939109251893,
+          "paired_ndcg_95_ci_tagged": [
+            -0.0032830935023900483,
+            0.008814407838274084
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 1,
+          "ndcg_delta": 0.03670929144165498,
+          "ndcg_per_added_seed": 0.03670929144165498,
+          "paired_ndcg_95_ci": [
+            0.030324549806003787,
+            0.04289044725925656
+          ]
+        }
+      },
+      "3": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.012022463580348582,
+            "ndcg_at_20": 0.03271514326592892,
+            "precision_at_20": 0.02963333333333332,
+            "hit_rate_at_20": 0.23,
+            "artist_diversity": 0.850333333333333,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 22,
+            "catalogue_coverage": 1.0824875169507705e-05
+          },
+          "cf": {
+            "recall_at_20": 0.08286722100962782,
+            "ndcg_at_20": 0.19183653367065884,
+            "precision_at_20": 0.17023333333333376,
+            "hit_rate_at_20": 0.7333333333333333,
+            "artist_diversity": 0.49526666666666674,
+            "popular_track_share": 0.7483333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14106,
+            "catalogue_coverage": 0.006940713142776167
+          },
+          "keyword_title": {
+            "recall_at_20": 0.08329650359720486,
+            "ndcg_at_20": 0.19238899065766027,
+            "precision_at_20": 0.17073333333333374,
+            "hit_rate_at_20": 0.736,
+            "artist_diversity": 0.49643333333333334,
+            "popular_track_share": 0.7506333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14083,
+            "catalogue_coverage": 0.0069293962278262275
+          },
+          "learned_title": {
+            "recall_at_20": 0.08329650359720486,
+            "ndcg_at_20": 0.19238899065766027,
+            "precision_at_20": 0.17073333333333374,
+            "hit_rate_at_20": 0.736,
+            "artist_diversity": 0.49643333333333334,
+            "popular_track_share": 0.7506333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14083,
+            "catalogue_coverage": 0.0069293962278262275
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.019515613258277522,
+            "ndcg_at_20": 0.04585839219077027,
+            "precision_at_20": 0.04203296703296701,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.062358815348111,
+            "ndcg_at_20": 0.15407772089775962,
+            "precision_at_20": 0.13543956043956054,
+            "hit_rate_at_20": 0.7142857142857143
+          },
+          "keyword_title": {
+            "recall_at_20": 0.06589685865231766,
+            "ndcg_at_20": 0.15863093782359555,
+            "precision_at_20": 0.13956043956043973,
+            "hit_rate_at_20": 0.7362637362637363
+          },
+          "learned_title": {
+            "recall_at_20": 0.06589685865231766,
+            "ndcg_at_20": 0.15863093782359555,
+            "precision_at_20": 0.13956043956043973,
+            "hit_rate_at_20": 0.7362637362637363
+          }
+        },
+        "all_seeds_unseen": 4,
+        "tag_effect": {
+          "improved": 62,
+          "worsened": 58,
+          "unchanged": 1380,
+          "mean_ndcg_delta": 0.0005524569870014212,
+          "paired_ndcg_95_ci_tagged": [
+            -0.0019724187786511653,
+            0.011262507472667558
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 2,
+          "ndcg_delta": 0.025082795903105286,
+          "ndcg_per_added_seed": 0.025082795903105286,
+          "paired_ndcg_95_ci": [
+            0.020541353910684568,
+            0.02987535473204449
+          ]
+        }
+      },
+      "5": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.01202955577893014,
+            "ndcg_at_20": 0.03279186493550891,
+            "precision_at_20": 0.029666666666666654,
+            "hit_rate_at_20": 0.23,
+            "artist_diversity": 0.8504999999999997,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 23,
+            "catalogue_coverage": 1.1316914949939873e-05
+          },
+          "cf": {
+            "recall_at_20": 0.09933434245407627,
+            "ndcg_at_20": 0.22742375749601945,
+            "precision_at_20": 0.19963333333333413,
+            "hit_rate_at_20": 0.7893333333333333,
+            "artist_diversity": 0.5159666666666666,
+            "popular_track_share": 0.7880333333333335,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12313,
+            "catalogue_coverage": 0.006058485816461289
+          },
+          "keyword_title": {
+            "recall_at_20": 0.09981302975049958,
+            "ndcg_at_20": 0.2281419676468627,
+            "precision_at_20": 0.19986666666666755,
+            "hit_rate_at_20": 0.7906666666666666,
+            "artist_diversity": 0.5166333333333334,
+            "popular_track_share": 0.7907999999999998,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12270,
+            "catalogue_coverage": 0.006037328105902706
+          },
+          "learned_title": {
+            "recall_at_20": 0.09981302975049958,
+            "ndcg_at_20": 0.2281419676468627,
+            "precision_at_20": 0.19986666666666755,
+            "hit_rate_at_20": 0.7906666666666666,
+            "artist_diversity": 0.5166333333333334,
+            "popular_track_share": 0.7907999999999998,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12270,
+            "catalogue_coverage": 0.006037328105902706
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.019574065444389284,
+            "ndcg_at_20": 0.046111368532467875,
+            "precision_at_20": 0.04230769230769228,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.0800031946303701,
+            "ndcg_at_20": 0.1893528346909451,
+            "precision_at_20": 0.1609890109890111,
+            "hit_rate_at_20": 0.7582417582417582
+          },
+          "keyword_title": {
+            "recall_at_20": 0.0839484196008916,
+            "ndcg_at_20": 0.19527214912097196,
+            "precision_at_20": 0.16291208791208805,
+            "hit_rate_at_20": 0.7692307692307693
+          },
+          "learned_title": {
+            "recall_at_20": 0.0839484196008916,
+            "ndcg_at_20": 0.19527214912097196,
+            "precision_at_20": 0.16291208791208805,
+            "hit_rate_at_20": 0.7692307692307693
+          }
+        },
+        "all_seeds_unseen": 2,
+        "tag_effect": {
+          "improved": 72,
+          "worsened": 62,
+          "unchanged": 1366,
+          "mean_ndcg_delta": 0.0007182101508432517,
+          "paired_ndcg_95_ci_tagged": [
+            -0.0020175164880257535,
+            0.013931579075501571
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 3,
+          "ndcg_delta": 0.035752976989202066,
+          "ndcg_per_added_seed": 0.017876488494601033,
+          "paired_ndcg_95_ci": [
+            0.030273090244795558,
+            0.04126838808630033
+          ]
+        }
+      },
+      "10": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.012085892400713932,
+            "ndcg_at_20": 0.03324065262379797,
+            "precision_at_20": 0.02993333333333332,
+            "hit_rate_at_20": 0.23,
+            "artist_diversity": 0.8504999999999998,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 24,
+            "catalogue_coverage": 1.180895473037204e-05
+          },
+          "cf": {
+            "recall_at_20": 0.11740228028869819,
+            "ndcg_at_20": 0.2739091066124343,
+            "precision_at_20": 0.23776666666666746,
+            "hit_rate_at_20": 0.834,
+            "artist_diversity": 0.5561999999999999,
+            "popular_track_share": 0.8275,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10520,
+            "catalogue_coverage": 0.005176258490146412
+          },
+          "keyword_title": {
+            "recall_at_20": 0.11733301132470476,
+            "ndcg_at_20": 0.27431856897754564,
+            "precision_at_20": 0.23750000000000088,
+            "hit_rate_at_20": 0.8326666666666667,
+            "artist_diversity": 0.5571666666666667,
+            "popular_track_share": 0.8292333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10502,
+            "catalogue_coverage": 0.005167401774098633
+          },
+          "learned_title": {
+            "recall_at_20": 0.11733301132470476,
+            "ndcg_at_20": 0.27431856897754564,
+            "precision_at_20": 0.23750000000000088,
+            "hit_rate_at_20": 0.8326666666666667,
+            "artist_diversity": 0.5571666666666667,
+            "popular_track_share": 0.8292333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10502,
+            "catalogue_coverage": 0.005167401774098633
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.019616658510238166,
+            "ndcg_at_20": 0.046495021676701,
+            "precision_at_20": 0.042582417582417556,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.10041019727141393,
+            "ndcg_at_20": 0.2348274464014512,
+            "precision_at_20": 0.19999999999999993,
+            "hit_rate_at_20": 0.8351648351648352
+          },
+          "keyword_title": {
+            "recall_at_20": 0.0998392992165228,
+            "ndcg_at_20": 0.23820213622379727,
+            "precision_at_20": 0.19780219780219788,
+            "hit_rate_at_20": 0.8241758241758241
+          },
+          "learned_title": {
+            "recall_at_20": 0.0998392992165228,
+            "ndcg_at_20": 0.23820213622379727,
+            "precision_at_20": 0.19780219780219788,
+            "hit_rate_at_20": 0.8241758241758241
+          }
+        },
+        "all_seeds_unseen": 1,
+        "tag_effect": {
+          "improved": 68,
+          "worsened": 74,
+          "unchanged": 1358,
+          "mean_ndcg_delta": 0.00040946236511131583,
+          "paired_ndcg_95_ci_tagged": [
+            -0.006187049013019726,
+            0.01253497218495841
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 5,
+          "ndcg_delta": 0.04617660133068232,
+          "ndcg_per_added_seed": 0.009235320266136464,
+          "paired_ndcg_95_ci": [
+            0.04041983385739736,
+            0.052379189583522466
+          ]
+        }
+      },
+      "20": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.012362060515243996,
+            "ndcg_at_20": 0.033885521085956855,
+            "precision_at_20": 0.03056666666666665,
+            "hit_rate_at_20": 0.23066666666666666,
+            "artist_diversity": 0.8503999999999999,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 27,
+            "catalogue_coverage": 1.3285074071668547e-05
+          },
+          "cf": {
+            "recall_at_20": 0.13230767421552808,
+            "ndcg_at_20": 0.3152472788097131,
+            "precision_at_20": 0.26733333333333426,
+            "hit_rate_at_20": 0.8573333333333333,
+            "artist_diversity": 0.5987333333333333,
+            "popular_track_share": 0.8556333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9183,
+            "catalogue_coverage": 0.0045184013037086026
+          },
+          "keyword_title": {
+            "recall_at_20": 0.1326616769146038,
+            "ndcg_at_20": 0.31548900269182834,
+            "precision_at_20": 0.26760000000000084,
+            "hit_rate_at_20": 0.8593333333333333,
+            "artist_diversity": 0.5988333333333333,
+            "popular_track_share": 0.857,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9194,
+            "catalogue_coverage": 0.004523813741293356
+          },
+          "learned_title": {
+            "recall_at_20": 0.1326616769146038,
+            "ndcg_at_20": 0.31548900269182834,
+            "precision_at_20": 0.26760000000000084,
+            "hit_rate_at_20": 0.8593333333333333,
+            "artist_diversity": 0.5988333333333333,
+            "popular_track_share": 0.857,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9194,
+            "catalogue_coverage": 0.004523813741293356
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.02018236264737087,
+            "ndcg_at_20": 0.04763397300218615,
+            "precision_at_20": 0.04368131868131865,
+            "hit_rate_at_20": 0.3241758241758242
+          },
+          "cf": {
+            "recall_at_20": 0.10781122293366524,
+            "ndcg_at_20": 0.26691841379713765,
+            "precision_at_20": 0.22170329670329691,
+            "hit_rate_at_20": 0.8406593406593407
+          },
+          "keyword_title": {
+            "recall_at_20": 0.11072882759637714,
+            "ndcg_at_20": 0.2689106435947926,
+            "precision_at_20": 0.22390109890109902,
+            "hit_rate_at_20": 0.8571428571428571
+          },
+          "learned_title": {
+            "recall_at_20": 0.11072882759637714,
+            "ndcg_at_20": 0.2689106435947926,
+            "precision_at_20": 0.22390109890109902,
+            "hit_rate_at_20": 0.8571428571428571
+          }
+        },
+        "all_seeds_unseen": 0,
+        "tag_effect": {
+          "improved": 79,
+          "worsened": 66,
+          "unchanged": 1355,
+          "mean_ndcg_delta": 0.0002417238821154768,
+          "paired_ndcg_95_ci_tagged": [
+            -0.007106368519146059,
+            0.010653832557338493
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 10,
+          "ndcg_delta": 0.0411704337142834,
+          "ndcg_per_added_seed": 0.00411704337142834,
+          "paired_ndcg_95_ci": [
+            0.035254770359396136,
+            0.046774919948037896
+          ]
+        }
+      }
+    },
+    "cases": {
+      "largest_gain": null,
+      "largest_loss": null,
+      "first_zero_hit": null
+    }
+  },
+  "test": {
+    "queries": 1500,
+    "title_tagged_queries": 194,
+    "budgets": {
+      "1": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.01182304543244986,
+            "ndcg_at_20": 0.030149861854672447,
+            "precision_at_20": 0.027899999999999966,
+            "hit_rate_at_20": 0.21,
+            "artist_diversity": 0.8502666666666664,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 21,
+            "catalogue_coverage": 1.0332835389075536e-05
+          },
+          "cf": {
+            "recall_at_20": 0.05441153242460963,
+            "ndcg_at_20": 0.12737642384884892,
+            "precision_at_20": 0.1120666666666667,
+            "hit_rate_at_20": 0.58,
+            "artist_diversity": 0.5053666666666666,
+            "popular_track_share": 0.6569,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17489,
+            "catalogue_coverage": 0.008605283719978193
+          },
+          "keyword_title": {
+            "recall_at_20": 0.05488179577730558,
+            "ndcg_at_20": 0.1284111773446748,
+            "precision_at_20": 0.11320000000000005,
+            "hit_rate_at_20": 0.5826666666666667,
+            "artist_diversity": 0.5065333333333333,
+            "popular_track_share": 0.6590666666666667,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17432,
+            "catalogue_coverage": 0.00857723745249356
+          },
+          "learned_title": {
+            "recall_at_20": 0.05488179577730558,
+            "ndcg_at_20": 0.1284111773446748,
+            "precision_at_20": 0.11320000000000005,
+            "hit_rate_at_20": 0.5826666666666667,
+            "artist_diversity": 0.5065333333333333,
+            "popular_track_share": 0.6590666666666667,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 17433,
+            "catalogue_coverage": 0.008577729492273992
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014399766759733186,
+            "ndcg_at_20": 0.03857231419298632,
+            "precision_at_20": 0.03505154639175255,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.036907125351164666,
+            "ndcg_at_20": 0.09817800721710641,
+            "precision_at_20": 0.08969072164948456,
+            "hit_rate_at_20": 0.5360824742268041
+          },
+          "keyword_title": {
+            "recall_at_20": 0.04054318220190672,
+            "ndcg_at_20": 0.10617867857658464,
+            "precision_at_20": 0.09845360824742272,
+            "hit_rate_at_20": 0.5567010309278351
+          },
+          "learned_title": {
+            "recall_at_20": 0.04054318220190672,
+            "ndcg_at_20": 0.10617867857658464,
+            "precision_at_20": 0.09845360824742272,
+            "hit_rate_at_20": 0.5567010309278351
+          }
+        },
+        "all_seeds_unseen": 32,
+        "tag_effect": {
+          "improved": 58,
+          "worsened": 35,
+          "unchanged": 1407,
+          "mean_ndcg_delta": 0.001034753495825856,
+          "paired_ndcg_95_ci_tagged": [
+            0.002983861805888981,
+            0.013358052458392007
+          ]
+        }
+      },
+      "2": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.011847414233543255,
+            "ndcg_at_20": 0.030244525991484503,
+            "precision_at_20": 0.027999999999999973,
+            "hit_rate_at_20": 0.21,
+            "artist_diversity": 0.8502666666666664,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 22,
+            "catalogue_coverage": 1.0824875169507705e-05
+          },
+          "cf": {
+            "recall_at_20": 0.07304342621101223,
+            "ndcg_at_20": 0.16780861175433226,
+            "precision_at_20": 0.15000000000000024,
+            "hit_rate_at_20": 0.68,
+            "artist_diversity": 0.4912,
+            "popular_track_share": 0.7081999999999999,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15754,
+            "catalogue_coverage": 0.007751594700928381
+          },
+          "keyword_title": {
+            "recall_at_20": 0.07350200744140428,
+            "ndcg_at_20": 0.16905391897511543,
+            "precision_at_20": 0.15103333333333357,
+            "hit_rate_at_20": 0.6826666666666666,
+            "artist_diversity": 0.493,
+            "popular_track_share": 0.7105,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15730,
+            "catalogue_coverage": 0.007739785746198009
+          },
+          "learned_title": {
+            "recall_at_20": 0.07350200744140428,
+            "ndcg_at_20": 0.169040055912462,
+            "precision_at_20": 0.15103333333333357,
+            "hit_rate_at_20": 0.6826666666666666,
+            "artist_diversity": 0.4929666666666667,
+            "popular_track_share": 0.7105,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 15730,
+            "catalogue_coverage": 0.007739785746198009
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014399766759733186,
+            "ndcg_at_20": 0.03857231419298632,
+            "precision_at_20": 0.03505154639175255,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.05073996103696145,
+            "ndcg_at_20": 0.1300029777347127,
+            "precision_at_20": 0.12061855670103097,
+            "hit_rate_at_20": 0.6237113402061856
+          },
+          "keyword_title": {
+            "recall_at_20": 0.054285692199786434,
+            "ndcg_at_20": 0.13963164181293172,
+            "precision_at_20": 0.12860824742268048,
+            "hit_rate_at_20": 0.6443298969072165
+          },
+          "learned_title": {
+            "recall_at_20": 0.054285692199786434,
+            "ndcg_at_20": 0.13952445318416826,
+            "precision_at_20": 0.12860824742268048,
+            "hit_rate_at_20": 0.6443298969072165
+          }
+        },
+        "all_seeds_unseen": 4,
+        "tag_effect": {
+          "improved": 73,
+          "worsened": 44,
+          "unchanged": 1383,
+          "mean_ndcg_delta": 0.0012314441581295981,
+          "paired_ndcg_95_ci_tagged": [
+            0.0045649346233144344,
+            0.015155283817934132
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 1,
+          "ndcg_delta": 0.040628878567787255,
+          "ndcg_per_added_seed": 0.040628878567787255,
+          "paired_ndcg_95_ci": [
+            0.03392460388780155,
+            0.04754905246110387
+          ]
+        }
+      },
+      "3": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.011857830900209922,
+            "ndcg_at_20": 0.03028704853858091,
+            "precision_at_20": 0.028033333333333302,
+            "hit_rate_at_20": 0.21,
+            "artist_diversity": 0.8501999999999998,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 22,
+            "catalogue_coverage": 1.0824875169507705e-05
+          },
+          "cf": {
+            "recall_at_20": 0.08286377538458982,
+            "ndcg_at_20": 0.1903653371304435,
+            "precision_at_20": 0.17006666666666717,
+            "hit_rate_at_20": 0.7246666666666667,
+            "artist_diversity": 0.49,
+            "popular_track_share": 0.7354333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14471,
+            "catalogue_coverage": 0.007120307662633909
+          },
+          "keyword_title": {
+            "recall_at_20": 0.08309468389152155,
+            "ndcg_at_20": 0.19117545074025527,
+            "precision_at_20": 0.1705666666666672,
+            "hit_rate_at_20": 0.724,
+            "artist_diversity": 0.4918,
+            "popular_track_share": 0.7379666666666665,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14416,
+            "catalogue_coverage": 0.007093245474710139
+          },
+          "learned_title": {
+            "recall_at_20": 0.08309468389152155,
+            "ndcg_at_20": 0.19121275691580805,
+            "precision_at_20": 0.1705666666666672,
+            "hit_rate_at_20": 0.724,
+            "artist_diversity": 0.4918,
+            "popular_track_share": 0.738,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 14416,
+            "catalogue_coverage": 0.007093245474710139
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014399766759733186,
+            "ndcg_at_20": 0.03857231419298632,
+            "precision_at_20": 0.03505154639175255,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.05766713943109455,
+            "ndcg_at_20": 0.1507979172247644,
+            "precision_at_20": 0.13762886597938156,
+            "hit_rate_at_20": 0.7010309278350515
+          },
+          "keyword_title": {
+            "recall_at_20": 0.05945251448469045,
+            "ndcg_at_20": 0.15706168224908243,
+            "precision_at_20": 0.14149484536082482,
+            "hit_rate_at_20": 0.6958762886597938
+          },
+          "learned_title": {
+            "recall_at_20": 0.05945251448469045,
+            "ndcg_at_20": 0.1573501320600576,
+            "precision_at_20": 0.14149484536082482,
+            "hit_rate_at_20": 0.6958762886597938
+          }
+        },
+        "all_seeds_unseen": 0,
+        "tag_effect": {
+          "improved": 72,
+          "worsened": 52,
+          "unchanged": 1376,
+          "mean_ndcg_delta": 0.0008474197853645819,
+          "paired_ndcg_95_ci_tagged": [
+            0.0005145365744072502,
+            0.013831491317289698
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 2,
+          "ndcg_delta": 0.022172701003345764,
+          "ndcg_per_added_seed": 0.022172701003345764,
+          "paired_ndcg_95_ci": [
+            0.017238490240081474,
+            0.02703510264092058
+          ]
+        }
+      },
+      "5": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.011892716700551548,
+            "ndcg_at_20": 0.030419583414073338,
+            "precision_at_20": 0.02816666666666664,
+            "hit_rate_at_20": 0.21066666666666667,
+            "artist_diversity": 0.8502333333333333,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 24,
+            "catalogue_coverage": 1.180895473037204e-05
+          },
+          "cf": {
+            "recall_at_20": 0.09574123964781309,
+            "ndcg_at_20": 0.22065085525058808,
+            "precision_at_20": 0.19430000000000064,
+            "hit_rate_at_20": 0.76,
+            "artist_diversity": 0.5123333333333333,
+            "popular_track_share": 0.7778999999999999,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12697,
+            "catalogue_coverage": 0.006247429092147242
+          },
+          "keyword_title": {
+            "recall_at_20": 0.09631367157394459,
+            "ndcg_at_20": 0.22200719440858782,
+            "precision_at_20": 0.19556666666666733,
+            "hit_rate_at_20": 0.7606666666666667,
+            "artist_diversity": 0.5147333333333333,
+            "popular_track_share": 0.7805,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12641,
+            "catalogue_coverage": 0.006219874864443041
+          },
+          "learned_title": {
+            "recall_at_20": 0.09631367157394459,
+            "ndcg_at_20": 0.22200116646314116,
+            "precision_at_20": 0.19556666666666733,
+            "hit_rate_at_20": 0.7606666666666667,
+            "artist_diversity": 0.5148,
+            "popular_track_share": 0.7805333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 12635,
+            "catalogue_coverage": 0.0062169226257604475
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014497024102662577,
+            "ndcg_at_20": 0.03876379464149605,
+            "precision_at_20": 0.03530927835051544,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.06468293483905782,
+            "ndcg_at_20": 0.16596827711923742,
+            "precision_at_20": 0.14690721649484548,
+            "hit_rate_at_20": 0.7474226804123711
+          },
+          "keyword_title": {
+            "recall_at_20": 0.06910895488646678,
+            "ndcg_at_20": 0.17645543555737778,
+            "precision_at_20": 0.15670103092783513,
+            "hit_rate_at_20": 0.7525773195876289
+          },
+          "learned_title": {
+            "recall_at_20": 0.06910895488646678,
+            "ndcg_at_20": 0.17640882773175928,
+            "precision_at_20": 0.15670103092783513,
+            "hit_rate_at_20": 0.7525773195876289
+          }
+        },
+        "all_seeds_unseen": 0,
+        "tag_effect": {
+          "improved": 80,
+          "worsened": 58,
+          "unchanged": 1362,
+          "mean_ndcg_delta": 0.00135031121255283,
+          "paired_ndcg_95_ci_tagged": [
+            0.0023682784188883707,
+            0.018813985753262385
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 3,
+          "ndcg_delta": 0.030788409547332942,
+          "ndcg_per_added_seed": 0.015394204773666471,
+          "paired_ndcg_95_ci": [
+            0.025759536451895555,
+            0.03654984175446942
+          ]
+        }
+      },
+      "10": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.01191089257502033,
+            "ndcg_at_20": 0.03075405770355492,
+            "precision_at_20": 0.02826666666666664,
+            "hit_rate_at_20": 0.21066666666666667,
+            "artist_diversity": 0.8503999999999999,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 24,
+            "catalogue_coverage": 1.180895473037204e-05
+          },
+          "cf": {
+            "recall_at_20": 0.11336337306621305,
+            "ndcg_at_20": 0.26694397227712985,
+            "precision_at_20": 0.23260000000000045,
+            "hit_rate_at_20": 0.808,
+            "artist_diversity": 0.5554333333333333,
+            "popular_track_share": 0.8203333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10703,
+            "catalogue_coverage": 0.005266301769965498
+          },
+          "keyword_title": {
+            "recall_at_20": 0.11375601626971048,
+            "ndcg_at_20": 0.26827857151683054,
+            "precision_at_20": 0.23346666666666716,
+            "hit_rate_at_20": 0.808,
+            "artist_diversity": 0.5571666666666667,
+            "popular_track_share": 0.823,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10659,
+            "catalogue_coverage": 0.0052446520196264826
+          },
+          "learned_title": {
+            "recall_at_20": 0.11364490515859939,
+            "ndcg_at_20": 0.26823264247233886,
+            "precision_at_20": 0.2334333333333338,
+            "hit_rate_at_20": 0.808,
+            "artist_diversity": 0.5572666666666667,
+            "popular_track_share": 0.8231333333333334,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 10651,
+            "catalogue_coverage": 0.005240715701383025
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014605542822141685,
+            "ndcg_at_20": 0.03937385789011498,
+            "precision_at_20": 0.035824742268041214,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.0843011971261428,
+            "ndcg_at_20": 0.21540479571197932,
+            "precision_at_20": 0.18608247422680416,
+            "hit_rate_at_20": 0.7835051546391752
+          },
+          "keyword_title": {
+            "recall_at_20": 0.08733709818411253,
+            "ndcg_at_20": 0.22572386199832495,
+            "precision_at_20": 0.19278350515463916,
+            "hit_rate_at_20": 0.7835051546391752
+          },
+          "learned_title": {
+            "recall_at_20": 0.08647799165490291,
+            "ndcg_at_20": 0.22536874052029623,
+            "precision_at_20": 0.1925257731958763,
+            "hit_rate_at_20": 0.7835051546391752
+          }
+        },
+        "all_seeds_unseen": 0,
+        "tag_effect": {
+          "improved": 78,
+          "worsened": 67,
+          "unchanged": 1355,
+          "mean_ndcg_delta": 0.0012886701952090002,
+          "paired_ndcg_95_ci_tagged": [
+            0.0012556569305843476,
+            0.018551567774358207
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 5,
+          "ndcg_delta": 0.046231476009197865,
+          "ndcg_per_added_seed": 0.009246295201839573,
+          "paired_ndcg_95_ci": [
+            0.04035950721559107,
+            0.052198198740807424
+          ]
+        }
+      },
+      "20": {
+        "all_queries": {
+          "popularity": {
+            "recall_at_20": 0.01201557411585445,
+            "ndcg_at_20": 0.03133453346027345,
+            "precision_at_20": 0.028633333333333306,
+            "hit_rate_at_20": 0.21066666666666667,
+            "artist_diversity": 0.8502666666666664,
+            "popular_track_share": 1.0,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 27,
+            "catalogue_coverage": 1.3285074071668547e-05
+          },
+          "cf": {
+            "recall_at_20": 0.1327681309303741,
+            "ndcg_at_20": 0.3134975115958726,
+            "precision_at_20": 0.26516666666666744,
+            "hit_rate_at_20": 0.848,
+            "artist_diversity": 0.5902999999999999,
+            "popular_track_share": 0.8458333333333333,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9548,
+            "catalogue_coverage": 0.0046979958235663435
+          },
+          "keyword_title": {
+            "recall_at_20": 0.13292289882461314,
+            "ndcg_at_20": 0.3142246240931283,
+            "precision_at_20": 0.2659666666666674,
+            "hit_rate_at_20": 0.8486666666666667,
+            "artist_diversity": 0.5904,
+            "popular_track_share": 0.8477666666666668,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9533,
+            "catalogue_coverage": 0.004690615226859861
+          },
+          "learned_title": {
+            "recall_at_20": 0.13292289882461314,
+            "ndcg_at_20": 0.31420528987709906,
+            "precision_at_20": 0.2659666666666674,
+            "hit_rate_at_20": 0.8486666666666667,
+            "artist_diversity": 0.5904,
+            "popular_track_share": 0.8477666666666668,
+            "known_artist_slot_share": 1.0,
+            "unique_recommended_tracks": 9533,
+            "catalogue_coverage": 0.004690615226859861
+          }
+        },
+        "title_tagged_queries": {
+          "popularity": {
+            "recall_at_20": 0.014849770430779868,
+            "ndcg_at_20": 0.04002670193372383,
+            "precision_at_20": 0.036340206185566985,
+            "hit_rate_at_20": 0.28350515463917525
+          },
+          "cf": {
+            "recall_at_20": 0.10177353815227844,
+            "ndcg_at_20": 0.2509284237497917,
+            "precision_at_20": 0.2126288659793815,
+            "hit_rate_at_20": 0.8195876288659794
+          },
+          "keyword_title": {
+            "recall_at_20": 0.10297019712835365,
+            "ndcg_at_20": 0.25655042759455204,
+            "precision_at_20": 0.21881443298969075,
+            "hit_rate_at_20": 0.8247422680412371
+          },
+          "learned_title": {
+            "recall_at_20": 0.10297019712835365,
+            "ndcg_at_20": 0.2564009362335016,
+            "precision_at_20": 0.21881443298969075,
+            "hit_rate_at_20": 0.8247422680412371
+          }
+        },
+        "all_seeds_unseen": 0,
+        "tag_effect": {
+          "improved": 84,
+          "worsened": 70,
+          "unchanged": 1346,
+          "mean_ndcg_delta": 0.0007077782812264874,
+          "paired_ndcg_95_ci_tagged": [
+            -0.005006001799633587,
+            0.01553283209105451
+          ]
+        },
+        "marginal_seed_gain": {
+          "from_seeds": 10,
+          "ndcg_delta": 0.04597264740476003,
+          "ndcg_per_added_seed": 0.004597264740476003,
+          "paired_ndcg_95_ci": [
+            0.040207281119511,
+            0.051303502144015925
+          ]
+        }
+      }
+    },
+    "cases": {
+      "largest_gain": {
+        "seeds": 20,
+        "known_seeds": 20,
+        "withheld_tracks": 25,
+        "withheld_seen_in_training": 25,
+        "withheld_in_cf_candidates": 23,
+        "inferred_tag_count": 1,
+        "plain_hit_ranks": [
+          9,
+          15
+        ],
+        "tagged_hit_ranks": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          9,
+          14,
+          19
+        ],
+        "ndcg_delta": 0.4481575936541799
+      },
+      "largest_loss": {
+        "seeds": 20,
+        "known_seeds": 20,
+        "withheld_tracks": 34,
+        "withheld_seen_in_training": 34,
+        "withheld_in_cf_candidates": 33,
+        "inferred_tag_count": 1,
+        "plain_hit_ranks": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          19
+        ],
+        "tagged_hit_ranks": [
+          4,
+          7,
+          16,
+          17,
+          18
+        ],
+        "ndcg_delta": -0.330497720350808
+      },
+      "first_zero_hit": {
+        "seeds": 20,
+        "known_seeds": 20,
+        "withheld_tracks": 4,
+        "withheld_seen_in_training": 4,
+        "withheld_in_cf_candidates": 0,
+        "inferred_tag_count": 0,
+        "plain_hit_ranks": [],
+        "tagged_hit_ranks": [],
+        "ndcg_delta": 0.0
+      }
+    }
+  }
+};
