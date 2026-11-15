@@ -2,6 +2,14 @@
 
 This is a clean implementation for ES 335. It asks whether automatically inferred, playlist-derived tags improve hidden-recording recovery over ordinary item-based collaborative filtering given three visible recordings. A separate audit checks whether the title classifier understands the requested tags.
 
+## Million-playlist run and website
+
+- [Prepare and split the full MPD](scripts/README.md)
+- [Train, validate, and evaluate the full model](scripts/full_training.md)
+- [Run the local trained demo and publish the static site](scripts/site.md)
+
+The full run processed 1,000,000 playlists and trained collaborative filtering on 804,485. On a fixed sample of 5,000 fresh test playlists with three visible seeds, NDCG@20 was 0.0372 for popularity, 0.2497 for collaborative filtering, and 0.2513 for the selected title-aware ranker. Among the 660 queries with inferred tags, the last two scores were 0.2041 and 0.2166. These scores measure recovery of withheld tracks. The original 20,000-playlist pilot is documented below as a separate run.
+
 ## 1. Set up the local environment
 
 Use Python 3.11 or newer. Python 3.12 is the version used for the reference run.
