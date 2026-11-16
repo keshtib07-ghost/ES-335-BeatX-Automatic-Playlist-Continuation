@@ -32,7 +32,7 @@ Small reviewed source files belong in this GitHub repository. Preserve trained b
 
 Ordinary GitHub commits cannot contain files over 100 MiB. A GitHub release asset must be under 2 GiB. Do not use a public release to publish private training data.
 
-No trained files have been backed up merely by running the inventory or reorganising this repository.
+Use the [private backup helper](private-backup.md) to preserve the existing run with verified per-file checksums before transferring it. No trained files have been backed up merely by running the inventory or reorganising this repository.
 
 ## Step 3. Make a clean local checkout
 
