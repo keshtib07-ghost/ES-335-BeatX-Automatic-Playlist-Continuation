@@ -21,7 +21,7 @@ function fixture(request = async () => { throw new Error('Unexpected network req
     history: {replaceState: (_, __, url) => { navigation.cleaned = url; }},
     sessionStorage: store, fetch: request});
   vm.runInContext(source + '\nthis.api = {SpotifyStudio, SpotifyArtwork, spotifyRedirectUri, spotifyImageUrl, spotifyStorage};', context);
-  return {api: context.api, store, navigation};
+  return {api: context.api, store, navigation, browserGlobal: vm.runInContext('globalThis', context)};
 }
 
 function ok(body, status = 200) { return {ok: true, status, json: async () => body}; }
@@ -141,4 +141,28 @@ test('invalid or repeated track IDs never create a Spotify playlist', async () =
   connected(app);
   await assert.rejects(app.save({...draft, ids: ['demo-1']}), /valid Spotify songs/);
   await assert.rejects(app.save({...draft, ids: [draft.ids[0], draft.ids[0]]}), /valid Spotify songs/);
+});
+
+
+test('default fetch preserves Window for artwork, OAuth exchange, and playlist writes', async () => {
+  const calls = [];
+  const f = fixture(function browserFetch(url, options) {
+    assert.equal(this, f.browserGlobal, 'Native browser fetch must be called on Window');
+    calls.push({url, method: options?.method || 'GET'});
+    if (url.startsWith('https://open.spotify.com/oembed?')) {
+      return Promise.resolve(ok({thumbnail_url: 'https://i.scdn.co/image/test-cover'}));
+    }
+    if (url === 'https://accounts.spotify.com/api/token') {
+      return Promise.resolve(ok({access_token: 'unit-test-token', expires_in: 3600}));
+    }
+    return Promise.resolve(options.method === 'POST' ? ok({id: playlistId}) : ok({}, 204));
+  });
+  const art = new f.api.SpotifyArtwork();
+  assert.equal(await art.cover(draft.ids[0]), 'https://i.scdn.co/image/test-cover');
+  const app = new f.api.SpotifyStudio(clientId);
+  await app.authorize(draft, true);
+  const saved = JSON.parse(f.store.getItem(f.api.spotifyStorage.auth));
+  await app.completeAuthorization(redirect + '?code=unit-test-code&state=' + saved.state);
+  assert.equal(await app.save(draft), 'https://open.spotify.com/playlist/' + playlistId);
+  assert.deepEqual(calls.map(call => call.method), ['GET', 'POST', 'POST', 'PUT']);
 });

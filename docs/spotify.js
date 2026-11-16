@@ -4,6 +4,8 @@ const spotifyTrackId = (value) => typeof value === 'string' && /^[A-Za-z0-9]{22}
 const spotifyClientId = (value) => typeof value === 'string' && /^[a-fA-F0-9]{32}$/.test(value);
 const spotifyRedirectUri = (pageUrl = location.href) => new URL('./', pageUrl).href;
 const spotifyStorage = {auth: 'beatx.spotify.auth', token: 'beatx.spotify.token', playlist: 'beatx.spotify.playlist'};
+// Keep native fetch on Window when called through a Spotify client instance.
+const spotifyFetch = (input, init) => globalThis.fetch(input, init);
 
 function storedJson(store, key) {
   try { return JSON.parse(store.getItem(key) || 'null'); } catch { return null; }
@@ -19,7 +21,7 @@ function spotifyImageUrl(value) {
 
 // Public oEmbed thumbnails do not need OAuth. Limit concurrent metadata lookups.
 class SpotifyArtwork {
-  constructor(request = fetch) {
+  constructor(request = spotifyFetch) {
     this.request = request;
     this.cache = new Map();
     this.pending = new Map();
@@ -61,7 +63,7 @@ class SpotifyArtwork {
 }
 
 class SpotifyStudio {
-  constructor(clientId, redirectUri = spotifyRedirectUri(), store = sessionStorage, request = fetch) {
+  constructor(clientId, redirectUri = spotifyRedirectUri(), store = sessionStorage, request = spotifyFetch) {
     if (!spotifyClientId(clientId)) throw new Error('Enter a valid Spotify Client ID.');
     this.clientId = clientId.toLowerCase();
     this.redirectUri = redirectUri;
