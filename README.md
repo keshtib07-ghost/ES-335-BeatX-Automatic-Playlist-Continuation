@@ -1,8 +1,10 @@
-# Playlist continuation from a title and seed songs
+# BeatX · Playlist continuation from a title and seed songs
 
 This is a clean implementation for ES 335. It asks whether automatically inferred, playlist-derived tags improve hidden-recording recovery over ordinary item-based collaborative filtering given three visible recordings. A separate audit checks whether the title classifier understands the requested tags.
 
 ## Million-playlist run and website
+
+BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/) from its [Research page](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research.html). The public Studio uses a small real-song preview with illustrative rankings. The full trained model runs locally. See [website setup](scripts/site.md) for artwork and Spotify playlist export.
 
 - [Prepare and split the full MPD](scripts/README.md)
 - [Train, validate, and evaluate the full model](scripts/full_training.md)

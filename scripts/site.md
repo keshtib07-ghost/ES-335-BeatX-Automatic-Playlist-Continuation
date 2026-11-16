@@ -1,6 +1,6 @@
-# Next Track website
+# BeatX website
 
-The public GitHub Pages site includes interactive explorers of the held-out results and the seed-count study, plus an illustrative playlist demo with fictional tracks. Its static files live under `docs/`. Use the local server below to query the actual trained model and your private MPD catalogue.
+BeatX has two separate pages. `docs/index.html` is the Playlist Studio. `docs/research.html` contains the measured results and study interactions. The public Studio uses a small catalogue of real Spotify tracks with public oEmbed artwork. Its preview rankings and hand-selected context tags are illustrative, not predictions from the full MPD model. The research results are unchanged. Use the local server below for actual trained-model recommendations from your private MPD catalogue.
 
 ## Run locally
 
@@ -12,11 +12,17 @@ python scripts/export_site_results.py
 python scripts/serve_million_demo.py
 ```
 
-Open `http://127.0.0.1:8000` in your browser. The demo should show **Local trained model**. Search by song or artist or paste a Spotify track link. Select up to twenty distinct seeds and use a title such as `Rainy Night Study`. Switch methods and select **Compare with plain CF** to inspect outputs side by side in the playlist panel. The search and recommendations use your own local SQLite and model files. The server binds only to loopback. The [extended study commands](extended_study.md) generate the seed-count charts and enable playback ordering.
+Open `http://127.0.0.1:8000` in your browser. The demo should show **Local trained model**. Search by song or artist or paste a Spotify track link. Select up to twenty distinct seeds and use a title such as `Rainy Night Study`. Switch methods and select **Compare with plain CF** to inspect outputs side by side in the playlist panel. The search and recommendations use your own local SQLite and model files. The server binds only to loopback. Open `http://127.0.0.1:8000/research.html` for the research page. The [extended study commands](extended_study.md) generate the seed-count charts and enable playback ordering.
 
 When available, the server loads expanded title tags and the existing `runs/million/catalogue-enrichment/catalogue_enrichment.sqlite3` file automatically. Use `CF + song profiles` to see the category filters. Era prefers a reviewed recording release date and labels fallback Spotify dates as catalogue editions. A BPM filter excludes tracks without a known tempo. Filters can return fewer than 20 results when the available candidates lack matching metadata. The existing evaluation results still describe the benchmark methods and do not measure this filter behavior.
 
-To test Spotify save, register `http://127.0.0.1:8000/` as a redirect URI in your Spotify app, start the server with `--spotify-client-id YOUR_CLIENT_ID`, and use **Generate & save to Spotify**. Confirm the saved playlist matches the order shown before following **Open in Spotify**. This flow needs an authorized Spotify account and is only available in the local demo.
+Album artwork loads without Spotify sign-in through Spotify’s public oEmbed endpoint. Preview artwork URLs are included in `docs/demo_catalogue.js`; local catalogue artwork is looked up and cached for the page session. Missing or unavailable artwork retains a placeholder.
+
+To create a Spotify playlist, register `http://127.0.0.1:8000/` as a redirect URI in your Spotify app and start the server with `--spotify-client-id YOUR_CLIENT_ID`. On GitHub Pages, register `https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/` and set the public Client ID in `docs/config.js`. A visitor can also enter a Client ID in the one-time setup dialog. No Client Secret is used. Spotify account authorization uses PKCE with `playlist-modify-private`.
+
+Use **Create Spotify playlist** or **Generate & save to Spotify**. The draft survives the authorization redirect. After Spotify confirms every recommended track was saved in the displayed order, the app shows **Open in Spotify** and **Copy playlist link**. A failed item write can be retried without creating a duplicate playlist. The generated playlist contains the recommended additions shown in the output panel. Actual account authorization and playlist creation require an enabled Spotify app and an eligible account.
+
+Run the Spotify integration tests with `node --test tests/test_spotify_frontend.cjs`. These use mocked Spotify responses; they do not create playlists in an account.
 
 To preview the public site experience, serve just the `docs/` directory:
 
@@ -24,10 +30,10 @@ To preview the public site experience, serve just the `docs/` directory:
 python3 -m http.server 8001 --directory docs
 ```
 
-Open `http://127.0.0.1:8001`. There should be a fictional-catalogue demo, and changing the cohort in **Results** should switch between 5,000 and 660 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. The narrative and split counts in `index.html` describe the verified November 15 submission run. Update them if publishing results from a different experiment.
+Open `http://127.0.0.1:8001`. The Studio should display real Spotify song artwork with illustrative rankings. Open `research.html` and change the cohort in **Results** to switch between 5,000 and 660 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. The narrative and split counts in `index.html` describe the verified November 15 submission run. Update them if publishing results from a different experiment.
 
 ## Publish when ready
 
-Push the completed local Git commits to `main`, and select **Settings → Pages → Deploy from a branch → `main` → `/docs` → Save**. Test the published Pages URL in a private browser window. The topic explorer and fictional demo run entirely in the browser. GitHub Pages does not run the local Python server.
+Push the completed local Git commits to `main`, and select **Settings → Pages → Deploy from a branch → `main` → `/docs` → Save**. Test the published Pages URL in a private browser window. The Research interactions and preview Studio run in the browser. GitHub Pages does not run the local Python server.
 
 Submit the live Pages URL and the source repository URL. Keep the raw archives, SQLite databases, catalogue metadata, local model checkpoints, and credentials out of Git. The source README and model scripts explain how to reproduce the offline experiment from a legitimate MPD copy.

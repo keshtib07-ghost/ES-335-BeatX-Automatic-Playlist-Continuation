@@ -36,7 +36,7 @@ h1 em { color: var(--green); font-style: normal; }
 .button { display: inline-flex; min-height: 43px; padding: 9px 15px; align-items: center; justify-content: center; gap: 13px; border: 1px solid transparent; border-radius: 7px; font-weight: 650; font-size: 14px; text-decoration: none; cursor: pointer; }
 .primary { background: var(--green); color: #17220f; }
 .primary:hover { background: #e2ffa9; }
-.secondary { border-color: var(--line); }
+.secondary { border-color: var(--line); background: transparent; color: var(--text); }
 .secondary:hover { border-color: var(--green); }
 .snapshot { position: relative; isolation: isolate; overflow: hidden; padding: 28px; border: 1px solid var(--line); border-radius: 14px; background: radial-gradient(ellipse at 100% 0, #27353a, transparent 65%), var(--card); }
 .snapshot::before { position: absolute; content: ''; inset: 0; z-index: -1; background: repeating-linear-gradient(125deg, transparent 0 23px, #afc7df0c 24px 25px); }
@@ -199,3 +199,40 @@ select { display: block; width: 100%; margin-top: 6px; border: 1px solid var(--l
   .finding-grid { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Separate Studio and Research pages share their navigation and visual identity. */
+nav a { padding: 6px 12px; border-radius: 6px; }
+nav a[aria-current='page'] { background: #273421; color: var(--green); }
+.studio-page { padding-block: 44px; }
+.studio-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.studio-heading h1 { font-size: clamp(36px, 5vw, 64px); line-height: 1.08; letter-spacing: -.055em; margin: 10px 0 12px; }
+.studio-heading p:last-child { max-width: 56ch; }
+.studio-heading > .button { flex: 0 0 auto; }
+.studio-page .demo-grid { align-items: start; }
+.studio-page .select-grid:has(> label[hidden]) { grid-template-columns: 1fr; }
+.studio-page .output-panel .track-list { max-height: 560px; overflow-y: auto; }
+.studio-page .cover-art { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; overflow: hidden; }
+.cover-art > .track-art { width: 100%; height: 100%; min-height: 43px; border-radius: 0; }
+.spotify-tools { border-block: 1px solid var(--line); padding-block: 14px; }
+.spotify-tools .button { font-size: 13px; min-height: 38px; }
+.spotify-tools #save-spotify { background: #1ed760; color: #082212; }
+.spotify-tools #spotify-playlist-link { color: var(--green); }
+.spotify-tools #spotify-status:empty { display: none; }
+#spotify-setup { width: min(530px, calc(100% - 32px)); padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); color: var(--text); }
+#spotify-setup::backdrop { background: #080b0cbb; backdrop-filter: blur(4px); }
+.setup-heading { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+#spotify-setup h2 { margin: 0; font-size: 28px; letter-spacing: -.04em; }
+#spotify-setup p { margin-block: 12px; }
+#spotify-setup label { display: block; margin-top: 20px; font-weight: 600; }
+#spotify-setup input { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: #11181e; color: var(--text); font: inherit; }
+#spotify-redirect-uri { display: block; padding: 12px; border-radius: 6px; background: #11181e; overflow-wrap: anywhere; color: var(--green); }
+@media (max-width: 620px) {
+  .studio-page { padding-block: 28px; }
+  .studio-heading { align-items: start; flex-direction: column; gap: 16px; }
+  .studio-page .output-panel { padding: 0; }
+  .studio-page .playlist-cover { gap: 12px; padding: 18px; }
+  .studio-page .output-panel .track-list { max-height: 500px; padding-inline: 12px; }
+  .navigation { flex-direction: row; align-items: center; }
+  nav { gap: 4px; }
+  nav a { padding: 6px 10px; }
+}

@@ -1,95 +1,11 @@
 'use strict';
 
-const select = (id) => document.getElementById(id);
-function node(tag, content, className) {
-  const element = document.createElement(tag);
-  if (content !== undefined) element.textContent = content;
-  if (className) element.className = className;
-  return element;
-}
-
-const experiment = window.NEXT_TRACK_EXPERIMENT;
-const methods = [['popularity', 'Popularity'], ['collaborative_filtering', 'Collaborative filtering'], ['selected_tag_ranker', 'CF + title tags']];
-const metrics = {
-  ndcg_at_20: ['NDCG@20 rewards reference tracks found near the top of the first 20 results.', (value) => value.toFixed(4)],
-  recall_at_20: ['Recall@20 is the share of withheld tracks recovered in the first 20 results.', (value) => `${(100 * value).toFixed(2)}%`],
-  precision_at_20: ['Precision@20 is the share of the first 20 results that are in the withheld playlist.', (value) => `${(100 * value).toFixed(2)}%`],
-  hit_rate_at_20: ['Hit rate@20 is the fraction of playlists with at least one withheld track in the first 20 results.', (value) => `${(100 * value).toFixed(2)}%`],
-};
-let cohort = 'all_queries';
-let metric = 'ndcg_at_20';
-
-function showResults() {
-  const score = experiment[cohort];
-  const [, format] = metrics[metric];
-  const tagged = cohort === 'title_tagged_queries';
-  const count = tagged ? experiment.sample.title_tagged_queries : experiment.sample.eligible_queries_evaluated;
-  select('query-count').textContent = `${count.toLocaleString('en-US')} held-out queries`;
-  select('metric-description').textContent = metrics[metric][0];
-  const maximum = Math.max(...['all_queries', 'title_tagged_queries'].flatMap((scope) =>
-    methods.map(([key]) => experiment[scope][key]?.[metric] ?? 0)));
-  const axisMax = Math.max(.05, Math.ceil(maximum * 20) / 20);
-  select('chart-scale').textContent = `Bar scale ${format(0)} – ${format(axisMax)}`;
-  select('chart').replaceChildren(...methods.map(([key, name]) => {
-    const value = score[key][metric];
-    const row = node('div', undefined, 'chart-row');
-    row.setAttribute('role', 'row');
-    const label = node('span', name, 'chart-label');
-    const visual = node('span', undefined, 'bar-track');
-    const bar = node('i', undefined, 'bar');
-    const cell = node('span', format(value), 'chart-value');
-    label.setAttribute('role', 'rowheader');
-    visual.setAttribute('aria-hidden', 'true');
-    cell.setAttribute('role', 'cell');
-    bar.style.width = `${100 * value / axisMax}%`;
-    visual.append(bar);
-    row.append(label, visual, cell);
-    return row;
-  }));
-  const gain = score.selected_tag_ranker[metric] - score.collaborative_filtering[metric];
-  const detail = select('evidence');
-  if (metric === 'ndcg_at_20') {
-    const interval = experiment[tagged ? 'tag_ranker_minus_cf_ndcg_95_ci_tagged' : 'tag_ranker_minus_cf_ndcg_95_ci_all'];
-    const message = interval ? ` · paired 95% interval ${interval[0].toFixed(4)} to ${interval[1].toFixed(4)}` : '';
-    detail.replaceChildren(node('strong', `${gain >= 0 ? '+' : ''}${gain.toFixed(4)} NDCG@20`), document.createTextNode(` vs. plain CF${message}`));
-  } else {
-    detail.replaceChildren(node('strong', `${gain >= 0 ? '+' : ''}${(100 * gain).toFixed(2)} percentage points`), document.createTextNode(' vs. plain CF'));
-  }
-}
-
-for (const button of document.querySelectorAll('[data-cohort], [data-metric]')) {
-  if (button.dataset.cohort === 'title_tagged_queries' && !experiment.sample.title_tagged_queries) button.disabled = true;
-  button.addEventListener('click', () => {
-    const group = button.dataset.cohort ? 'cohort' : 'metric';
-    if (group === 'cohort') cohort = button.dataset.cohort;
-    else metric = button.dataset.metric;
-    for (const peer of document.querySelectorAll(`[data-${group}]`)) peer.setAttribute('aria-pressed', String(peer === button));
-    showResults();
-  });
-}
-showResults();
-
-const fictional = [
-  ['Windowlight', 'Glass Station', 'study chill rainy'], ['Low Clouds', 'Evening Static', 'study rainy'],
-  ['Paper Lanterns', 'Field Notes', 'study chill'], ['Blue Margin', 'Field Notes', 'study chill'],
-  ['After the Rain', 'Evening Static', 'rainy chill'], ['Quiet Hours', 'Glass Station', 'study sleep'],
-  ['Corners of the Library', 'Field Notes', 'study rainy'], ['Soft Landing', 'Glass Station', 'chill sleep'],
-  ['Empty Platform', 'Evening Static', 'rainy sad'], ['First Draft', 'Field Notes', 'study'],
-  ['Kitchen Window', 'Glass Station', 'chill'], ['Porch in June', 'Glass Station', 'summer chill'],
-  ['Night Trainer', 'Turnline', 'gym upbeat'], ['Second Lap', 'Turnline', 'gym upbeat'],
-  ['Hold the Pace', 'Turnline', 'gym dance'], ['Floor Signal', 'North Exit', 'dance rave'],
-  ['Lights Until Dawn', 'North Exit', 'rave party'], ['South Stairwell', 'North Exit', 'party dance'],
-  ['Last Train Home', 'Evening Static', 'sad rainy'], ['Sundial', 'Field Notes', 'summer upbeat'],
-  ['Zero Visibility', 'Evening Static', 'winter rainy'], ['Daybreak Repeat', 'North Exit', 'summer dance party'],
-  ['On the Run Again', 'Turnline', 'upbeat gym'], ['Snow Overhead', 'Glass Station', 'winter sleep'],
-  ['Small Hours', 'Field Notes', 'sleep study'], ['Drift Lines', 'Evening Static', 'sad winter'],
-].map(([title, artist, labels], index) => ({id: `demo-${index}`, title, artist, tags: labels.split(' ')}));
-
+const demoCatalogue = window.BEATX_DEMO_CATALOGUE;
 const demoRules = {study: /study|focus|homework/, chill: /chill|relax|calm/, rainy: /rain|storm/, sleep: /sleep|bedtime/,
   gym: /gym|workout|running/, upbeat: /upbeat|hype/, dance: /dance/, party: /party/, rave: /rave/,
   sad: /sad|heartbreak/, summer: /summer/, winter: /winter|snow/};
 let realMode = false;
-let selected = fictional.slice(0, 3);
+let selected = demoCatalogue.slice(0, 3);
 let timer;
 let searchGeneration = 0;
 let recommendGeneration = 0;
@@ -104,6 +20,8 @@ select('demo-method').prepend(profileOption);
 select('demo-method').value = profileOption.value;
 let spotify;
 let savingSpotify = false;
+let pendingSpotifySave = false;
+const artworkLoader = new SpotifyArtwork();
 
 function updateMethod() {
   const method = select('demo-method').value;
@@ -116,16 +34,20 @@ function updateMethod() {
 function artwork(track) {
   const wrapper = node('span', '♪', 'track-art');
   wrapper.setAttribute('aria-hidden', 'true');
-  if (spotify?.connected) {
-    spotify.cover(track.id).then((url) => {
-      if (!url || !wrapper.isConnected) return;
-      const img = node('img');
-      img.alt = '';
-      img.loading = 'lazy';
-      img.src = url;
-      img.addEventListener('load', () => wrapper.replaceChildren(img), {once: true});
-    });
-  }
+  const showImage = (url) => {
+    if (!url) return;
+    const img = node('img');
+    img.alt = '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.width = img.height = 48;
+    img.addEventListener('error', () => { wrapper.textContent = '♪'; }, {once: true});
+    wrapper.replaceChildren(img);
+    img.src = url;
+  };
+  const cover = spotifyImageUrl(track.image);
+  if (cover) showImage(cover);
+  else artworkLoader.cover(track.id).then(showImage);
   return wrapper;
 }
 
@@ -159,7 +81,7 @@ function trackRow(track) {
     const seconds = Math.floor(track.duration_ms / 1000);
     actions.append(node('span', `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`));
   }
-  if (realMode && spotifyTrackId(track.id)) {
+  if (spotifyTrackId(track.id)) {
     const link = node('a', 'Spotify ↗');
     link.href = `https://open.spotify.com/track/${track.id}`;
     link.target = '_blank';
@@ -172,63 +94,114 @@ function trackRow(track) {
 }
 
 function spotifyDraft() {
-  return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id), result: lastResult, playbackMode};
+  return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id),
+    result: lastResult, playbackMode, seedTracks: selected, realMode,
+    method: select('demo-method').value, context: select('demo-context').value, filters: filterUI.read()};
+}
+
+function restoreStudioDraft(draft) {
+  if (!draft?.result || !Array.isArray(draft.seedTracks)) return false;
+  selected = draft.seedTracks;
+  lastResult = draft.result;
+  playbackMode = Boolean(draft.playbackMode);
+  select('playlist-title').value = draft.title;
+  select('generated-title').textContent = draft.title;
+  if ([...select('demo-method').options].some((option) => option.value === draft.method && !option.disabled)) {
+    select('demo-method').value = draft.method;
+  }
+  select('demo-context').value = draft.context || '';
+  filterUI.restore(draft.filters || {});
+  updateMethod();
+  showSeeds();
+  showContext(lastResult);
+  renderPlaylist();
+  return true;
+}
+
+// Moving between pages keeps the current playlist in this tab's session.
+window.addEventListener('pagehide', () => {
+  try { sessionStorage.setItem('beatx.studio.draft', JSON.stringify(spotifyDraft())); } catch {}
+});
+
+function showSpotifyLink(url) {
+  const link = select('spotify-playlist-link');
+  link.hidden = !url;
+  select('copy-playlist-link').hidden = !url;
+  if (url) link.href = url;
+  else link.removeAttribute('href');
+}
+
+function configureSpotify(clientId) {
+  if (!spotifyClientId(clientId)) return;
+  spotify = new SpotifyStudio(clientId);
+  select('connect-spotify').textContent = spotify.connected ? 'Reconnect Spotify' : 'Connect Spotify';
+}
+
+function ensureSpotify(saveAfter) {
+  if (spotify) return true;
+  pendingSpotifySave = saveAfter;
+  select('spotify-redirect-uri').textContent = spotifyRedirectUri();
+  select('spotify-setup').showModal();
+  return false;
+}
+
+async function connectSpotify() {
+  if (!ensureSpotify(false)) return;
+  try {
+    await spotify.authorize(spotifyDraft(), false);
+  } catch (error) {
+    select('spotify-status').textContent = error.message;
+  }
 }
 
 async function saveSpotify(draft = spotifyDraft()) {
-  if (!spotify || savingSpotify || !draft.ids.length) return;
+  if (savingSpotify || !draft.ids.length || !ensureSpotify(true)) return;
   const status = select('spotify-status');
-  select('spotify-playlist-link').hidden = true;
+  showSpotifyLink(null);
   savingSpotify = true;
   select('save-spotify').disabled = true;
+  select('recommend-and-save').disabled = true;
   try {
     if (!spotify.connected) {
       await spotify.authorize(draft, true);
       return;
     }
-    status.textContent = 'Saving your playlist…';
+    status.textContent = 'Creating your Spotify playlist…';
     const url = await spotify.save(draft);
-    const link = select('spotify-playlist-link');
-    link.href = url;
-    link.hidden = false;
-    status.textContent = `Saved ${draft.ids.length} tracks to your private Spotify playlist.`;
+    // Display only a completed playlist for the order currently on screen.
+    if (spotify.playlistKey(draft) === spotify.playlistKey(spotifyDraft())) showSpotifyLink(url);
+    status.textContent = `Saved ${draft.ids.length} recommended tracks to Spotify.`;
   } catch (error) {
-    status.textContent = `${error.message} Use Save to Spotify to retry.`;
+    status.textContent = `${error.message} Use Create Spotify playlist to retry.`;
   } finally {
     savingSpotify = false;
-    select('save-spotify').disabled = !lastResult?.tracks.length;
+    renderPlaylist();
+    select('recommend-and-save').disabled = false;
+    select('connect-spotify').textContent = spotify.connected ? 'Reconnect Spotify' : 'Connect Spotify';
   }
 }
 
-function setupSpotify(clientId) {
-  if (!clientId || location.hostname !== '127.0.0.1') return;
-  spotify = new SpotifyStudio(clientId);
-  select('recommend-and-save').hidden = false;
-  select('spotify-tools').hidden = false;
-  const status = select('spotify-status');
-  select('connect-spotify').addEventListener('click', async () => {
-    try {
-      await spotify.authorize(spotifyDraft(), false);
-    } catch (error) {
-      status.textContent = error.message;
-    }
-  });
-  select('save-spotify').addEventListener('click', () => saveSpotify());
-  spotify.completeAuthorization(location.href).then(async (session) => {
-    if (!session) return;
-    select('connect-spotify').hidden = true;
-    status.textContent = 'Spotify connected.';
-    const {draft} = session;
-    if (draft?.result) {
-      lastResult = draft.result;
-      playbackMode = draft.playbackMode;
-      select('generated-title').textContent = draft.title;
-      showContext(lastResult);
-      renderPlaylist();
-    }
-    if (session.saveAfter && draft) await saveSpotify(draft);
-  }).catch((error) => { status.textContent = error.message; });
-}
+select('connect-spotify').addEventListener('click', connectSpotify);
+select('save-spotify').addEventListener('click', () => saveSpotify());
+select('close-spotify-setup').addEventListener('click', () => select('spotify-setup').close());
+select('spotify-setup-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const clientId = select('spotify-client-id').value.trim();
+  if (!spotifyClientId(clientId)) return;
+  configureSpotify(clientId);
+  try { localStorage.setItem('beatx.spotify.clientId', clientId.toLowerCase()); } catch {}
+  select('spotify-setup').close();
+  if (pendingSpotifySave) await saveSpotify();
+  else await connectSpotify();
+});
+select('copy-playlist-link').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(select('spotify-playlist-link').href);
+    select('spotify-status').textContent = 'Spotify playlist link copied.';
+  } catch {
+    select('spotify-status').textContent = 'Open the Spotify link and copy its address.';
+  }
+});
 
 function showSeeds() {
   select('seed-count').textContent = `${selected.length} / ${maxSeeds}`;
@@ -257,7 +230,7 @@ async function searchTracks(append = false) {
     nextOffset = 0;
     list.replaceChildren();
   }
-  if (selected.length >= maxSeeds || (realMode && query.length < 2)) return;
+  if (selected.length >= maxSeeds || query.length < 2) return;
   try {
     let matches, hasMore;
     if (realMode) {
@@ -267,7 +240,10 @@ async function searchTracks(append = false) {
       matches = result.tracks;
       hasMore = result.more;
     } else {
-      const all = fictional.filter((track) => `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase()));
+      const identifier = query.match(/^(?:spotify:track:)?([A-Za-z0-9]{22})$/)?.[1] ||
+        query.match(/^https:\/\/open\.spotify\.com\/track\/([A-Za-z0-9]{22})(?:\?.*)?$/)?.[1];
+      const all = demoCatalogue.filter((track) => identifier ? track.id === identifier :
+        `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase()));
       matches = all.slice(nextOffset, nextOffset + 12);
       hasMore = all.length > nextOffset + 12;
     }
@@ -305,7 +281,7 @@ function demoRecommendation(title, seeds, method, context, filters) {
   const seedTags = seeds.flatMap((track) => track.tags);
   const value = (track) => (method === 'popularity' ? 0 : track.tags.reduce((sum, tag) => sum + seedTags.filter((t) => t === tag).length, 0))
     + 2 * track.tags.filter((tag) => inferred.includes(tag)).length;
-  const tracks = fictional.filter((track) => !seeds.some((seed) => seed.id === track.id))
+  const tracks = demoCatalogue.filter((track) => !seeds.some((seed) => seed.id === track.id))
     .sort((a, b) => value(b) - value(a)).slice(0, 20);
   const previewOnly = expanded && (filters.eras.length || filters.min_bpm || filters.max_bpm);
   return {tags: inferred, tracks, seed_count: seeds.length, transition_evidence: null,
@@ -316,7 +292,9 @@ function renderPlaylist() {
   if (!lastResult) return;
   const list = orderedTracks();
   select('track-list').replaceChildren(...list.map(trackRow));
-  select('save-spotify').disabled = !spotify || savingSpotify || !list.length;
+  select('generated-cover').replaceChildren(...list.slice(0, 4).map(artwork));
+  select('save-spotify').disabled = savingSpotify || !list.length || !list.every((track) => spotifyTrackId(track.id));
+  showSpotifyLink(spotify?.savedPlaylist(spotifyDraft()) || null);
   select('relevance-order').setAttribute('aria-pressed', String(!playbackMode));
   select('playback-order').setAttribute('aria-pressed', String(playbackMode));
   select('playback-order').disabled = lastResult.transition_evidence === null;
@@ -365,7 +343,7 @@ async function recommend(event) {
     if (generation !== recommendGeneration) return;
     select('generated-title').textContent = title.trim() || 'Your playlist';
     showContext(result);
-    select('spotify-playlist-link').hidden = true;
+    showSpotifyLink(null);
     select('spotify-status').textContent = '';
     lastResult = result;
     playbackMode = false;
@@ -395,37 +373,54 @@ select('relevance-order').addEventListener('click', () => { playbackMode = false
 select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
 select('demo-method').addEventListener('change', updateMethod);
 select('demo-form').addEventListener('submit', recommend);
-updateMethod();
-showSeeds();
-recommend();
-
-const owner = location.hostname.match(/^([\w-]+)\.github\.io$/);
-const repo = location.pathname.split('/').filter(Boolean)[0];
-if (owner && repo && /^[\w.-]+$/.test(repo) && !/\.html$/.test(repo)) {
-  select('source-link').href = `https://github.com/${owner[1]}/${repo}#readme`;
-  select('source-link').hidden = false;
-}
-if (['localhost', '127.0.0.1'].includes(location.hostname)) {
-  fetch('/api/status').then((response) => response.ok ? response.json() : null).then((status) => {
-    if (!status?.trained_model) return;
+async function initializeStudio() {
+  let authorizationError = '';
+  let localStatus = null;
+  if (['localhost', '127.0.0.1'].includes(location.hostname)) {
+    try {
+      const response = await fetch('/api/status', {signal: AbortSignal.timeout(5000)});
+      if (response.ok) localStatus = await response.json();
+    } catch {}
+  }
+  if (localStatus?.trained_model) {
     realMode = true;
-    searchGeneration += 1;
-    recommendGeneration += 1;
     selected = [];
-    profileOption.disabled = !status.song_profiles;
-    select('demo-method').value = status.song_profiles ? 'song_profiles' : 'learned_title';
-    updateMethod();
+    profileOption.disabled = !localStatus.song_profiles;
+    select('demo-method').value = localStatus.song_profiles ? 'song_profiles' : 'learned_title';
     select('mode-label').textContent = 'Local trained model';
-    select('demo-mode').textContent = 'Search your local MPD catalogue and get predictions from the trained model. This data stays on your machine.';
-    select('inferred-tags').textContent = 'Add seed tracks to get started.';
-    select('demo-status').textContent = '';
-    select('get-recs').disabled = false;
-    select('recommend-and-save').disabled = false;
-    select('track-list').replaceChildren();
-    select('generation-evidence').textContent = '';
-    select('demo-comparison').hidden = true;
-    lastResult = null;
-    showSeeds();
-    setupSpotify(status.spotify_client_id);
-  }).catch(() => {});
+    select('demo-mode').textContent = 'Search your MPD catalogue and build a playlist with the trained model.';
+  }
+  let savedClientId;
+  try { savedClientId = localStorage.getItem('beatx.spotify.clientId'); } catch {}
+  const query = new URL(location.href).searchParams;
+  const pending = (query.has('code') || query.has('error')) ? storedJson(sessionStorage, spotifyStorage.auth) : null;
+  configureSpotify(pending?.clientId || localStatus?.spotify_client_id || window.BEATX_CONFIG?.spotifyClientId || savedClientId);
+  select('recommend-and-save').hidden = false;
+  updateMethod();
+  showSeeds();
+  if (spotify) {
+    try {
+      const session = await spotify.completeAuthorization(location.href);
+      if (session) {
+        const draft = session.draft;
+        select('spotify-status').textContent = 'Spotify connected.';
+        select('connect-spotify').textContent = 'Reconnect Spotify';
+        if (restoreStudioDraft(draft)) {
+          if (session.saveAfter) await saveSpotify(draft);
+          return;
+        }
+      }
+    } catch (error) {
+      authorizationError = error.message;
+    }
+  }
+  const savedDraft = storedJson(sessionStorage, 'beatx.studio.draft');
+  if (savedDraft?.realMode === realMode && restoreStudioDraft(savedDraft)) {
+    if (authorizationError) select('spotify-status').textContent = authorizationError;
+    return;
+  }
+  if (selected.length) await recommend();
+  else select('inferred-tags').textContent = 'Add seed tracks to get started.';
+  if (authorizationError) select('spotify-status').textContent = authorizationError;
 }
+initializeStudio();

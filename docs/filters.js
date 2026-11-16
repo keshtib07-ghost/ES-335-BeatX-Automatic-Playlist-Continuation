@@ -97,6 +97,13 @@ function setupFilters() {
   });
   return {
     show: (visible) => { section.hidden = !visible; },
+    restore: (values) => {
+      for (const {control, category, key} of selections) {
+        if (category === 'Tempo') control.value = values[key] ?? '';
+        else control.checked = (values[category === 'Era' ? 'eras' : 'tags'] || []).includes(key);
+      }
+      refresh();
+    },
     read: () => {
       const options = {tags: [], eras: []};
       for (const {category, key, read} of selections) {

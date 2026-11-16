@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An ES335 study of seed counts, title context, and playback order on the Spotify Million Playlist Dataset.">
+  <title>BeatX · Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script src="common.js" defer></script>
+  <script src="experiment.js" defer></script>
+  <script src="seed_experiment.js" defer></script>
+  <script src="sequence_experiment.js" defer></script>
+  <script src="research.js" defer></script>
+  <script src="study.js" defer></script>
+</head>
+<body data-page="research">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="shell navigation">
+      <a class="brand" href="index.html" aria-label="BeatX Studio"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span> BeatX</a>
+      <nav aria-label="Main navigation"><a href="index.html" >Studio</a><a href="research.html" aria-current="page">Research</a></nav>
+      <span class="course">ES335 · Machine Learning</span>
+    </div>
+  </header>
+  <main id="main">
+    <section class="shell hero" id="top" aria-labelledby="headline">
+      <div class="hero-text">
+        <p class="eyebrow">Spotify Million Playlist Dataset</p>
+        <h1 id="headline">What should<br>play <em>next?</em></h1>
+        <p class="intro">How many songs are enough to start a playlist? Explore how more seeds, a playlist title, and track ordering affect the result.</p>
+        <div class="hero-actions"><a class="button primary" href="#seed-study">Explore the seed study <span aria-hidden="true">↘</span></a><a class="button secondary" href="index.html">Make a playlist</a></div>
+      </div>
+      <aside class="snapshot" aria-label="Dataset at a glance">
+        <div class="snapshot-top"><span>EXPERIMENT AT A GLANCE</span><span aria-hidden="true">●</span></div>
+        <strong class="hero-number">1,000,000</strong>
+        <p class="hero-caption">playlists processed</p>
+        <div class="split-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <dl class="split-labels"><div><dt>Train</dt><dd>804,485</dd></div><div><dt>Validation</dt><dd>97,704</dd></div><div><dt>Test</dt><dd>97,811</dd></div></dl>
+        <p class="snapshot-note">An initial three-seed benchmark and a separate, fixed-reference experiment across six seed counts.</p>
+      </aside>
+    </section>
+
+    <section class="section shell" id="seed-study" aria-labelledby="seed-study-title">
+      <div class="section-heading"><p class="eyebrow">Research question 1</p><h2 id="seed-study-title">How many songs are enough?</h2><p>At 1, 2, 3, 5, 10, and 20 seeds the same playlists and withheld tracks are scored. The smaller seed sets are prefixes of the same 20-track pool.</p></div>
+      <div class="result-panel" id="seed-study-panel"><p id="seed-study-status" role="status">Run the seed study to populate this section.</p>
+        <div id="seed-study-content" hidden><div class="controls"><div><h3>Seed count versus quality</h3><p id="seed-study-cohort" class="small"></p></div><label>Metric <select id="seed-metric"><option value="ndcg_at_20">NDCG@20</option><option value="recall_at_20">Recall@20</option><option value="artist_diversity">Artist diversity</option><option value="catalogue_coverage">Catalogue coverage</option><option value="popular_track_share">Top 1% popularity share</option></select></label></div>
+          <div class="seed-curve" id="seed-curve" aria-hidden="true"></div><p class="small seed-legend">Blue · plain CF &nbsp; Green · CF + learned tags</p><div class="table-wrap"><table id="seed-table"></table></div><p class="small" id="seed-metric-description"></p><div class="evidence" id="seed-gain"></div><details class="marginal"><summary>Inspect the gain from each added seed</summary><div class="table-wrap"><table id="seed-marginal"></table></div></details></div>
+      </div>
+    </section>
+
+    <section class="section shell" id="results" aria-labelledby="results-title">
+      <div class="section-heading"><p class="eyebrow">Research question 2 · Three-seed benchmark</p><h2 id="results-title">How much does the title help?</h2><p>Collaborative filtering produces the large gain over popularity. Title-aware reranking adds a smaller improvement, concentrated in queries where a tag was inferred.</p></div>
+      <div class="result-panel">
+        <div class="controls"><div><h3>Compare rankers</h3><p id="query-count">5,000 held-out queries</p></div><div class="segments" role="group" aria-label="Playlist cohort"><button type="button" data-cohort="all_queries" aria-pressed="true">All titles</button><button type="button" data-cohort="title_tagged_queries" aria-pressed="false">Inferred tags only</button></div></div>
+        <div class="metrics" role="group" aria-label="Evaluation metric"><button type="button" data-metric="ndcg_at_20" aria-pressed="true">NDCG@20</button><button type="button" data-metric="recall_at_20" aria-pressed="false">Recall@20</button><button type="button" data-metric="precision_at_20" aria-pressed="false">Precision@20</button><button type="button" data-metric="hit_rate_at_20" aria-pressed="false">Hit rate@20</button></div>
+        <p class="metric-description" id="metric-description"></p>
+        <div class="chart" id="chart" role="table" aria-label="Scores by ranking method" aria-live="polite"></div>
+        <p class="small chart-scale" id="chart-scale"></p>
+        <div class="evidence" id="evidence" aria-live="polite"></div>
+        <noscript><p>On 5,000 test playlists, NDCG@20 was 0.0372 for popularity, 0.2497 for collaborative filtering, and 0.2513 for title-aware reranking.</p></noscript>
+      </div>
+    </section>
+
+    <section class="section shell" id="features" aria-labelledby="features-title">
+      <div class="section-heading"><p class="eyebrow">Preprocessing and feature scope</p><h2 id="features-title">What went into the model.</h2><p>The staging run removed 881,652 repeat track occurrences within playlists, leaving 65,464,776 distinct playlist–track memberships.</p></div>
+      <div class="result-panel"><div class="table-wrap"><table class="features-table"><thead><tr><th>Feature or field</th><th>What it measures</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Track ID and playlist membership</td><td>Which recordings appeared together</td><td><strong>Kept</strong></td></tr>
+        <tr><td>Playlist title</td><td>Context inferred through keywords or learned tags</td><td><strong>Compared</strong></td></tr>
+        <tr><td>Artist, track and album names</td><td>Catalogue display and artist-diversity analysis</td><td>Metadata</td></tr>
+        <tr><td>Track position</td><td>Directed transitions in the original playlists</td><td>Playback layer</td></tr>
+        <tr><td>BPM, energy, and release era</td><td>Audio characteristics and release metadata</td><td>Unevaluated</td></tr>
+        <tr><td>Repeat IDs within a playlist</td><td>Extra copies of the same exact track</td><td>Removed</td></tr>
+        <tr><td>Same recording under different IDs</td><td>Alternate releases of a recording</td><td>Needs verified map</td></tr>
+      </tbody></table></div></div>
+    </section>
+
+    <section class="section shell" id="method" aria-labelledby="method-title">
+      <div class="section-heading"><p class="eyebrow">How it works</p><h2 id="method-title">From playlists to ranked tracks.</h2></div>
+      <div class="methods">
+        <article><span class="step">01</span><h3>Group and split</h3><p>We staged 65,464,776 distinct playlist–track memberships. Exact track sets stayed together, and all 20,000 pilot playlists plus their exact copies were assigned to training.</p></article>
+        <article><span class="step">02</span><h3>Find related tracks</h3><p>The sparse index uses all 804,485 training playlists. Item–item cosine similarity links co-occurring tracks, and a shrinkage term discounts pairs with few observations.</p></article>
+        <article><span class="step">03</span><h3>Infer context</h3><p>One-vs-rest logistic classifiers use word and character TF-IDF. They fit 60,000 weakly labeled titles, then predict tags for all training playlists. Labeled groups contribute track-level evidence.</p></article>
+        <article><span class="step">04</span><h3>Rerank and test</h3><p>Plain and tag-aware CF share the same candidates. The title-aware ranker promotes tracks with positive tag lift. Validation chose weight 1 before the held-out test.</p></article>
+      </div>
+    </section>
+
+    <section class="section shell findings" aria-labelledby="findings-title">
+      <div class="section-heading"><p class="eyebrow">Interpretation</p><h2 id="findings-title">Where the model runs out of evidence.</h2></div>
+      <div class="finding-grid">
+        <article><h3>Title coverage</h3><p>Only 660 of the 5,000 test titles triggered tags. Other queries use the plain CF ranking. The classifier was checked against keyword labels, so agreement measures how well it reproduces those rules.</p></article>
+        <article><h3>Unseen tracks</h3><p>Seven test queries had all three seeds absent from training. Those queries fall back to popularity. There were also 5,922 unseen reference occurrences among 316,437 total.</p></article>
+        <article><h3>What the metric measures</h3><p>The scores measure recovery of held-out tracks. How well the music fits a listener's intent needs a separate study. We used exact Spotify track IDs, so alternate releases may count separately.</p></article>
+      </div>
+      <div class="result-panel analysis-detail" id="seed-audit" hidden><h3>Where reranking helped and hurt</h3><p id="seed-audit-counts" class="small"></p><div class="finding-grid" id="seed-cases"></div></div>
+      <div class="result-panel analysis-detail"><h3>Does playback order matter?</h3><p class="small">Playback flow reorders the same recommendations using adjacent songs observed in training playlists. A separate order-recovery test checks how many original directed transitions it recovers from the same 20 tracks, with the first track fixed.</p><p id="sequence-study-status" class="evidence" role="status">Run the transition experiment to populate this comparison.</p></div>
+    </section>
+
+    <section class="section shell" id="reproduce" aria-labelledby="reproduce-title">
+      <div class="section-heading"><p class="eyebrow">Reproduction</p><h2 id="reproduce-title">Run the experiment yourself.</h2><p>The source README describes setup, dataset access, the held-out split, and the commands to rebuild the run. The full catalogue and training files live with a local copy of the dataset.</p></div>
+      <div class="reproduce-box"><a id="source-link" href="#reproduction-commands" hidden>Source README and run instructions ↗</a><details id="reproduction-commands"><summary>Build and evaluate the model</summary><pre><code>export PYTHONPATH="$PWD/src"
+python3 scripts/prepare_million.py prepare --zip "$MPD_ZIP"
+python3 scripts/split_million.py build
+python scripts/train_million.py index
+python scripts/train_million.py tags
+python scripts/train_million.py validate --queries 5000
+python scripts/train_million.py test</code></pre></details><ul><li><a href="https://doi.org/10.1145/3240323.3240342">MPD dataset and playlist continuation task</a></li><li><a href="https://doi.org/10.1145/371920.372071">Item-based collaborative filtering</a></li><li><a href="https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction">TF-IDF text features</a></li></ul><p class="small">Codex assisted with design, code, title auditing, verification, and presentation. See the repository README for the full disclosure.</p></div>
+    </section>
+  </main>
+  <footer class="shell footer"><a class="brand" href="#top">BeatX</a><span>ES335 · Million Playlist Continuation</span></footer>
+</body>
+</html>
