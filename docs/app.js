@@ -12,22 +12,10 @@ let lastResult = null;
 let playbackMode = false;
 const maxSeeds = 20;
 const filterUI = setupFilters();
-const profileOption = node('option', 'CF + song profiles');
-profileOption.value = 'song_profiles';
-select('demo-method').prepend(profileOption);
-select('demo-method').value = profileOption.value;
 let spotify;
 let savingSpotify = false;
 let pendingSpotifySave = false;
 const artworkLoader = new SpotifyArtwork();
-
-function updateMethod() {
-  const method = select('demo-method').value;
-  const usesOldTags = ['learned_title', 'keyword_title'].includes(method);
-  select('demo-context').disabled = !usesOldTags;
-  select('demo-context').parentElement.hidden = !usesOldTags;
-  filterUI.show(method === 'song_profiles');
-}
 
 function artwork(track) {
   const wrapper = node('span', '♪', 'track-art');
@@ -94,7 +82,7 @@ function trackRow(track) {
 function spotifyDraft() {
   return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id),
     result: lastResult, playbackMode, seedTracks: selected, realMode, modelId: modelStatus?.model_id || 'local',
-    method: select('demo-method').value, context: select('demo-context').value, filters: filterUI.read()};
+    filters: filterUI.read()};
 }
 
 function restoreStudioDraft(draft) {
@@ -105,12 +93,7 @@ function restoreStudioDraft(draft) {
   playbackMode = Boolean(draft.playbackMode);
   select('playlist-title').value = draft.title;
   select('generated-title').textContent = draft.title;
-  if ([...select('demo-method').options].some((option) => option.value === draft.method && !option.disabled)) {
-    select('demo-method').value = draft.method;
-  }
-  select('demo-context').value = draft.context || '';
   filterUI.restore(draft.filters || {});
-  updateMethod();
   showSeeds();
   showContext(lastResult);
   renderPlaylist();
@@ -271,7 +254,7 @@ function renderPlaylist() {
   select('playback-order').setAttribute('aria-pressed', String(playbackMode));
   select('playback-order').disabled = lastResult.transition_evidence === null;
   const support = realMode ? ` · ${lastResult.known_seeds}/${lastResult.seed_count} seeds seen in training` : '';
-  const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported, including the last seed` : '';
+  const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported,${lastResult.has_seed_anchor ? ', including the last known seed' : ''}` : '';
   select('generation-evidence').textContent = `${list.length} additions${support}${transitions}`;
 }
 
@@ -294,23 +277,13 @@ async function recommend(event) {
     status.textContent = 'Connect the trained model before generating a playlist.';
     return;
   }
-  if (selected.length < 1 || selected.length > maxSeeds) {
-    status.textContent = 'Select 1–20 distinct seed tracks first.';
-    return;
-  }
   button.disabled = true;
   saveButton.disabled = true;
   try {
     const title = select('playlist-title').value;
-    const method = select('demo-method').value;
-    const context = select('demo-context').value;
-    const filters = filterUI.read();
-    const seeds = [...selected];
-    async function getRanking(approach) {
-      return modelApi.recommend({title, seeds: seeds.map((track) => track.id), method: approach, context, filters});
-    }
-    const result = await getRanking(method);
-    const baseline = select('compare-cf').checked && method !== 'cf' ? await getRanking('cf') : null;
+    const result = await modelApi.recommend({
+      title, seeds: selected.map((track) => track.id), method: 'unified', filters: filterUI.read()
+    });
     if (generation !== recommendGeneration) return;
     select('generated-title').textContent = title.trim() || 'Your playlist';
     showContext(result);
@@ -319,13 +292,6 @@ async function recommend(event) {
     lastResult = result;
     playbackMode = false;
     renderPlaylist();
-    select('demo-comparison').hidden = !baseline;
-    if (baseline) {
-      const common = new Set(baseline.tracks.map((track) => track.id));
-      const overlap = result.tracks.filter((track) => common.has(track.id)).length;
-      select('comparison-summary').textContent = `Plain CF ranking · ${overlap} of ${result.tracks.length} suggestions in common`;
-      select('comparison-list').replaceChildren(...baseline.tracks.map(trackRow));
-    }
     if (saveWhenReady && result.tracks.length) await saveSpotify();
   } catch (error) {
     if (generation === recommendGeneration) status.textContent = error.message || 'Recommendation failed.';
@@ -342,10 +308,9 @@ select('track-search').addEventListener('input', () => {
 select('search-more').addEventListener('click', () => searchTracks(true));
 select('relevance-order').addEventListener('click', () => { playbackMode = false; renderPlaylist(); });
 select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
-select('demo-method').addEventListener('change', updateMethod);
 select('demo-form').addEventListener('submit', recommend);
 function setModelControls(ready) {
-  for (const id of ['get-recs', 'recommend-and-save', 'track-search', 'demo-method', 'compare-cf']) {
+  for (const id of ['get-recs', 'recommend-and-save', 'track-search']) {
     select(id).disabled = !ready;
   }
   select('search-more').hidden = true;
@@ -360,13 +325,12 @@ async function initializeStudio() {
   select('demo-mode').textContent = 'Connecting to the trained playlist recommender…';
   try {
     modelStatus = await modelApi.status();
+    if (modelStatus.unified_model !== true) throw new Error('Update the model server to enable the unified recommender.');
     realMode = true;
-    profileOption.disabled = !modelStatus.song_profiles;
-    select('demo-method').value = modelStatus.song_profiles ? 'song_profiles' : 'learned_title';
     select('mode-label').textContent = 'Trained model connected';
     const support = Number.isInteger(modelStatus.training_playlists)
       ? ' Trained on ' + modelStatus.training_playlists.toLocaleString() + ' playlists.' : '';
-    select('demo-mode').textContent = 'Search the model catalogue and generate recommendations from your seed songs.' + support;
+    select('demo-mode').textContent = 'Use a title, seed tracks, or filters to generate a playlist.' + support;
     select('demo-status').textContent = '';
     select('retry-model').hidden = true;
     setModelControls(true);
@@ -386,7 +350,6 @@ async function initializeStudio() {
   const pending = (query.has('code') || query.has('error')) ? storedJson(sessionStorage, spotifyStorage.auth) : null;
   configureSpotify(pending?.clientId || modelStatus?.spotify_client_id || window.BEATX_CONFIG?.spotifyClientId || savedClientId);
   select('recommend-and-save').hidden = false;
-  updateMethod();
   showSeeds();
   if (spotify) {
     try {
@@ -409,7 +372,7 @@ async function initializeStudio() {
     if (authorizationError) select('spotify-status').textContent = authorizationError;
     return;
   }
-  select('inferred-tags').textContent = realMode ? 'Add seed tracks to get started.' : 'Waiting for the trained model.';
+  select('inferred-tags').textContent = realMode ? 'Add a title, seed tracks, or filters to get started.' : 'Waiting for the trained model.';
   if (authorizationError) select('spotify-status').textContent = authorizationError;
 }
 

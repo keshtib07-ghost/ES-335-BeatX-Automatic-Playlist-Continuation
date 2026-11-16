@@ -104,7 +104,8 @@ def create_app():
                 or url.username or url.password):
             raise ValueError('BEATX_ALLOWED_ORIGINS must contain origins without paths.')
     index = read_json(run / 'index' / 'summary.json')
-    methods = list(METHODS) + (['song_profiles'] if demo.profiles is not None else [])
+    methods = [method for method in METHODS
+               if demo.profiles is not None or method not in ('song_profiles', 'unified')]
     status = {
         'trained_model': True,
         'model_id': hashlib.sha256((run / 'frozen_settings.json').read_bytes()).hexdigest(),
@@ -113,6 +114,7 @@ def create_app():
         'methods': methods,
         'sequence_model': demo.sequence is not None,
         'song_profiles': demo.profiles is not None,
+        'unified_model': demo.profiles is not None,
         'bulk_catalogue_profiles': bool(demo.profiles and demo.profiles.catalogue_profiles),
         'spotify_client_id': client_id,
     }

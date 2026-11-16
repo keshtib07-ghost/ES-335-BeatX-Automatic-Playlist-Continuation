@@ -23,7 +23,7 @@ from playlist_model.tagger import TAG_COLUMN, weak_tags
 
 
 PAGE_SIZE = 12
-METHODS = ('popularity', 'cf', 'keyword_title', 'learned_title', 'song_profiles')
+METHODS = ('popularity', 'cf', 'keyword_title', 'learned_title', 'song_profiles', 'unified')
 
 
 def spotify_reference(value):
@@ -75,9 +75,10 @@ class Demo:
             raise ValueError('Use a shorter track or artist search.')
         if not 0 <= offset <= 2_500_000:
             raise ValueError('Invalid track-search offset.')
+        identifier = spotify_reference(query)
         with self.catalogue() as db:
             db.create_function('training_support', 1, lambda index: int(self.ranker.counts[index]))
-            if identifier := spotify_reference(query):
+            if identifier:
                 hits = db.execute('''
                     SELECT c.spotify_id, c.track_name, c.artist_name, c.album_name, c.duration_ms,
                            training_support(COALESCE(a.recording_index, c.track_index))
@@ -101,6 +102,9 @@ class Demo:
                     ) {group}
                     ORDER BY exact DESC, training_support(recording) DESC, title, spotify_id LIMIT ? OFFSET ?
                 ''', (fold(query).strip(), *words, PAGE_SIZE + 1, offset)).fetchall()
+        if identifier and not hits and offset == 0:
+            return {'tracks': [{'id': identifier, 'title': 'Spotify track', 'artist': 'Outside the model catalogue',
+                                'training_support': 0, 'unknown_seed': True}], 'more': False}
         return {'tracks': [{'id': identifier, 'title': title, 'artist': artist, 'album': album, 'duration_ms': duration,
                             'training_support': support}
                            for identifier, title, artist, album, duration, support in hits[:PAGE_SIZE]],
@@ -110,27 +114,30 @@ class Demo:
         if not isinstance(body, dict):
             raise ValueError('Expected a request object.')
         title, seeds = body.get('title'), body.get('seeds')
-        method, override = body.get('method', 'learned_title'), body.get('context', '')
-        if not isinstance(title, str) or len(title) > 180 or not isinstance(seeds, list) or not 1 <= len(seeds) <= 20:
-            raise ValueError('Enter a title of up to 180 characters and select 1–20 tracks.')
+        method, override = body.get('method', 'unified'), body.get('context', '')
+        if not isinstance(title, str) or len(title) > 180 or not isinstance(seeds, list) or not 0 <= len(seeds) <= 20:
+            raise ValueError('Enter a title of up to 180 characters and select up to 20 tracks.')
         if not isinstance(method, str) or method not in METHODS or not isinstance(override, str) or (override and override not in TAG_COLUMN):
             raise ValueError('Unknown recommendation method or context.')
+        if not seeds and method not in ('song_profiles', 'unified', 'popularity'):
+            raise ValueError('This ranking method requires at least one seed.')
         if not all(isinstance(item, str) for item in seeds):
             raise ValueError('Select valid Spotify track IDs.')
         identifiers = list(map(track_id, seeds))
         if None in identifiers or len(set(identifiers)) != len(seeds):
             raise ValueError('Select distinct Spotify track IDs.')
         markers = ','.join('?' for _ in identifiers)
-        with self.catalogue(with_bulk=method == 'song_profiles' and self.profiles is not None) as db:
+        uses_profiles = method in ('song_profiles', 'unified')
+        with self.catalogue(with_bulk=uses_profiles and self.profiles is not None) as db:
             rows = dict(db.execute(f'''
                 SELECT c.spotify_id, COALESCE(a.recording_index, c.track_index)
                 FROM catalogue AS c LEFT JOIN splits.recording_aliases AS a USING (track_index)
                 WHERE c.spotify_id IN ({markers})
-            ''', identifiers))
-            if len(rows) != len(seeds):
+            ''', identifiers)) if identifiers else {}
+            if len(rows) != len(seeds) and not uses_profiles:
                 raise ValueError('A selected track is absent from your local catalogue.')
-            ids = np.array([rows[identifier] for identifier in identifiers], dtype=np.int32)
-            if len(set(ids)) != len(seeds):
+            ids = np.array([rows[identifier] for identifier in identifiers if identifier in rows], dtype=np.int32)
+            if len(set(ids)) != len(ids):
                 raise ValueError('Two selected tracks represent one recording. Pick another seed.')
             labels = []
             if method in ('keyword_title', 'learned_title'):
@@ -142,7 +149,7 @@ class Demo:
                     labels = np.flatnonzero(self.tags.tagger.predict([title])[0])
             metadata, profile_note = {}, ''
             applied = [TAGS[i] for i in labels]
-            if method == 'song_profiles':
+            if uses_profiles:
                 if self.profiles is None:
                     raise ValueError('Build the song profiles to enable category filters.')
                 ranked, applied, metadata, profile_note = self.profiles.recommend(self.ranker, ids, title,
@@ -153,7 +160,11 @@ class Demo:
                 candidates, scores, fallback = self.ranker.candidates(ids)
                 bonus = self.tags.bonus(candidates, labels)
                 ranked = rank_candidates(candidates, scores, fallback, bonus, self.weight)
-            playback, learned = self.sequence.order(ranked, anchor=int(ids[-1])) if self.sequence else (None, None)
+            if len(rows) != len(seeds):
+                profile_note = f"{len(seeds) - len(rows)} seed(s) outside the model catalogue. {profile_note}".strip()
+            warm = ids[self.ranker.counts[ids] > 0]
+            anchor = int(warm[-1]) if len(warm) else None
+            playback, learned = self.sequence.order(ranked, anchor=anchor) if self.sequence else (None, None)
             tracks = []
             for index in ranked:
                 identifier, name, artist, album, duration = db.execute('''
@@ -162,13 +173,13 @@ class Demo:
                 profile = metadata.get(index, {})
                 fields = {key: profile.get(key) for key in ('era', 'era_source', 'bpm', 'bpm_source', 'match_status',
                                                            'release_date', 'catalogue_release_date', 'bulk_recording_release_date')}
-                if method == 'song_profiles':
+                if uses_profiles:
                     fields['tags'] = self.profiles.track_tags(index)
                 tracks.append({'id': identifier, 'title': name, 'artist': artist, 'album': album,
                                'duration_ms': duration, 'profile': fields, 'rank': len(tracks) + 1,
                                'playback_position': playback.index(int(index)) + 1 if playback is not None else None})
         return {'tags': applied, 'tracks': tracks, 'method': method, 'filter_note': profile_note,
-                'known_seeds': int(np.count_nonzero(self.ranker.counts[ids])), 'seed_count': len(ids),
+                'known_seeds': int(np.count_nonzero(self.ranker.counts[ids])), 'seed_count': len(seeds), 'has_seed_anchor': anchor is not None,
                 'transition_evidence': learned}
 
 
@@ -191,6 +202,7 @@ class Handler(SimpleHTTPRequestHandler):
         if url.path == '/api/status':
             self.respond({'trained_model': True, 'sequence_model': self.demo.sequence is not None,
                           'song_profiles': self.demo.profiles is not None,
+                          'unified_model': self.demo.profiles is not None,
                           'bulk_catalogue_profiles': bool(self.demo.profiles and self.demo.profiles.catalogue_profiles),
                           'spotify_client_id': self.demo.spotify_client_id})
         elif url.path == '/api/search':

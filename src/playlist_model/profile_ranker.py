@@ -15,6 +15,7 @@ from .profile_tags import (ASSOCIATION_SMOOTHING, CONTEXT_AXIS, CONTEXT_GROUPS, 
 
 COLUMNS = {tag: index for index, tag in enumerate(CONTEXT_TAGS)}
 FILTER_BACKFILL = 5_000
+CONTEXT_BACKFILL = 50_000
 
 
 def parse_filters(raw):
@@ -30,6 +31,29 @@ def parse_filters(raw):
     if None not in bpm and bpm[0] > bpm[1]:
         raise ValueError('Minimum BPM must be at most maximum BPM.')
     return {'tags': set(tags), 'eras': set(eras), 'bpm': bpm}
+
+
+def reconcile_context(explicit, title, seeds):
+    """Agree within a category and combine separate categories."""
+    resolved = []
+    conflicts = []
+    for group in CONTEXT_GROUPS.values():
+        group = set(group)
+        signals = [values & group for values in (explicit, title, seeds)]
+        agreed = set()
+        winner = None
+        for source, labels in zip(('selected filters', 'title', 'seeds'), signals):
+            if not labels:
+                continue
+            if not agreed:
+                agreed, winner = labels, source
+            elif overlap := agreed & labels:
+                agreed = overlap
+            else:
+                conflicts.append((winner, source))
+        if agreed:
+            resolved.append(agreed)
+    return resolved, conflicts
 
 
 class ProfileRanker:
@@ -96,63 +120,105 @@ class ProfileRanker:
             return profile.get('era')
         return None
 
-    def context_bonus(self, pool, tags):
-        columns = sorted(COLUMNS[tag] for tag in tags)
-        if not columns:
-            return np.zeros(len(pool))
-        axes = CONTEXT_AXIS[columns]
+    def cue_lift(self, pool, columns):
         votes = self.votes[np.ix_(pool, columns)]
-        counts = self.totals[np.ix_(pool, axes)]
+        counts = self.totals[np.ix_(pool, CONTEXT_AXIS[columns])]
         priors = self.priors[columns]
         rates = (votes + ASSOCIATION_SMOOTHING * priors) / (counts + ASSOCIATION_SMOOTHING)
         lift = np.divide(rates, priors, out=np.ones_like(rates), where=priors > 0)
-        lift = np.clip(np.log(np.maximum(lift, .01)), 0, 2.0)
-        return np.mean([lift[:, axes == axis].max(axis=1) for axis in set(axes)], axis=0)
+        return np.where(votes > 0, lift, 1.0)
 
-    def track_tags(self, index):
+    def context_matrix(self, pool, groups):
+        if not groups:
+            return np.empty((len(pool), 0), dtype=float)
+        columns = sorted({COLUMNS[tag] for group in groups for tag in group})
+        lifts = self.cue_lift(pool, columns)
+        index = {column: position for position, column in enumerate(columns)}
+        return np.column_stack([
+            lifts[:, [index[COLUMNS[tag]] for tag in group]].max(axis=1) for group in groups
+        ])
+
+    def track_tags(self, index, limit=4):
         votes = self.votes[index]
         lift = contextual_scores(votes, self.totals[index], self.priors)
         columns = np.flatnonzero((votes > 0) & (lift > 1))
-        top = columns[np.argsort(-lift[columns], kind='stable')[:4]]
+        top = columns[np.argsort(-lift[columns], kind='stable')[:limit]]
         return [CONTEXT_TAGS[column] for column in top]
+
+    def seed_context(self, seeds):
+        support = [set(self.track_tags(index, limit=None)) for index in seeds]
+        support = [tags for tags in support if tags]
+        return {tag for tag in CONTEXT_TAGS
+                if support and 2 * sum(tag in tags for tags in support) >= len(support)}
 
     def recommend(self, ranker, seeds, title, filters, catalogue):
         constraints = parse_filters(filters)
         inferred = predicted_context(self.tagger, [title], expanded=self.expanded)[0]
-        labels = constraints['tags'] or {CONTEXT_TAGS[i] for i in np.flatnonzero(inferred)}
+        title_tags = {CONTEXT_TAGS[i] for i in np.flatnonzero(inferred)}
+        seed_tags = self.seed_context(seeds)
+        explicit = constraints['tags']
+        groups, conflicts = reconcile_context(explicit, title_tags, seed_tags)
+        explicit_groups = [group for tags in CONTEXT_GROUPS.values() if (group := set(tags) & explicit)]
+        title_groups = [group for group in groups if group & title_tags]
         metadata = self.metadata(catalogue)
         eras = constraints['eras']
         hinted_eras = requested_eras(title) if not eras else set()
-        space, scores, fallback = ranker.candidates(seeds, k=60)
-        candidates = np.concatenate((space, fallback))
-        values = np.concatenate((scores, np.zeros(len(fallback))))
-        self.add_bulk_metadata(catalogue, candidates, metadata)
         minimum, maximum = constraints['bpm']
         tempo_filter = minimum is not None or maximum is not None
 
-        def fits(index):
-            profile = metadata.get(index, {})
-            if eras and self.filter_era(profile) not in eras:
-                return False
-            bpm = profile.get('bpm')
-            return not tempo_filter or (bpm is not None and (minimum or 0) <= bpm <= (maximum or float('inf')))
+        def keep_metadata(pool, scores):
+            self.add_bulk_metadata(catalogue, pool, metadata)
+            if not (eras or tempo_filter):
+                return pool, scores
+            keep = []
+            for index in pool:
+                profile = metadata.get(index, {})
+                bpm = profile.get('bpm')
+                keep.append((not eras or self.filter_era(profile) in eras) and
+                            (not tempo_filter or (bpm is not None and (minimum or 0) <= bpm <= (maximum or 300))))
+            keep = np.array(keep, dtype=bool)
+            return pool[keep], scores[keep]
 
-        if eras or tempo_filter:
-            keep = np.fromiter((fits(index) for index in candidates), dtype=bool, count=len(candidates))
-            candidates, values = candidates[keep], values[keep]
-            if len(candidates) < 20:
-                popular = ranker.popularity(np.concatenate((seeds, candidates)), FILTER_BACKFILL)
-                self.add_bulk_metadata(catalogue, popular, metadata)
-                backfill = [index for index in popular if fits(index)][:20]
-                candidates = np.concatenate((candidates, np.asarray(backfill, dtype=np.int32)))
-                values = np.concatenate((values, np.zeros(len(backfill))))
+        warm_seeds = seeds[ranker.counts[seeds] > 0]
+        if len(warm_seeds):
+            candidates, scores, _ = ranker.candidates(warm_seeds, k=20)
+            keep = ~np.isin(candidates, seeds)
+            candidates, scores = candidates[keep], scores[keep]
+        else:
+            candidates = np.empty(0, dtype=np.int32)
+            scores = np.empty(0)
+        candidates, scores = keep_metadata(candidates, scores)
+        source_matches = self.context_matrix(candidates, groups) > 1
+        if len(candidates) < 20 or (groups and np.count_nonzero(source_matches.all(axis=1)) < 20):
+            needs_context = bool(groups)
+            limit = CONTEXT_BACKFILL if needs_context and not len(warm_seeds) else FILTER_BACKFILL
+            if not (groups or eras or tempo_filter):
+                limit = 20
+            popular = ranker.popularity(np.concatenate((seeds, candidates)), limit)
+            # Avoid loading bulk data for a large context-only pool. Fetch the
+            # selected results below unless era or tempo affects eligibility.
+            if eras or tempo_filter or hinted_eras:
+                popular, _ = keep_metadata(popular, np.zeros(len(popular)))
+            candidates = np.concatenate((candidates, popular))
+            scores = np.concatenate((scores, np.zeros(len(popular))))
 
-        bonus = self.context_bonus(candidates, labels)
-        bonus += np.asarray([.2 if self.filter_era(metadata.get(index, {})) in hinted_eras else 0.
-                             for index in candidates])
+        if explicit_groups:
+            allowed = (self.context_matrix(candidates, explicit_groups) > 1).all(axis=1)
+            candidates, scores = candidates[allowed], scores[allowed]
+        lift = self.context_matrix(candidates, groups)
+        matches = lift > 1
+        title_hits = (self.context_matrix(candidates, title_groups) > 1).sum(axis=1)
+        full_match = matches.all(axis=1) if groups else np.zeros(len(candidates), dtype=bool)
+        context_strength = np.clip(np.log(np.maximum(lift, 1)), 0, 2).sum(axis=1)
+        era_hint = np.asarray([self.filter_era(metadata.get(index, {})) in hinted_eras for index in candidates])
+        if len(scores) and scores.max() > 0:
+            scores = scores / scores.max()
+        # Exact context agreement comes first, then the title's context.
+        # Stable candidate order breaks ties in favour of training popularity.
+        order = np.lexsort((-context_strength, -scores, -era_hint.astype(int), -matches.sum(axis=1),
+                            -title_hits, -full_match.astype(int)))
         verified = {index: profile for index, profile in metadata.items()
                     if profile.get('match_status') == 'verified_recording'}
-        order = np.argsort(-(values * (1 + bonus)), kind='stable')
         seen = {verified[index]['mbid'] for index in seeds if index in verified}
         result = []
         for index in candidates[order]:
@@ -164,11 +230,22 @@ class ProfileRanker:
             result.append(index)
             if len(result) == 20:
                 break
-        notes = []
+        result = np.asarray(result, dtype=np.int32)
+        self.add_bulk_metadata(catalogue, result, metadata)
+        notes = [f'{winner.capitalize()} took priority over conflicting {other} tags.'
+                 for winner, other in sorted(set(conflicts))]
+        if not len(warm_seeds):
+            if matches.any() or era_hint.any():
+                notes.append('No seed co-occurrence evidence. Used title or selected context with training popularity.')
+            else:
+                notes.append('No usable seed or context evidence. Used training popularity.')
+        if groups and np.count_nonzero(full_match) < len(result):
+            notes.append('Some suggestions match only part of the inferred context.')
         if eras:
             notes.append('Era uses reviewed recording dates when available. Catalogue edition dates can be later reissues.')
         if tempo_filter:
             notes.append('BPM filters require a known tempo.')
-        if (eras or tempo_filter) and len(result) < 20:
-            notes.append('The available candidates did not fill all 20 positions.')
-        return np.array(result, dtype=np.int32), sorted(labels | eras | hinted_eras), metadata, ' '.join(notes)
+        if (eras or tempo_filter or explicit_groups) and len(result) < 20:
+            notes.append('Fewer than 20 songs in the candidate pool matched the selected filters.')
+        labels = set().union(*groups)
+        return result, sorted(labels | eras | hinted_eras), metadata, ' '.join(notes)
