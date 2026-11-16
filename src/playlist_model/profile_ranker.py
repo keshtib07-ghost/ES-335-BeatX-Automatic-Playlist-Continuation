@@ -34,23 +34,18 @@ def parse_filters(raw):
 
 
 def reconcile_context(explicit, title, seeds):
-    """Agree within a category and combine separate categories."""
+    """Combine chosen context and seed evidence within each tag category."""
+    primary = explicit or title
+    primary_source = 'selected filters' if explicit else 'title'
     resolved = []
     conflicts = []
-    for group in CONTEXT_GROUPS.values():
-        group = set(group)
-        signals = [values & group for values in (explicit, title, seeds)]
-        agreed = set()
-        winner = None
-        for source, labels in zip(('selected filters', 'title', 'seeds'), signals):
-            if not labels:
-                continue
-            if not agreed:
-                agreed, winner = labels, source
-            elif overlap := agreed & labels:
-                agreed = overlap
-            else:
-                conflicts.append((winner, source))
+    for tags in CONTEXT_GROUPS.values():
+        group = set(tags)
+        requested = primary & group
+        supported = seeds & group
+        if requested and supported and not requested & supported:
+            conflicts.append((primary_source, 'seeds'))
+        agreed = (requested & supported) or requested or supported
         if agreed:
             resolved.append(agreed)
     return resolved, conflicts
@@ -153,16 +148,19 @@ class ProfileRanker:
 
     def recommend(self, ranker, seeds, title, filters, catalogue):
         constraints = parse_filters(filters)
-        inferred = predicted_context(self.tagger, [title], expanded=self.expanded)[0]
-        title_tags = {CONTEXT_TAGS[i] for i in np.flatnonzero(inferred)}
-        seed_tags = self.seed_context(seeds)
         explicit = constraints['tags']
+        eras = constraints['eras']
+        use_title = bool(title.strip()) and not (explicit or eras)
+        title_tags = set()
+        if use_title:
+            inferred = predicted_context(self.tagger, [title], expanded=self.expanded)[0]
+            title_tags = {CONTEXT_TAGS[i] for i in np.flatnonzero(inferred)}
+        seed_tags = self.seed_context(seeds)
         groups, conflicts = reconcile_context(explicit, title_tags, seed_tags)
         explicit_groups = [group for tags in CONTEXT_GROUPS.values() if (group := set(tags) & explicit)]
         title_groups = [group for group in groups if group & title_tags]
         metadata = self.metadata(catalogue)
-        eras = constraints['eras']
-        hinted_eras = requested_eras(title) if not eras else set()
+        hinted_eras = requested_eras(title) if use_title else set()
         minimum, maximum = constraints['bpm']
         tempo_filter = minimum is not None or maximum is not None
 
