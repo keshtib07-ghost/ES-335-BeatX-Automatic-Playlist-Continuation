@@ -3,3 +3,9 @@ __pycache__/
 private-data/
 runs/
 *.joblib
+node_modules/
+.pytest_cache/
+.env
+.env.*
+!.env.example
+beatx-local-inventory.json

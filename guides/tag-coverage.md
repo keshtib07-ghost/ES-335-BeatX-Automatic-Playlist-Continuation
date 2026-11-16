@@ -16,7 +16,7 @@ python scripts/track_profiles.py --output "$EXPANDED" build --expanded-title-cue
 
 ## Add release years and sound profiles
 
-Run the [metadata enrichment pilot](track_profiles.md) against the same profiles that the website uses:
+Run the [metadata enrichment pilot](track-profiles.md) against the same profiles that the website uses:
 
 ```bash
 python scripts/track_profiles.py --output "$EXPANDED" enrich --limit 30 \

@@ -6,7 +6,7 @@ The report lives in `docs/research.html`, with its own `research.css` and `resea
 python -m http.server 8765 --directory docs
 ```
 
-Open `http://localhost:8765/research.html`. Studio can also be opened from this server, but its full local-model API requires the server described in [site.md](site.md). A `/api/status` 404 on a plain static server is an expected Studio probe.
+Open `http://localhost:8765/research.html`. Studio can also be opened from this server, but its full local-model API requires the server described in [site.md](website.md). A `/api/status` 404 on a plain static server is an expected Studio probe.
 
 ## Evidence and scope
 
