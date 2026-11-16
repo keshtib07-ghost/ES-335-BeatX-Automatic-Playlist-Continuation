@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "generator": "scripts/export_research_bundle.py",
+  "source_sha256": {
+    "experiment.js": "d2a3f876550fe18b5c3f1841c0ddc06737a1364204c57f7a575a31350777ab6f",
+    "seed_experiment.js": "51cb63068c34701204b351399ec6affb3b5e7274c7c127d575a3939ce9d9ab12",
+    "sequence_experiment.js": "bb0004cc1c1c65386ed8421bcf6f479f8acd4928e16d7fd8a7bea186ccff30b2"
+  },
+  "scope": "Existing public aggregate exports; no new experiment or private-data verification.",
+  "uncertainty": "Published paired group-bootstrap intervals; not individual-model intervals.",
+  "identity": "Exact Spotify track IDs; no verified recording crosswalk in the measured run.",
+  "protocols": {
+    "benchmark": "Three seeds; 5000 test queries; every remaining track is a reference.",
+    "seed_study": "Same playlist cohort and reference set at every budget. First 20 deterministic shuffled tracks form the seed pool. Unrevealed seed-pool tracks may be candidates but do not receive credit.",
+    "sequence": "Same 20 known tracks, first fixed; original directed adjacency recovery."
+  },
+  "not_evaluated_in_ranking_benchmark": [
+    "Expanded song profiles",
+    "BPM",
+    "Bass",
+    "Treble",
+    "Release era",
+    "ALS",
+    "BPR"
+  ],
+  "missing_public_evidence": [
+    "Full-million validation weight curve",
+    "Raw EDA distributions",
+    "Private model-array checksums",
+    "Human listener study"
+  ]
+}
