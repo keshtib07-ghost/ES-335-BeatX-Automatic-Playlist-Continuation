@@ -4,7 +4,7 @@ This is a clean implementation for ES 335. It asks whether automatically inferre
 
 ## Million-playlist run and website
 
-BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/) from its [Research page](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research.html). The public Studio uses a small real-song preview with illustrative rankings. The full trained model runs locally. See [website setup](scripts/site.md) for artwork and Spotify playlist export.
+BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/) from its [Research page](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research.html). The Studio connects to a Python model API for real inference. Training completion does not deploy that API: the existing GitHub Pages URL still needs a running backend and its trained artifacts. The Studio reports an unavailable model instead of generating illustrative rankings. See [live model deployment](scripts/deployment.md) and [website setup](scripts/site.md).
 
 - [Prepare and split the full MPD](scripts/README.md)
 - [Train, validate, and evaluate the full model](scripts/full_training.md)

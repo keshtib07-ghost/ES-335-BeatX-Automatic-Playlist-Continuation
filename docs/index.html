@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Build your next playlist with BeatX. Pick seed songs, explore the preview, and save your playlist to Spotify.">
+  <meta name="description" content="Build your next playlist with BeatX. Pick seed songs, generate model recommendations, and save your playlist to Spotify.">
   <title>BeatX · Playlist Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="config.js" defer></script>
   <script src="common.js" defer></script>
-  <script src="demo_catalogue.js" defer></script>
+  <script src="model_api.js" defer></script>
   <script src="spotify.js" defer></script>
   <script src="filters.js" defer></script>
   <script src="app.js" defer></script>
@@ -28,7 +28,8 @@
   </header>
   <main id="main">
     <section class="shell studio-page" id="demo" aria-labelledby="demo-title">
-      <div class="section-heading studio-heading"><div><p class="eyebrow">Your sound, continued</p><h1 id="demo-title">Find your next track.</h1><p id="demo-mode">Explore a small preview with real Spotify songs. Preview rankings are illustrative.</p></div><a class="button secondary" href="research.html">Explore the research <span aria-hidden="true">↗</span></a></div>
+      <div class="section-heading studio-heading"><div><p class="eyebrow">Your sound, continued</p><h1 id="demo-title">Find your next track.</h1><p id="demo-mode">Connect to the trained playlist recommender and build a playlist from your seed songs.</p></div><a class="button secondary" href="research.html">Explore the research <span aria-hidden="true">↗</span></a></div>
+      <button class="button secondary" id="retry-model" type="button" hidden>Retry model connection</button>
       <div class="demo-grid">
         <form class="demo-form" id="demo-form">
           <label for="playlist-title">Playlist title</label><input id="playlist-title" name="title" type="text" maxlength="180" value="Rainy Night Study" placeholder="e.g. Rainy Night Study">
@@ -41,15 +42,15 @@
           </section>
           <div class="seed-heading"><label for="track-search">Seed tracks</label><span id="seed-count">0 / 20</span></div>
           <div id="seed-chips" class="chips" aria-label="Selected seed tracks"></div>
-          <input id="track-search" type="search" maxlength="120" placeholder="Song, artist, or Spotify track link" autocomplete="off" aria-controls="track-matches">
+          <input id="track-search" disabled type="search" maxlength="120" placeholder="Song, artist, or Spotify track link" autocomplete="off" aria-controls="track-matches">
           <div class="match-list" id="track-matches" aria-label="Track search results"></div>
           <button type="button" class="button secondary" id="search-more" hidden>More matches</button>
           <label class="compare-control"><input type="checkbox" id="compare-cf"> Compare with plain CF</label>
-          <button type="submit" class="button primary" id="get-recs">Recommend tracks <span aria-hidden="true">→</span></button>
-          <button type="submit" class="button secondary" id="recommend-and-save" hidden>Generate &amp; save to Spotify</button>
+          <button type="submit" class="button primary" id="get-recs" disabled>Recommend tracks <span aria-hidden="true">→</span></button>
+          <button type="submit" class="button secondary" id="recommend-and-save" disabled hidden>Generate &amp; save to Spotify</button>
           <p class="small status" id="demo-status" role="status"></p>
         </form>
-        <div class="output-panel"><div class="playlist-cover"><div class="cover-art" id="generated-cover" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Spotify song preview</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add seed tracks to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div>
+        <div class="output-panel"><div class="playlist-cover"><div class="cover-art" id="generated-cover" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Connecting to model</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add seed tracks to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div>
           <div class="spotify-tools" id="spotify-tools"><button type="button" class="button secondary" id="connect-spotify">Connect Spotify</button><button type="button" class="button primary" id="save-spotify" disabled>Create Spotify playlist</button><a id="spotify-playlist-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify ↗</a><button id="copy-playlist-link" class="button secondary" type="button" hidden>Copy playlist link</button><p id="spotify-status" role="status" class="small"></p></div>
           <p class="small filter-note" id="filter-note" role="status" hidden></p>
           <ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol><details class="comparison" id="demo-comparison" hidden><summary id="comparison-summary"></summary><ol class="track-list" id="comparison-list" aria-label="Plain CF recommendations"></ol></details><p class="small live-note">Album artwork and track links are provided by Spotify. <a href="research.html">Read the measured model results.</a></p></div>

@@ -1,11 +1,9 @@
 'use strict';
 
-const demoCatalogue = window.BEATX_DEMO_CATALOGUE;
-const demoRules = {study: /study|focus|homework/, chill: /chill|relax|calm/, rainy: /rain|storm/, sleep: /sleep|bedtime/,
-  gym: /gym|workout|running/, upbeat: /upbeat|hype/, dance: /dance/, party: /party/, rave: /rave/,
-  sad: /sad|heartbreak/, summer: /summer/, winter: /winter|snow/};
+const modelApi = new BeatXModelAPI(window.BEATX_CONFIG?.modelApiBase || '');
+let modelStatus = null;
 let realMode = false;
-let selected = demoCatalogue.slice(0, 3);
+let selected = [];
 let timer;
 let searchGeneration = 0;
 let recommendGeneration = 0;
@@ -95,12 +93,13 @@ function trackRow(track) {
 
 function spotifyDraft() {
   return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id),
-    result: lastResult, playbackMode, seedTracks: selected, realMode,
+    result: lastResult, playbackMode, seedTracks: selected, realMode, modelId: modelStatus?.model_id || 'local',
     method: select('demo-method').value, context: select('demo-context').value, filters: filterUI.read()};
 }
 
 function restoreStudioDraft(draft) {
-  if (!draft?.result || !Array.isArray(draft.seedTracks)) return false;
+  if (!realMode || draft?.realMode !== true || draft.modelId !== (modelStatus?.model_id || 'local') ||
+      !draft.result || !Array.isArray(draft.seedTracks)) return false;
   selected = draft.seedTracks;
   lastResult = draft.result;
   playbackMode = Boolean(draft.playbackMode);
@@ -155,7 +154,7 @@ async function connectSpotify() {
 }
 
 async function saveSpotify(draft = spotifyDraft()) {
-  if (savingSpotify || !draft.ids.length || !ensureSpotify(true)) return;
+  if (!realMode || draft?.realMode !== true || savingSpotify || !draft.ids.length || !ensureSpotify(true)) return;
   const status = select('spotify-status');
   showSpotifyLink(null);
   savingSpotify = true;
@@ -176,7 +175,7 @@ async function saveSpotify(draft = spotifyDraft()) {
   } finally {
     savingSpotify = false;
     renderPlaylist();
-    select('recommend-and-save').disabled = false;
+    select('recommend-and-save').disabled = !realMode;
     select('connect-spotify').textContent = spotify.connected ? 'Reconnect Spotify' : 'Connect Spotify';
   }
 }
@@ -230,23 +229,11 @@ async function searchTracks(append = false) {
     nextOffset = 0;
     list.replaceChildren();
   }
-  if (selected.length >= maxSeeds || query.length < 2) return;
+  if (!realMode || selected.length >= maxSeeds || query.length < 2) return;
   try {
-    let matches, hasMore;
-    if (realMode) {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&offset=${nextOffset}`);
-      if (!response.ok) throw new Error('Search failed');
-      const result = await response.json();
-      matches = result.tracks;
-      hasMore = result.more;
-    } else {
-      const identifier = query.match(/^(?:spotify:track:)?([A-Za-z0-9]{22})$/)?.[1] ||
-        query.match(/^https:\/\/open\.spotify\.com\/track\/([A-Za-z0-9]{22})(?:\?.*)?$/)?.[1];
-      const all = demoCatalogue.filter((track) => identifier ? track.id === identifier :
-        `${track.title} ${track.artist}`.toLowerCase().includes(query.toLowerCase()));
-      matches = all.slice(nextOffset, nextOffset + 12);
-      hasMore = all.length > nextOffset + 12;
-    }
+    const result = await modelApi.search(query, nextOffset);
+    let matches = result.tracks;
+    const hasMore = result.more;
     if (generation !== searchGeneration) return;
     nextOffset += matches.length;
     matches = matches.filter((candidate) => !selected.some((track) => track.id === candidate.id));
@@ -271,21 +258,6 @@ async function searchTracks(append = false) {
   } catch (error) {
     if (generation === searchGeneration) list.append(node('p', 'Track search is unavailable.', 'small'));
   }
-}
-
-function demoRecommendation(title, seeds, method, context, filters) {
-  const expanded = method === 'song_profiles';
-  const chosen = expanded ? filters.tags.map((tag) => tag === 'study_focus' ? 'study' : tag) : context ? [context] : [];
-  const inferred = ['popularity', 'cf'].includes(method) ? [] : chosen.length ? chosen
-    : Object.entries(demoRules).filter(([, rule]) => rule.test(title.toLowerCase())).map(([label]) => label);
-  const seedTags = seeds.flatMap((track) => track.tags);
-  const value = (track) => (method === 'popularity' ? 0 : track.tags.reduce((sum, tag) => sum + seedTags.filter((t) => t === tag).length, 0))
-    + 2 * track.tags.filter((tag) => inferred.includes(tag)).length;
-  const tracks = demoCatalogue.filter((track) => !seeds.some((seed) => seed.id === track.id))
-    .sort((a, b) => value(b) - value(a)).slice(0, 20);
-  const previewOnly = expanded && (filters.eras.length || filters.min_bpm || filters.max_bpm);
-  return {tags: inferred, tracks, seed_count: seeds.length, transition_evidence: null,
-    filter_note: previewOnly ? 'Era and BPM filters use catalogue metadata in the local model.' : ''};
 }
 
 function renderPlaylist() {
@@ -318,6 +290,10 @@ async function recommend(event) {
   const saveWhenReady = event?.submitter === saveButton;
   const status = select('demo-status');
   status.textContent = '';
+  if (!realMode) {
+    status.textContent = 'Connect the trained model before generating a playlist.';
+    return;
+  }
   if (selected.length < 1 || selected.length > maxSeeds) {
     status.textContent = 'Select 1–20 distinct seed tracks first.';
     return;
@@ -331,12 +307,7 @@ async function recommend(event) {
     const filters = filterUI.read();
     const seeds = [...selected];
     async function getRanking(approach) {
-      if (!realMode) return demoRecommendation(title, seeds, approach, context, filters);
-      const response = await fetch('/api/recommend', {method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({title, seeds: seeds.map((track) => track.id), method: approach, context, filters})});
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || 'Recommendation failed.');
-      return payload;
+      return modelApi.recommend({title, seeds: seeds.map((track) => track.id), method: approach, context, filters});
     }
     const result = await getRanking(method);
     const baseline = select('compare-cf').checked && method !== 'cf' ? await getRanking('cf') : null;
@@ -359,7 +330,7 @@ async function recommend(event) {
   } catch (error) {
     if (generation === recommendGeneration) status.textContent = error.message || 'Recommendation failed.';
   } finally {
-    if (generation === recommendGeneration) button.disabled = saveButton.disabled = false;
+    if (generation === recommendGeneration) button.disabled = saveButton.disabled = !realMode;
   }
 }
 
@@ -373,28 +344,47 @@ select('relevance-order').addEventListener('click', () => { playbackMode = false
 select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
 select('demo-method').addEventListener('change', updateMethod);
 select('demo-form').addEventListener('submit', recommend);
+function setModelControls(ready) {
+  for (const id of ['get-recs', 'recommend-and-save', 'track-search', 'demo-method', 'compare-cf']) {
+    select(id).disabled = !ready;
+  }
+  select('search-more').hidden = true;
+}
+
 async function initializeStudio() {
   let authorizationError = '';
-  let localStatus = null;
-  if (['localhost', '127.0.0.1'].includes(location.hostname)) {
-    try {
-      const response = await fetch('/api/status', {signal: AbortSignal.timeout(5000)});
-      if (response.ok) localStatus = await response.json();
-    } catch {}
-  }
-  if (localStatus?.trained_model) {
+  realMode = false;
+  setModelControls(false);
+  select('retry-model').disabled = true;
+  select('mode-label').textContent = 'Connecting to model';
+  select('demo-mode').textContent = 'Connecting to the trained playlist recommender…';
+  try {
+    modelStatus = await modelApi.status();
     realMode = true;
-    selected = [];
-    profileOption.disabled = !localStatus.song_profiles;
-    select('demo-method').value = localStatus.song_profiles ? 'song_profiles' : 'learned_title';
-    select('mode-label').textContent = 'Local trained model';
-    select('demo-mode').textContent = 'Search your MPD catalogue and build a playlist with the trained model.';
+    profileOption.disabled = !modelStatus.song_profiles;
+    select('demo-method').value = modelStatus.song_profiles ? 'song_profiles' : 'learned_title';
+    select('mode-label').textContent = 'Trained model connected';
+    const support = Number.isInteger(modelStatus.training_playlists)
+      ? ' Trained on ' + modelStatus.training_playlists.toLocaleString() + ' playlists.' : '';
+    select('demo-mode').textContent = 'Search the model catalogue and generate recommendations from your seed songs.' + support;
+    select('demo-status').textContent = '';
+    select('retry-model').hidden = true;
+    setModelControls(true);
+  } catch (error) {
+    modelStatus = null;
+    select('mode-label').textContent = 'Model disconnected';
+    select('demo-mode').textContent = 'The trained recommender is not connected yet. Playlist generation will become available when its server is running.';
+    select('demo-status').textContent = error.message;
+    select('retry-model').hidden = false;
+  } finally {
+    select('retry-model').disabled = false;
   }
+
   let savedClientId;
   try { savedClientId = localStorage.getItem('beatx.spotify.clientId'); } catch {}
   const query = new URL(location.href).searchParams;
   const pending = (query.has('code') || query.has('error')) ? storedJson(sessionStorage, spotifyStorage.auth) : null;
-  configureSpotify(pending?.clientId || localStatus?.spotify_client_id || window.BEATX_CONFIG?.spotifyClientId || savedClientId);
+  configureSpotify(pending?.clientId || modelStatus?.spotify_client_id || window.BEATX_CONFIG?.spotifyClientId || savedClientId);
   select('recommend-and-save').hidden = false;
   updateMethod();
   showSeeds();
@@ -415,12 +405,13 @@ async function initializeStudio() {
     }
   }
   const savedDraft = storedJson(sessionStorage, 'beatx.studio.draft');
-  if (savedDraft?.realMode === realMode && restoreStudioDraft(savedDraft)) {
+  if (restoreStudioDraft(savedDraft)) {
     if (authorizationError) select('spotify-status').textContent = authorizationError;
     return;
   }
-  if (selected.length) await recommend();
-  else select('inferred-tags').textContent = 'Add seed tracks to get started.';
+  select('inferred-tags').textContent = realMode ? 'Add seed tracks to get started.' : 'Waiting for the trained model.';
   if (authorizationError) select('spotify-status').textContent = authorizationError;
 }
+
+select('retry-model').addEventListener('click', initializeStudio);
 initializeStudio();
