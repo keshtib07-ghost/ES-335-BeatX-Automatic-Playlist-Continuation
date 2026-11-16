@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import os
+import re
 import sqlite3
 import unicodedata
 from contextlib import contextmanager, closing
@@ -15,12 +17,13 @@ import numpy as np
 from playlist_model.data import track_id
 from playlist_model.million import TAGS, open_dataset, rank_candidates, read_json, read_only
 from playlist_model.million_eval import load_training
+from playlist_model.profile_ranker import ProfileRanker
 from playlist_model.sequence import Transitions
 from playlist_model.tagger import TAG_COLUMN, weak_tags
 
 
 PAGE_SIZE = 12
-METHODS = ('popularity', 'cf', 'keyword_title', 'learned_title')
+METHODS = ('popularity', 'cf', 'keyword_title', 'learned_title', 'song_profiles')
 
 
 def spotify_reference(value):
@@ -34,8 +37,9 @@ def spotify_reference(value):
 
 
 class Demo:
-    def __init__(self, source, split, run, allow_partial, sequence=None):
+    def __init__(self, source, split, run, allow_partial, sequence=None, profiles=None, spotify_client_id=None, catalogue_profiles=None):
         self.source, self.split = source, split
+        self.spotify_client_id = spotify_client_id
         frozen = read_json(run / 'frozen_settings.json')
         with open_dataset(source, split, allow_partial) as data:
             self.ranker, self.tags, signatures = load_training(data, run)
@@ -47,12 +51,16 @@ class Demo:
                     raise ValueError('Sequence model belongs to a different split')
                 self.sequence = Transitions(sequence, self.ranker.counts)
             self.has_aliases = data.aliases is not None
+            self.profiles = (ProfileRanker(profiles, data, catalogue_profiles)
+                             if profiles and (profiles / 'tags').exists() else None)
         self.weight = frozen['selected_tag_weight']
 
     @contextmanager
-    def catalogue(self):
+    def catalogue(self, with_bulk=False):
         with closing(sqlite3.connect(read_only(self.source), uri=True)) as connection:
             connection.execute('ATTACH DATABASE ? AS splits', (read_only(self.split),))
+            if with_bulk and self.profiles.catalogue_profiles:
+                connection.execute('ATTACH DATABASE ? AS bulk_profiles', (read_only(self.profiles.catalogue_profiles),))
             connection.execute('PRAGMA query_only=ON')
             yield connection
 
@@ -71,7 +79,7 @@ class Demo:
             db.create_function('training_support', 1, lambda index: int(self.ranker.counts[index]))
             if identifier := spotify_reference(query):
                 hits = db.execute('''
-                    SELECT c.spotify_id, c.track_name, c.artist_name,
+                    SELECT c.spotify_id, c.track_name, c.artist_name, c.album_name, c.duration_ms,
                            training_support(COALESCE(a.recording_index, c.track_index))
                     FROM catalogue AS c LEFT JOIN splits.recording_aliases AS a USING (track_index)
                     WHERE c.spotify_id=?
@@ -85,15 +93,18 @@ class Demo:
                 alias_join = 'LEFT JOIN splits.recording_aliases AS a USING (track_index)' if self.has_aliases else ''
                 group = 'GROUP BY recording' if self.has_aliases else ''
                 hits = db.execute(f'''
-                    SELECT spotify_id, title, artist, training_support(recording) FROM (
+                    SELECT spotify_id, title, artist, album_name, duration_ms, training_support(recording) FROM (
                         SELECT c.spotify_id, c.track_name AS title, c.artist_name AS artist,
+                               c.album_name, c.duration_ms,
                                {canonical} AS recording, {func}(c.track_name)=? AS exact
                         FROM catalogue AS c {alias_join} WHERE {where}
                     ) {group}
                     ORDER BY exact DESC, training_support(recording) DESC, title, spotify_id LIMIT ? OFFSET ?
                 ''', (fold(query).strip(), *words, PAGE_SIZE + 1, offset)).fetchall()
-        return {'tracks': [{'id': identifier, 'title': title, 'artist': artist, 'training_support': support}
-                           for identifier, title, artist, support in hits[:PAGE_SIZE]], 'more': len(hits) > PAGE_SIZE}
+        return {'tracks': [{'id': identifier, 'title': title, 'artist': artist, 'album': album, 'duration_ms': duration,
+                            'training_support': support}
+                           for identifier, title, artist, album, duration, support in hits[:PAGE_SIZE]],
+                'more': len(hits) > PAGE_SIZE}
 
     def recommend(self, body):
         if not isinstance(body, dict):
@@ -110,7 +121,7 @@ class Demo:
         if None in identifiers or len(set(identifiers)) != len(seeds):
             raise ValueError('Select distinct Spotify track IDs.')
         markers = ','.join('?' for _ in identifiers)
-        with self.catalogue() as db:
+        with self.catalogue(with_bulk=method == 'song_profiles' and self.profiles is not None) as db:
             rows = dict(db.execute(f'''
                 SELECT c.spotify_id, COALESCE(a.recording_index, c.track_index)
                 FROM catalogue AS c LEFT JOIN splits.recording_aliases AS a USING (track_index)
@@ -129,7 +140,14 @@ class Demo:
                     labels = sorted(TAG_COLUMN[tag] for tag in weak_tags(title))
                 else:
                     labels = np.flatnonzero(self.tags.tagger.predict([title])[0])
-            if method == 'popularity':
+            metadata, profile_note = {}, ''
+            applied = [TAGS[i] for i in labels]
+            if method == 'song_profiles':
+                if self.profiles is None:
+                    raise ValueError('Build the song profiles to enable category filters.')
+                ranked, applied, metadata, profile_note = self.profiles.recommend(self.ranker, ids, title,
+                                                                                 body.get('filters', {}), db)
+            elif method == 'popularity':
                 ranked = self.ranker.popularity(ids, 20)
             else:
                 candidates, scores, fallback = self.ranker.candidates(ids)
@@ -138,12 +156,18 @@ class Demo:
             playback, learned = self.sequence.order(ranked, anchor=int(ids[-1])) if self.sequence else (None, None)
             tracks = []
             for index in ranked:
-                identifier, name, artist = db.execute('''
-                    SELECT spotify_id, track_name, artist_name FROM catalogue WHERE track_index=?
+                identifier, name, artist, album, duration = db.execute('''
+                    SELECT spotify_id, track_name, artist_name, album_name, duration_ms FROM catalogue WHERE track_index=?
                 ''', (int(index),)).fetchone()
-                tracks.append({'id': identifier, 'title': name, 'artist': artist, 'rank': len(tracks) + 1,
+                profile = metadata.get(index, {})
+                fields = {key: profile.get(key) for key in ('era', 'era_source', 'bpm', 'bpm_source', 'match_status',
+                                                           'release_date', 'catalogue_release_date', 'bulk_recording_release_date')}
+                if method == 'song_profiles':
+                    fields['tags'] = self.profiles.track_tags(index)
+                tracks.append({'id': identifier, 'title': name, 'artist': artist, 'album': album,
+                               'duration_ms': duration, 'profile': fields, 'rank': len(tracks) + 1,
                                'playback_position': playback.index(int(index)) + 1 if playback is not None else None})
-        return {'tags': [TAGS[i] for i in labels], 'tracks': tracks, 'method': method,
+        return {'tags': applied, 'tracks': tracks, 'method': method, 'filter_note': profile_note,
                 'known_seeds': int(np.count_nonzero(self.ranker.counts[ids])), 'seed_count': len(ids),
                 'transition_evidence': learned}
 
@@ -165,7 +189,10 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         url = urlsplit(self.path)
         if url.path == '/api/status':
-            self.respond({'trained_model': True, 'sequence_model': self.demo.sequence is not None})
+            self.respond({'trained_model': True, 'sequence_model': self.demo.sequence is not None,
+                          'song_profiles': self.demo.profiles is not None,
+                          'bulk_catalogue_profiles': bool(self.demo.profiles and self.demo.profiles.catalogue_profiles),
+                          'spotify_client_id': self.demo.spotify_client_id})
         elif url.path == '/api/search':
             try:
                 query = parse_qs(url.query)
@@ -195,11 +222,22 @@ def main():
     cli.add_argument('--split', type=Path, default=Path('runs/million/split.sqlite3'))
     cli.add_argument('--run', type=Path, default=Path('runs/million/model'))
     cli.add_argument('--sequence', type=Path, default=Path('runs/million/sequence'))
+    cli.add_argument('--profiles', type=Path)
+    cli.add_argument('--catalogue-profiles', type=Path,
+                     help='Bulk catalogue_enrichment.sqlite3 file. Uses the existing default output if present.')
+    cli.add_argument('--spotify-client-id', default=os.environ.get('NEXT_TRACK_SPOTIFY_CLIENT_ID'))
     cli.add_argument('--port', type=int, default=8000)
     cli.add_argument('--allow-partial-source', action='store_true', help='Allow a verified pilot-sized database')
     args = cli.parse_args()
     try:
-        demo = Demo(args.source, args.split, args.run, args.allow_partial_source, args.sequence)
+        if args.spotify_client_id and not re.fullmatch(r'[0-9a-f]{32}', args.spotify_client_id):
+            raise ValueError('Provide the Spotify app Client ID from its dashboard.')
+        expanded = Path('runs/million/profiles-v2-expanded')
+        profiles = args.profiles or (expanded if (expanded / 'tags').is_dir() else Path('runs/million/profiles-v2'))
+        bulk_default = Path('runs/million/catalogue-enrichment/catalogue_enrichment.sqlite3')
+        bulk = args.catalogue_profiles or (bulk_default if bulk_default.is_file() else None)
+        demo = Demo(args.source, args.split, args.run, args.allow_partial_source, args.sequence, profiles,
+                    args.spotify_client_id, bulk)
         handler = partial(Handler, demo=demo, directory=Path(__file__).resolve().parent.parent / 'docs')
         with ThreadingHTTPServer(('127.0.0.1', args.port), handler) as server:
             print(f'Local trained demo: http://127.0.0.1:{server.server_address[1]}/', flush=True)

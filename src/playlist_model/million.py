@@ -154,21 +154,29 @@ def build_index(data, run):
     return summary
 
 
-def fit_tags(data, run, title_limit):
+def fit_tags(data, run, title_limit, *, groups=TAG_GROUPS, rules=weak_tags, taxonomy_version=None, predict=None,
+             cross_category_baseline=()):
     target = run / 'tags'
     files = ('title_tagger.joblib', 'track_tag_votes.npy', 'track_axis_totals.npy', 'tag_priors.npy')
     identity = {**data.identity, 'title_training_limit': title_limit, 'validation_title_limit': 5000}
+    if taxonomy_version is not None:
+        identity.update(taxonomy_version=taxonomy_version, tag_groups={key: list(value) for key, value in groups.items()},
+                        cross_category_baseline=list(cross_category_baseline))
     if prior := completed(target, identity, files):
         return prior
     run.mkdir(parents=True, exist_ok=True)
     train_titles = [title for (title,) in data.sample('train', 'p.title', title_limit, salt=335)]
     val_titles = [title for (title,) in data.sample('validation', 'p.title', 5000, salt=336)]
-    train_labels = label_matrix(map(weak_tags, train_titles))
-    val_labels = label_matrix(map(weak_tags, val_titles))
+    tags = tuple(tag for group in groups.values() for tag in group)
+    group_columns = np.split(np.arange(len(tags)), np.cumsum([len(group) for group in groups.values()])[:-1])
+    broader_axes = {i for i, name in enumerate(groups) if name in cross_category_baseline}
+    tag_axis = np.repeat(np.arange(len(groups)), [len(group) for group in groups.values()])
+    train_labels = label_matrix(map(rules, train_titles), tags)
+    val_labels = label_matrix(map(rules, val_titles), tags)
     print(f'Training the TF-IDF title model on {len(train_titles):,} sampled training titles', flush=True)
-    tagger = TitleTagger().fit(train_titles, train_labels)
+    tagger = TitleTagger(tags).fit(train_titles, train_labels)
     tagger.select_thresholds(val_titles, val_labels)
-    validation_agreement = classification_metrics(val_labels, tagger.predict(val_titles))
+    validation_agreement = classification_metrics(val_labels, tagger.predict(val_titles), tags)
     del train_titles, train_labels, val_titles, val_labels
 
     duplicates = {row[0] for row in data.connection.execute('''
@@ -177,16 +185,16 @@ def fit_tags(data, run, title_limit):
         WHERE g.split='train' GROUP BY a.group_hash HAVING COUNT(*)>1
     ''')}
     deferred = {}
-    prior_votes = np.zeros(len(TAGS), dtype=np.int64)
-    prior_axes = np.zeros(len(TAG_GROUPS), dtype=np.int64)
-    predicted_titles = np.zeros(len(TAGS), dtype=np.int64)
+    prior_votes = np.zeros(len(tags), dtype=np.int64)
+    prior_axes = np.zeros(len(groups), dtype=np.int64)
+    predicted_titles = np.zeros(len(tags), dtype=np.int64)
 
     with TemporaryDirectory(dir=run, prefix='.tags-') as temp:
         path = Path(temp)
         votes = np.lib.format.open_memmap(path / files[1], mode='w+', dtype=np.int32,
-                                          shape=(data.track_count, len(TAGS)))
+                                          shape=(data.track_count, len(tags)))
         axes = np.lib.format.open_memmap(path / files[2], mode='w+', dtype=np.int32,
-                                         shape=(data.track_count, len(TAG_GROUPS)))
+                                         shape=(data.track_count, len(groups)))
         votes[:] = 0
         axes[:] = 0
 
@@ -197,15 +205,16 @@ def fit_tags(data, run, title_limit):
             for column in np.flatnonzero(labels):
                 votes[items, column] += 1
                 prior_votes[column] += 1
-            for axis, columns in enumerate(GROUP_COLUMNS):
-                if labels[columns].any():
+            for axis, columns in enumerate(group_columns):
+                if axis in broader_axes or labels[columns].any():
                     axes[items, axis] += 1
                     prior_axes[axis] += 1
 
         rows = data.rows('train', 'p.title, p.track_indices, s.recording_count, s.group_hash')
         row_count = 0
         while batch := rows.fetchmany(TAG_BLOCK):
-            predictions = tagger.predict([row[0] for row in batch])
+            titles = [row[0] for row in batch]
+            predictions = tagger.predict(titles) if predict is None else predict(tagger, titles)
             predicted_titles += predictions.sum(axis=0)
             for (_, payload, expected, group), labels in zip(batch, predictions):
                 if not labels.any():
@@ -224,8 +233,8 @@ def fit_tags(data, run, title_limit):
             record_evidence(*entry)
         if row_count != data.sizes['train']:
             raise ValueError('Title prediction row count disagrees with the training partition')
-        denominators = prior_axes[TAG_AXIS]
-        priors = np.divide(prior_votes, denominators, out=np.zeros(len(TAGS)), where=denominators > 0)
+        denominators = prior_axes[tag_axis]
+        priors = np.divide(prior_votes, denominators, out=np.zeros(len(tags)), where=denominators > 0)
         votes.flush()
         axes.flush()
         np.save(path / files[3], priors)
@@ -233,9 +242,9 @@ def fit_tags(data, run, title_limit):
         summary = {'identity': identity, 'classifier_training_titles': min(data.sizes['train'], title_limit),
                    'title_label_source': 'weak title rules', 'train_playlists_scored_for_song_tags': row_count,
                    'validation_rule_agreement': validation_agreement,
-                   'classifier_thresholds': dict(zip(TAGS, map(float, tagger.thresholds))),
-                   'training_titles_by_tag': dict(zip(TAGS, map(int, predicted_titles))),
-                   'song_tag_priors': dict(zip(TAGS, map(float, priors)))}
+                   'classifier_thresholds': dict(zip(tags, map(float, tagger.thresholds))),
+                   'training_titles_by_tag': dict(zip(tags, map(int, predicted_titles))),
+                   'song_tag_priors': dict(zip(tags, map(float, priors)))}
         del votes, axes
         write_json(path / 'summary.json', summary)
         os.replace(path, target)

@@ -97,11 +97,144 @@ let nextOffset = 0;
 let lastResult = null;
 let playbackMode = false;
 const maxSeeds = 20;
+const filterUI = setupFilters();
+const profileOption = node('option', 'CF + song profiles');
+profileOption.value = 'song_profiles';
+select('demo-method').prepend(profileOption);
+select('demo-method').value = profileOption.value;
+let spotify;
+let savingSpotify = false;
+
+function updateMethod() {
+  const method = select('demo-method').value;
+  const usesOldTags = ['learned_title', 'keyword_title'].includes(method);
+  select('demo-context').disabled = !usesOldTags;
+  select('demo-context').parentElement.hidden = !usesOldTags;
+  filterUI.show(method === 'song_profiles');
+}
+
+function artwork(track) {
+  const wrapper = node('span', '♪', 'track-art');
+  wrapper.setAttribute('aria-hidden', 'true');
+  if (spotify?.connected) {
+    spotify.cover(track.id).then((url) => {
+      if (!url || !wrapper.isConnected) return;
+      const img = node('img');
+      img.alt = '';
+      img.loading = 'lazy';
+      img.src = url;
+      img.addEventListener('load', () => wrapper.replaceChildren(img), {once: true});
+    });
+  }
+  return wrapper;
+}
+
+function orderedTracks() {
+  const tracks = [...(lastResult?.tracks || [])];
+  if (playbackMode) tracks.sort((a, b) => a.playback_position - b.playback_position);
+  return tracks;
+}
+
+function trackRow(track) {
+  const li = node('li', undefined, 'track');
+  const info = node('div', undefined, 'track-info');
+  info.append(node('strong', track.title), node('small', track.artist));
+  if (track.album) info.append(node('small', track.album, 'track-album'));
+  const profile = track.profile;
+  const details = [];
+  if (profile?.tags?.length) details.push(profile.tags.map((tag) => filterLabels[tag] || tag).join(', '));
+  if (profile?.era) {
+    const edition = profile.era_source === 'catalogue_edition' ? ' (catalogue edition)' :
+      profile.match_status === 'verified_recording' ? '' : ' (provisional)';
+    details.push(`${profile.era}${edition}`);
+  }
+  if (profile?.bpm) details.push(`${Math.round(profile.bpm)} BPM`);
+  if (details.length > 0) {
+    const disclosure = node('details');
+    disclosure.append(node('summary', 'Song details'), node('small', details.join(' · ')));
+    info.append(disclosure);
+  }
+  const actions = node('div', undefined, 'track-actions');
+  if (Number.isFinite(track.duration_ms)) {
+    const seconds = Math.floor(track.duration_ms / 1000);
+    actions.append(node('span', `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`));
+  }
+  if (realMode && spotifyTrackId(track.id)) {
+    const link = node('a', 'Spotify ↗');
+    link.href = `https://open.spotify.com/track/${track.id}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', `Open ${track.title} in Spotify`);
+    actions.append(link);
+  }
+  li.append(artwork(track), info, actions);
+  return li;
+}
+
+function spotifyDraft() {
+  return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id), result: lastResult, playbackMode};
+}
+
+async function saveSpotify(draft = spotifyDraft()) {
+  if (!spotify || savingSpotify || !draft.ids.length) return;
+  const status = select('spotify-status');
+  select('spotify-playlist-link').hidden = true;
+  savingSpotify = true;
+  select('save-spotify').disabled = true;
+  try {
+    if (!spotify.connected) {
+      await spotify.authorize(draft, true);
+      return;
+    }
+    status.textContent = 'Saving your playlist…';
+    const url = await spotify.save(draft);
+    const link = select('spotify-playlist-link');
+    link.href = url;
+    link.hidden = false;
+    status.textContent = `Saved ${draft.ids.length} tracks to your private Spotify playlist.`;
+  } catch (error) {
+    status.textContent = `${error.message} Use Save to Spotify to retry.`;
+  } finally {
+    savingSpotify = false;
+    select('save-spotify').disabled = !lastResult?.tracks.length;
+  }
+}
+
+function setupSpotify(clientId) {
+  if (!clientId || location.hostname !== '127.0.0.1') return;
+  spotify = new SpotifyStudio(clientId);
+  select('recommend-and-save').hidden = false;
+  select('spotify-tools').hidden = false;
+  const status = select('spotify-status');
+  select('connect-spotify').addEventListener('click', async () => {
+    try {
+      await spotify.authorize(spotifyDraft(), false);
+    } catch (error) {
+      status.textContent = error.message;
+    }
+  });
+  select('save-spotify').addEventListener('click', () => saveSpotify());
+  spotify.completeAuthorization(location.href).then(async (session) => {
+    if (!session) return;
+    select('connect-spotify').hidden = true;
+    status.textContent = 'Spotify connected.';
+    const {draft} = session;
+    if (draft?.result) {
+      lastResult = draft.result;
+      playbackMode = draft.playbackMode;
+      select('generated-title').textContent = draft.title;
+      showContext(lastResult);
+      renderPlaylist();
+    }
+    if (session.saveAfter && draft) await saveSpotify(draft);
+  }).catch((error) => { status.textContent = error.message; });
+}
 
 function showSeeds() {
   select('seed-count').textContent = `${selected.length} / ${maxSeeds}`;
   select('seed-chips').replaceChildren(...selected.map((track) => {
-    const button = node('button', `${track.title} ×`, 'chip');
+    const button = node('button', undefined, 'chip seed-chip');
+    button.append(artwork(track), document.createTextNode(`${track.title} ×`));
     button.type = 'button';
     button.setAttribute('aria-label', `Remove ${track.title}`);
     button.addEventListener('click', () => {
@@ -143,7 +276,10 @@ async function searchTracks(append = false) {
     matches = matches.filter((candidate) => !selected.some((track) => track.id === candidate.id));
     if (!matches.length && !append) list.append(node('p', hasMore ? 'More tracks are available on the next page.' : 'No additional matches in this catalogue.', 'small'));
     for (const track of matches) {
-      const button = node('button', `${track.title} · ${track.artist}`);
+      const button = node('button', undefined, 'track-match');
+      const info = node('span');
+      info.append(node('strong', track.title), node('small', track.artist));
+      button.append(artwork(track), info);
       button.type = 'button';
       button.addEventListener('click', () => {
         if (selected.length >= maxSeeds) return;
@@ -161,37 +297,26 @@ async function searchTracks(append = false) {
   }
 }
 
-function demoRecommendation(title, seeds, method, context) {
-  const inferred = ['popularity', 'cf'].includes(method) ? [] : context ? [context]
+function demoRecommendation(title, seeds, method, context, filters) {
+  const expanded = method === 'song_profiles';
+  const chosen = expanded ? filters.tags.map((tag) => tag === 'study_focus' ? 'study' : tag) : context ? [context] : [];
+  const inferred = ['popularity', 'cf'].includes(method) ? [] : chosen.length ? chosen
     : Object.entries(demoRules).filter(([, rule]) => rule.test(title.toLowerCase())).map(([label]) => label);
   const seedTags = seeds.flatMap((track) => track.tags);
   const value = (track) => (method === 'popularity' ? 0 : track.tags.reduce((sum, tag) => sum + seedTags.filter((t) => t === tag).length, 0))
     + 2 * track.tags.filter((tag) => inferred.includes(tag)).length;
   const tracks = fictional.filter((track) => !seeds.some((seed) => seed.id === track.id))
     .sort((a, b) => value(b) - value(a)).slice(0, 20);
-  return {tags: inferred, tracks, seed_count: seeds.length, transition_evidence: null};
+  const previewOnly = expanded && (filters.eras.length || filters.min_bpm || filters.max_bpm);
+  return {tags: inferred, tracks, seed_count: seeds.length, transition_evidence: null,
+    filter_note: previewOnly ? 'Era and BPM filters use catalogue metadata in the local model.' : ''};
 }
 
 function renderPlaylist() {
   if (!lastResult) return;
-  const list = [...lastResult.tracks];
-  if (playbackMode) list.sort((a, b) => a.playback_position - b.playback_position);
-  select('track-list').replaceChildren(...list.map((track) => {
-    const li = node('li', undefined, 'track');
-    const info = node('div');
-    const artist = playbackMode && track.rank ? `${track.artist} · relevance #${track.rank}` : track.artist;
-    info.append(node('strong', track.title), node('small', artist));
-    li.append(info);
-    if (realMode && /^[A-Za-z0-9]{22}$/.test(track.id)) {
-      const link = node('a', 'Spotify ↗');
-      link.href = `https://open.spotify.com/track/${track.id}`;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.setAttribute('aria-label', `Open ${track.title} in Spotify`);
-      li.append(link);
-    }
-    return li;
-  }));
+  const list = orderedTracks();
+  select('track-list').replaceChildren(...list.map(trackRow));
+  select('save-spotify').disabled = !spotify || savingSpotify || !list.length;
   select('relevance-order').setAttribute('aria-pressed', String(!playbackMode));
   select('playback-order').setAttribute('aria-pressed', String(playbackMode));
   select('playback-order').disabled = lastResult.transition_evidence === null;
@@ -200,10 +325,19 @@ function renderPlaylist() {
   select('generation-evidence').textContent = `${list.length} additions${support}${transitions}`;
 }
 
+function showContext(result) {
+  const tags = result.tags.map((tag) => filterLabels[tag] || tag);
+  select('inferred-tags').textContent = tags.length ? `Applied context · ${tags.join(', ')}` : 'No context applied.';
+  select('filter-note').textContent = result.filter_note || '';
+  select('filter-note').hidden = !result.filter_note;
+}
+
 async function recommend(event) {
   event?.preventDefault();
   const generation = ++recommendGeneration;
   const button = select('get-recs');
+  const saveButton = select('recommend-and-save');
+  const saveWhenReady = event?.submitter === saveButton;
   const status = select('demo-status');
   status.textContent = '';
   if (selected.length < 1 || selected.length > maxSeeds) {
@@ -211,15 +345,17 @@ async function recommend(event) {
     return;
   }
   button.disabled = true;
+  saveButton.disabled = true;
   try {
     const title = select('playlist-title').value;
     const method = select('demo-method').value;
     const context = select('demo-context').value;
+    const filters = filterUI.read();
     const seeds = [...selected];
     async function getRanking(approach) {
-      if (!realMode) return demoRecommendation(title, seeds, approach, context);
+      if (!realMode) return demoRecommendation(title, seeds, approach, context, filters);
       const response = await fetch('/api/recommend', {method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({title, seeds: seeds.map((track) => track.id), method: approach, context})});
+        body: JSON.stringify({title, seeds: seeds.map((track) => track.id), method: approach, context, filters})});
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Recommendation failed.');
       return payload;
@@ -228,7 +364,9 @@ async function recommend(event) {
     const baseline = select('compare-cf').checked && method !== 'cf' ? await getRanking('cf') : null;
     if (generation !== recommendGeneration) return;
     select('generated-title').textContent = title.trim() || 'Your playlist';
-    select('inferred-tags').textContent = result.tags.length ? `Applied context · ${result.tags.join(', ')}` : 'No context applied.';
+    showContext(result);
+    select('spotify-playlist-link').hidden = true;
+    select('spotify-status').textContent = '';
     lastResult = result;
     playbackMode = false;
     renderPlaylist();
@@ -237,18 +375,13 @@ async function recommend(event) {
       const common = new Set(baseline.tracks.map((track) => track.id));
       const overlap = result.tracks.filter((track) => common.has(track.id)).length;
       select('comparison-summary').textContent = `Plain CF ranking · ${overlap} of ${result.tracks.length} suggestions in common`;
-      select('comparison-list').replaceChildren(...baseline.tracks.map((track) => {
-        const row = node('li', undefined, 'track');
-        const info = node('div');
-        info.append(node('strong', track.title), node('small', track.artist));
-        row.append(info);
-        return row;
-      }));
+      select('comparison-list').replaceChildren(...baseline.tracks.map(trackRow));
     }
+    if (saveWhenReady && result.tracks.length) await saveSpotify();
   } catch (error) {
     if (generation === recommendGeneration) status.textContent = error.message || 'Recommendation failed.';
   } finally {
-    if (generation === recommendGeneration) button.disabled = false;
+    if (generation === recommendGeneration) button.disabled = saveButton.disabled = false;
   }
 }
 
@@ -260,8 +393,9 @@ select('track-search').addEventListener('input', () => {
 select('search-more').addEventListener('click', () => searchTracks(true));
 select('relevance-order').addEventListener('click', () => { playbackMode = false; renderPlaylist(); });
 select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
-select('demo-method').addEventListener('change', () => { select('demo-context').disabled = ['cf', 'popularity'].includes(select('demo-method').value); });
+select('demo-method').addEventListener('change', updateMethod);
 select('demo-form').addEventListener('submit', recommend);
+updateMethod();
 showSeeds();
 recommend();
 
@@ -278,15 +412,20 @@ if (['localhost', '127.0.0.1'].includes(location.hostname)) {
     searchGeneration += 1;
     recommendGeneration += 1;
     selected = [];
+    profileOption.disabled = !status.song_profiles;
+    select('demo-method').value = status.song_profiles ? 'song_profiles' : 'learned_title';
+    updateMethod();
     select('mode-label').textContent = 'Local trained model';
     select('demo-mode').textContent = 'Search your local MPD catalogue and get predictions from the trained model. This data stays on your machine.';
     select('inferred-tags').textContent = 'Add seed tracks to get started.';
     select('demo-status').textContent = '';
     select('get-recs').disabled = false;
+    select('recommend-and-save').disabled = false;
     select('track-list').replaceChildren();
     select('generation-evidence').textContent = '';
     select('demo-comparison').hidden = true;
     lastResult = null;
     showSeeds();
+    setupSpotify(status.spotify_client_id);
   }).catch(() => {});
 }

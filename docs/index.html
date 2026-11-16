@@ -12,6 +12,8 @@
   <script src="experiment.js" defer></script>
   <script src="seed_experiment.js" defer></script>
   <script src="sequence_experiment.js" defer></script>
+  <script src="spotify.js" defer></script>
+  <script src="filters.js" defer></script>
   <script src="app.js" defer></script>
   <script src="study.js" defer></script>
 </head>
@@ -69,6 +71,12 @@
         <form class="demo-form" id="demo-form">
           <label for="playlist-title">Playlist title</label><input id="playlist-title" name="title" type="text" maxlength="180" value="Rainy Night Study" placeholder="e.g. Rainy Night Study">
           <div class="select-grid"><label for="demo-method">Method<select id="demo-method"><option value="learned_title">CF + learned title tags</option><option value="keyword_title">CF + keyword title tags</option><option value="cf">Collaborative filtering</option><option value="popularity">Popularity</option></select></label><label for="demo-context">Context<select id="demo-context"><option value="">Infer from title</option><option value="chill">Chill</option><option value="study">Study / focus</option><option value="gym">Workout</option><option value="party">Party</option><option value="rainy">Rainy</option><option value="sad">Sad</option><option value="sleep">Sleep</option></select></label></div>
+          <section id="profile-filters" aria-label="Playlist filters">
+            <button class="button secondary mobile-filters" id="open-filters" type="button">Filters</button>
+            <div id="desktop-filters"><div id="filter-content"></div></div>
+            <dialog id="filter-drawer" aria-labelledby="filter-heading"><div class="filter-drawer-header"><h3 id="filter-heading">Filters</h3><button class="button secondary" id="close-filters" type="button">Done</button></div></dialog>
+            <div class="chips" id="active-filters" aria-label="Active filters"></div>
+          </section>
           <div class="seed-heading"><label for="track-search">Seed tracks</label><span id="seed-count">0 / 20</span></div>
           <div id="seed-chips" class="chips" aria-label="Selected seed tracks"></div>
           <input id="track-search" type="search" maxlength="120" placeholder="Song, artist, or Spotify track link" autocomplete="off" aria-controls="track-matches">
@@ -76,9 +84,13 @@
           <button type="button" class="button secondary" id="search-more" hidden>More matches</button>
           <label class="compare-control"><input type="checkbox" id="compare-cf"> Compare with plain CF</label>
           <button type="submit" class="button primary" id="get-recs">Recommend tracks <span aria-hidden="true">→</span></button>
+          <button type="submit" class="button secondary" id="recommend-and-save" hidden>Generate &amp; save to Spotify</button>
           <p class="small status" id="demo-status" role="status"></p>
         </form>
-        <div class="output-panel"><div class="playlist-cover"><div class="cover-art" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Illustrative demo</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add seed tracks to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div><ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol><details class="comparison" id="demo-comparison" hidden><summary id="comparison-summary"></summary><ol class="track-list" id="comparison-list" aria-label="Plain CF recommendations"></ol></details><p class="small live-note">A new playlist has no withheld answer. The demo shows catalogue coverage for the seeds and observed transition evidence where available.</p></div>
+        <div class="output-panel"><div class="playlist-cover"><div class="cover-art" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Illustrative demo</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add seed tracks to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div>
+          <div class="spotify-tools" id="spotify-tools" hidden><button type="button" class="button secondary" id="connect-spotify">Connect Spotify</button><button type="button" class="button primary" id="save-spotify" disabled>Save to Spotify</button><a id="spotify-playlist-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify ↗</a><p id="spotify-status" role="status" class="small"></p></div>
+          <p class="small filter-note" id="filter-note" role="status" hidden></p>
+          <ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol><details class="comparison" id="demo-comparison" hidden><summary id="comparison-summary"></summary><ol class="track-list" id="comparison-list" aria-label="Plain CF recommendations"></ol></details><p class="small live-note">A new playlist has no withheld answer. The demo shows catalogue coverage for the seeds and observed transition evidence where available.</p></div>
       </div>
     </section>
 

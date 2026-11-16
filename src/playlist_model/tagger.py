@@ -72,16 +72,16 @@ def read_annotations(path):
     return annotations
 
 
-def label_matrix(label_sets):
-    return np.asarray([[tag in labels for tag in TAGS] for labels in label_sets], dtype=bool)
+def label_matrix(label_sets, tags=TAGS):
+    return np.asarray([[tag in labels for tag in tags] for labels in label_sets], dtype=bool).reshape(-1, len(tags))
 
 
-def classification_metrics(truth, prediction):
+def classification_metrics(truth, prediction, tags=TAGS):
     truth, prediction = np.asarray(truth, bool), np.asarray(prediction, bool)
     if not len(truth):
         return {'titles': 0, 'macro_f1_supported': None, 'per_tag': {}}
     by_tag, scores = {}, []
-    for i, tag in enumerate(TAGS):
+    for i, tag in enumerate(tags):
         tp = int(np.count_nonzero(truth[:, i] & prediction[:, i]))
         positives = int(truth[:, i].sum())
         predicted = int(prediction[:, i].sum())
@@ -96,18 +96,19 @@ def classification_metrics(truth, prediction):
 
 
 class TitleTagger:
-    def __init__(self):
+    def __init__(self, tags=TAGS):
         self.features = FeatureUnion([
             ('words', TfidfVectorizer(ngram_range=(1, 2), min_df=2, max_features=25_000, sublinear_tf=True)),
             ('characters', TfidfVectorizer(analyzer='char_wb', ngram_range=(3, 5), min_df=2,
                                           max_features=35_000, sublinear_tf=True)),
         ])
         self.models = []
-        self.thresholds = np.full(len(TAGS), .5)
+        self.tags = tuple(tags)
+        self.thresholds = np.full(len(self.tags), .5)
 
     def fit(self, titles, labels):
         features = self.features.fit_transform([normalize(title) for title in titles])
-        for index, tag in enumerate(TAGS):
+        for index in range(len(self.thresholds)):
             target = labels[:, index]
             model = None
             if 2 <= target.sum() <= len(target) - 2:
@@ -119,7 +120,7 @@ class TitleTagger:
     def scores(self, titles):
         titles = list(titles)
         features = self.features.transform([normalize(title) for title in titles])
-        scores = np.zeros((len(titles), len(TAGS)))
+        scores = np.zeros((len(titles), len(self.thresholds)))
         for index, model in enumerate(self.models):
             if model is not None:
                 scores[:, index] = model.predict_proba(features)[:, 1]
@@ -128,7 +129,7 @@ class TitleTagger:
     def select_thresholds(self, titles, labels, reviewed=None):
         scores = self.scores(titles)
         sources = {}
-        for index, tag in enumerate(TAGS):
+        for index, tag in enumerate(getattr(self, 'tags', TAGS)):
             mask = reviewed if reviewed is not None and int(labels[reviewed, index].sum()) >= 5 else slice(None)
             sources[tag] = 'reviewed' if not isinstance(mask, slice) else 'all available validation labels'
             truth, column = labels[mask, index], scores[mask, index]
