@@ -98,8 +98,8 @@
     table($('cutoff-table'), ['Method', `Recall@${k}`, `NDCG@${k}`, `Precision@${k}`, `Hit rate@${k}`], methods.map((row) => {
       const score = scoresFromHitRanks(row.ranks, item.withheld_tracks, k);
       return [row.label, ...['recall', 'ndcg', 'precision', 'hit_rate'].map((m) => fixed(score[m]))];
-    }), `One saved ${item.seeds}-seed query; ${item.withheld_tracks} reference tracks`);
-    $('cutoff-note').textContent = `The same ${item.withheld_tracks} hidden tracks remain the reference set at every K. Only the inspected ranking prefix changes. Values are calculated from the recorded hit positions.`;
+    }), `One saved playlist with ${item.seeds} seeds and ${item.withheld_tracks} hidden songs`);
+    $('cutoff-note').textContent = `The hidden set stays at ${item.withheld_tracks} songs for every K. Increasing K checks more of the same recommendation list. These scores are calculated from the saved hit positions.`;
   }
   function renderEDA() {
     const eda = data.eda;
@@ -116,7 +116,7 @@
     const log = $('eda-scale').value === 'log';
     bars($('eda-support-chart'), support.labels.map((label, i) => ({label, value: support.counts[i]})), log);
     const head = full ? eda.top_one_percent_membership_share : part.top_one_percent_membership_share;
-    $('eda-support-note').textContent = `X ranges count playlist memberships per song. Bar lengths use ${log ? 'log10(count + 1)' : 'raw counts'}; labels show actual song counts. The most frequent 1% of songs account for ${percent(head)} of memberships in this scope.`;
+    $('eda-support-note').textContent = `Each range shows how many playlists a song appears in. Bar lengths use ${log ? 'log10(count + 1)' : 'raw counts'}; labels show actual song counts. The most frequent 1% of songs account for ${percent(head)} of memberships in this scope.`;
     const stats = full ? [['Playlists', eda.playlists], ['Training tracks', support.total]] :
       [['Pilot playlists', eda.playlists], ['Distinct tracks', part.distinct_tracks], ['Median length', part.playlist_length_quantiles.median], ['Repeated occurrences removed', eda.repeat_occurrences_removed]];
     $('eda-stats').replaceChildren();
@@ -129,7 +129,7 @@
   function renderAudit() {
     const report = data.studio_audit;
     if (!report) { $('studio-audit-status').textContent = 'No live-audit export is available.'; return; }
-    $('studio-audit-status').textContent = `${report.cases.length} fixed requests checked on ${report.measured_utc.slice(0, 10)}. ${report.all_contract_checks_passed ? 'All API contract checks passed.' : 'A contract check failed; inspect the table.'} These requests are deliberately chosen edge cases, not a random user sample.`;
+    $('studio-audit-status').textContent = `${report.cases.length} fixed requests checked on ${report.measured_utc.slice(0, 10)}. ${report.all_contract_checks_passed ? 'Every response met the expected API checks.' : 'A response failed an API check; see the table.'} These requests test specific difficult inputs. They do not estimate how often a user will encounter a problem.`;
     bars($('studio-audit-chart'), report.cases.filter((row) => row.http_status === 200).map((row) => ({label: CASE_NAMES[row.case], value: row.results, color: row.results ? '#84b8ff' : '#f4a8c4'})));
     table($('studio-audit-table'), ['Request', 'Results', 'Known seeds', 'Artist variety', 'What happened'], report.cases.map((row) => [
       CASE_NAMES[row.case], row.results, row.known_seeds === null ? 'Input rejected' : `${row.known_seeds}/${row.request.seeds.length}`,
@@ -146,7 +146,7 @@
     if (!cohort.queries) { $('studio-evaluation-chart').textContent = 'No eligible queries in this subset.'; $('studio-evaluation-table').replaceChildren(); return; }
     const k = Number($('studio-evaluation-k').value);
     $('studio-evaluation-results').hidden = false;
-    $('studio-evaluation-status').textContent = `${number(cohort.queries)} held-out queries; ${report.freeze.seeds} seeds each. Frozen settings were recorded before test scoring.`;
+    $('studio-evaluation-status').textContent = `${number(cohort.queries)} test playlists with ${report.freeze.seeds} seeds each. Model settings were fixed before scoring.`;
     const rows = report.methods.map((name, i) => ({label: MODEL_LABELS[name], color: COLORS[i], values: report.cutoffs.map((n) => cohort.cutoffs[n][name][metric])}));
     curves($('studio-evaluation-chart'), rows, metric, k);
     table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], report.methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => fixed(cohort.cutoffs[k][name][m]))]));
