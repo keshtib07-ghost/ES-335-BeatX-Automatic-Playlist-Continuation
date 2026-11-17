@@ -5,6 +5,17 @@ body[data-page="research"] { --research-pink: #f4a8c4; --research-purple: #c9a8f
 [data-page="research"] h3 { font-size: 22px; }
 [data-page="research"] main { overflow: clip; }
 [data-page="research"] .section { scroll-margin-top: 75px; }
+[data-page="research"] [id] { scroll-margin-top: 75px; }
+[data-page="research"] .section-heading a,
+[data-page="research"] td a,
+[data-page="research"] .research-caption a,
+[data-page="research"] .research-note a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+.research-task-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0 0 25px; }
+.research-task-facts > div { padding: 17px; border-left: 2px solid var(--green); background: var(--card); }
+.research-task-facts dt { font-size: 13px; font-weight: 600; }
+.research-task-facts dd { color: var(--muted); font-size: 13px; margin: 9px 0 0; }
+.research-scroll-table table { min-width: 680px; }
+.research-scroll-table:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 [data-page="research"] .table-wrap { overflow-x: auto; max-width: 100%; }
 [data-page="research"] table { width: 100%; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; font-size: 13px; }
 [data-page="research"] th, [data-page="research"] td { padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -144,6 +155,7 @@ body[data-page="research"] { --research-pink: #f4a8c4; --research-purple: #c9a8f
   .research-next span { grid-column: 2; }
 }
 @media (max-width: 540px) {
+  .research-task-facts { grid-template-columns: 1fr; }
   [data-page="research"] .shell { width: calc(100% - 32px); }
   [data-page="research"] .section { padding-block: 42px; }
   .research-summary { display: block; padding: 22px; }

@@ -20,6 +20,14 @@ The two ranking protocols use different cohorts and reference sets. Their three-
 
 The ranking-score and metric tools are labeled teaching examples. Only the budget-rule explorer uses saved validation scores; it does not change the published 95% rule. Expanded profiles, bass, treble, BPM, era and ALS/BPR have no measured ranking gain in these exports. Missing EDA distributions and validation-grid scores are explicitly described rather than invented. Current source code documents the implementation; it is not independent verification of the original private run.
 
+## Rubric map and beginner explanations
+
+The report maps all ten ES335 rubric criteria to sections without claiming a grade. The overview, training-scope table and viva questions distinguish the full CF training split from the 60,000-title classifier fitting cap and the all-training context aggregation pass. The cap is a configurable choice, not an experimentally established optimum.
+
+The unified Studio explanation is pinned to implementation commit `1fd19b1ecdd7a3546d52d21989de02d7582e0184`. Keep its 19-tag taxonomy, filter behaviour, boost grid and deployment status separate from the 12-tag A/B benchmarks and their selected weight 1. New evaluation scripts write local outputs; do not infer scores or the selected unified weight from the existence of those scripts. Update this source snapshot and its statements when verified implementation or deployment evidence changes.
+
+The method-status table separates weak baselines, structural failures, small gains, code revisions and untested proposals. The conclusion and viva notes use existing public evidence. Neither the rubric map nor this documentation update trains or evaluates a model. Research works on static GitHub Pages; current Studio generation needs a live Python API and must not substitute illustrative rankings.
+
 ## Update results
 
 After producing new frozen experiment exports through the existing pipeline, regenerate the public downloads:
