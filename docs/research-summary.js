@@ -5,7 +5,8 @@
     'overview', 'known-seeds', 'unknown-seeds', 'questions', 'features',
     'training-scope', 'evaluation', 'method', 'studio-pipeline', 'metrics',
     'seed-study', 'results', 'findings', 'limitations', 'what-tags-mean',
-    'eda', 'studio-evaluation', 'studio-audit', 'studio-failure-cases', 'method-status', 'conclusion', 'rubric', 'contributions', 'reproduce', 'playback'
+    'eda', 'studio-evaluation', 'studio-audit', 'studio-failure-cases', 'method-status', 'conclusion', 'rubric', 'contributions', 'reproduce', 'playback',
+    'feature-decisions', 'development-history', 'context-results', 'earlier-seed-study', 'evidence-status', 'data-details'
   ]);
   function openReportSection() {
     let section;

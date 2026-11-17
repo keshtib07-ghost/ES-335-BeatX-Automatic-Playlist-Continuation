@@ -10,9 +10,9 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-LABELS = {'popularity': 'Popularity', 'cf': 'Plain CF', 'standard_title': 'Standard title model',
-          'unified_no_title': 'Studio without title', 'unified': 'Studio',
-          'unified_seed_bpm': 'Studio + seed BPM'}
+LABELS = {'popularity': 'Popularity baseline', 'cf': 'CF baseline', 'standard_title': 'Earlier title method',
+          'unified_no_title': 'Final pipeline without title', 'unified': 'Final pipeline',
+          'unified_seed_bpm': 'Final pipeline + BPM filter'}
 
 
 def check(report, eda):
@@ -88,9 +88,9 @@ def summary_block(report):
     values = report['cohorts']['all_queries']['cutoffs']['20']
     delta = values['unified']['ndcg'] - values['cf']['ndcg']
     low, high = report['paired_unified_minus_cf_ndcg_at_20_95_ci']
-    return (f'<div class="research-card" id="summary-studio-results"><h3>Final Studio evaluation</h3>'
+    return (f'<div class="research-card" id="summary-studio-results"><h3>Final pipeline evaluation</h3>'
             + score_table(report, 'summary-studio', ('popularity', 'cf', 'unified', 'unified_seed_bpm')) +
-            f'<p>Studio recovers at least one hidden song in {100 * values["unified"]["hit_rate"]:.1f}% of queries. '
+            f'<p>The final pipeline recovers at least one hidden song in {100 * values["unified"]["hit_rate"]:.1f}% of queries. '
             f'Its NDCG gain over CF is {delta:+.5f}. The paired 95% interval is '
             f'[{low:+.5f}, {high:+.5f}], which includes zero. This sample does not establish a clear improvement over CF.</p>'
             '<p>The BPM filter lowers recovery. It increases artist variety, but that is a different objective.</p>'

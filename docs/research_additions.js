@@ -140,8 +140,16 @@
       row.artist_diversity === null ? 'No list' : percent(row.artist_diversity), row.note || 'Generated from seed evidence.']
     ), 'Live Studio behavior. Artist variety = distinct known artists / known-artist result slots.');
   }
-  const MODEL_LABELS = {popularity: 'Popularity', cf: 'Plain CF', standard_title: 'Standard title model', unified_no_title: 'Studio without title', unified: 'Studio', unified_seed_bpm: 'Studio + seed BPM'};
+  const MODEL_LABELS = {popularity: 'Popularity baseline', cf: 'CF baseline', standard_title: 'Earlier title method', unified_no_title: 'Final pipeline without title', unified: 'Final pipeline', unified_seed_bpm: 'Final pipeline + BPM filter'};
   const COLORS = ['#aab7c2', '#84b8ff', '#f4a8c4', '#c5a8fa', '#cefb70', '#ffd47c'];
+  function renderContextEffects() {
+    if (!$('final-context-chart') || !data.studio_evaluation) return;
+    const scores = data.studio_evaluation.cohorts.all_queries.cutoffs['20'];
+    bars($('final-context-chart'), ['cf', 'unified_no_title', 'unified'].map(name => ({
+      label: MODEL_LABELS[name], value: scores[name].ndcg,
+      text: scores[name].ndcg.toFixed(5), color: COLORS[data.studio_evaluation.methods.indexOf(name)]
+    })));
+  }
   function renderEvaluation() {
     const report = data.studio_evaluation;
     if (!report) return;
@@ -151,9 +159,11 @@
     const k = Number($('studio-evaluation-k').value);
     $('studio-evaluation-results').hidden = false;
     $('studio-evaluation-status').textContent = `${number(cohort.queries)} held-out queries; ${report.freeze.seeds} seeds each. Frozen settings were recorded before test scoring.`;
-    const rows = report.methods.map((name, i) => ({label: MODEL_LABELS[name], color: COLORS[i], values: report.cutoffs.map((n) => cohort.cutoffs[n][name][metric])}));
+    const comparisons = {main: ['popularity', 'cf', 'unified'], context: ['cf', 'standard_title', 'unified_no_title', 'unified'], tempo: ['unified', 'unified_seed_bpm'], all: report.methods};
+    const methods = comparisons[$('studio-evaluation-comparison')?.value || 'main'];
+    const rows = methods.map((name) => ({label: MODEL_LABELS[name], color: COLORS[report.methods.indexOf(name)], values: report.cutoffs.map((n) => cohort.cutoffs[n][name][metric])}));
     curves($('studio-evaluation-chart'), rows, metric, k);
-    table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], report.methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => fixed(cohort.cutoffs[k][name][m]))]));
+    table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => fixed(cohort.cutoffs[k][name][m]))]));
     const ci = report.paired_unified_minus_cf_ndcg_at_20_95_ci;
     $('studio-evaluation-note').textContent = `All-query paired 95% interval for Studio minus CF NDCG@20: [${ci.map(fixed).join(', ')}]. Across all queries, ${report.unified_failures.zero_hit_queries} had no recovered song and ${report.unified_failures.short_outputs} returned fewer than 20 songs. These counts and the interval describe the full cohort, including when the graph shows a subset.`;
   }
@@ -206,11 +216,11 @@
     renderStudioCase();
   }
   try {
-    renderCutoff(); renderEDA(); renderAudit(); renderEvaluation(); renderStudioDiagnostics();
+    renderCutoff(); renderEDA(); renderAudit(); renderEvaluation(); renderStudioDiagnostics(); renderContextEffects();
     ['cutoff-case', 'cutoff-metric'].forEach((id) => $(id).addEventListener('change', renderCutoff));
     $('cutoff-k').addEventListener('input', renderCutoff);
     ['eda-dimension', 'eda-partition', 'eda-scale'].forEach((id) => $(id).addEventListener('change', renderEDA));
-    ['studio-evaluation-metric', 'studio-evaluation-k', 'studio-evaluation-cohort'].forEach((id) => $(id).addEventListener('change', renderEvaluation));
+    ['studio-evaluation-metric', 'studio-evaluation-k', 'studio-evaluation-cohort', 'studio-evaluation-comparison'].forEach((id) => $(id)?.addEventListener('change', renderEvaluation));
     $('studio-case').addEventListener('change', renderStudioCase);
   } catch (error) {
     const status = $('research-status'); status.hidden = false;

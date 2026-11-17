@@ -6045,5 +6045,6 @@ window.BEATX_RESEARCH_ADDITIONS = {
       }
     },
     "scope": "Same sampled queries and references for all methods and cutoffs. The BPM ablation uses a prespecified +/-10 BPM window around the median of at least two known seed tempos; it falls back to ordinary Studio when tempo is unavailable. No hidden reference determines the tempo target. Explicit user tags are absent; their contract is checked separately. Unknown unrecorded development cohorts cannot be certified."
-  }
+  },
+  "studio_seed_study": null
 };
