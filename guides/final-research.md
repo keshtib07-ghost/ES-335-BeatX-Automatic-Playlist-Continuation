@@ -1,18 +1,28 @@
-# Finish the research evidence
+# Completed research evidence
 
 Research now starts with the two proposal questions. The K explorer rescales
 actual saved hit positions. It does not invent average scores at other cutoffs.
 
-The data plots were measured from all 20,000 pinned pilot playlists. Each source
-slice was checked against its Git blob hash. Those playlists belong to training.
-The plots are labelled as a subset, not a full-MPD distribution.
+The main data plots now cover all 1,000,000 staged playlists and separate the
+existing splits. The verified 20,000-playlist pilot remains available as earlier
+evidence. It is not substituted for the full distribution.
 
 The Studio audit sends 11 fixed requests to the deployed model. It includes
 unknown seeds and conflicting context. It checks a narrow tempo range and
 duplicate seed input. It does not write to Spotify. These are functional checks,
 not hidden-song recovery scores.
 
-## Evaluate the exact deployed model
+## Completed result
+
+The owner ran 1,000 held-out queries against the active Azure runtime. Studio
+reached NDCG@20 0.26347 and Recall@20 0.10662. Its paired gain over CF is
+uncertain. The BPM filter reduces recovery on the known-tempo subset.
+
+The saved freeze records 17 model/profile hashes and the runtime versions. It
+does not include source or enrichment database hashes. Keep those private input
+snapshots for reproduction; the model ID alone does not certify every input.
+
+## Evaluate the deployed model on a new protocol
 
 From the local repository where the existing Azure key is available:
 
@@ -63,8 +73,8 @@ before scoring. Unknown historical development sets still need an explicit
 record before calling the holdout completely untouched.
 
 The command also computes full EDA by split. It writes diagnostic Studio cases.
-The website loads the resulting reports automatically after the generated files
-are published. It keeps the old benchmark and seed curves under their own scope.
+The website loads the completed reports. Refresh their interpretation with
+`python -m scripts.review_research_results`; this reads scores without inference. It keeps the old benchmark and seed curves under their own scope.
 
 ## Repeat publication without repeating test evaluation
 
@@ -75,3 +85,13 @@ python scripts/export_research_bundle.py --check
 
 A completed test report cannot be overwritten. Re-exporting changes the display,
 not the evidence.
+
+## Check the completed public evidence
+
+```bash
+python -m scripts.review_research_results --check-only
+python scripts/export_research_bundle.py --check
+```
+
+The review checks metric bounds and prefix consistency. It reconciles distribution
+counts and recomputes each saved case’s NDCG difference from its hit ranks.

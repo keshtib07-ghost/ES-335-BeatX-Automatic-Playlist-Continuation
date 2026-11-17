@@ -13,6 +13,14 @@ BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-B
 
 The full run processed 1,000,000 playlists and trained collaborative filtering on 804,485. On a fixed sample of 5,000 fresh test playlists with three visible seeds, NDCG@20 was 0.0372 for popularity, 0.2497 for collaborative filtering, and 0.2513 for the selected title-aware ranker. Among the 657 queries with inferred tags, the last two scores were 0.20355 and 0.21572. These scores measure recovery of withheld tracks. The original 20,000-playlist pilot is documented below as a separate run.
 
+## Completed Studio study
+
+The deployed pipeline was evaluated on 1,000 fresh five-seed queries. Recall@20 is 0.10662 and NDCG@20 is 0.26347. Plain CF reaches 0.26245 NDCG; the paired difference interval is [-0.00048, 0.00241], so the extra gain is uncertain. Studio has a Hit Rate of 0.806 and 194 zero-hit queries.
+
+On 947 queries with known seed tempo, a fixed BPM filter lowers NDCG from 0.26487 to 0.17011. Artist variety rises from 55.17% to 69.94%. These are different objectives. The earlier three-seed benchmark and the pilot below keep their own protocols.
+
+See [final-research.md](final-research.md) for the completed report and reproduction.
+
 ## 1. Set up the local environment
 
 Use Python 3.11 or newer. Python 3.12 is the version used for the reference run.

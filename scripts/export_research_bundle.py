@@ -73,7 +73,10 @@ def build_exports(source_dir):
             'benchmark': 'Three seeds; 5000 test queries; every remaining track is a reference.',
             'seed_study': study['reference_protocol'],
             'sequence': 'Same 20 known tracks, first fixed; original directed adjacency recovery.',
+            'studio': '1000 fresh held-out groups; five seeds; frozen deployed settings; K=1..20. BPM uses a fixed seed-derived window and has a 947-query eligible subset.',
         },
+        'studio_cohort_note': 'The original Studio report calls one cohort title_tagged. Its mask means any combined context, including seed-derived tags. It is not title-classifier coverage.',
+        'studio_integrity_note': 'The completed report records model/profile hashes and runtime versions. Its freeze does not include source/enrichment database hashes. Do not infer complete input-byte certification from the model ID.',
         'not_evaluated_in_ranking_benchmark': [
             'Unified Studio ranker', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
@@ -112,6 +115,15 @@ def build_exports(source_dir):
     outputs['marginal_gains.csv'] = csv_text(['partition', 'from_seeds', 'to_seeds', 'ndcg_delta',
                                            'ndcg_per_added_seed', 'paired_total_delta_ci_low',
                                            'paired_total_delta_ci_high'], marginal_rows)
+    studio = additions.get('studio_evaluation')
+    if studio:
+        rows = []
+        for cohort, result in studio['cohorts'].items():
+            for cutoff, methods in result['cutoffs'].items():
+                for method, metrics in methods.items():
+                    for metric, value in metrics.items():
+                        rows.append([cohort, result['queries'], studio['freeze']['seeds'], cutoff, method, metric, value])
+        outputs['studio_scores.csv'] = csv_text(['cohort', 'queries', 'seeds', 'k', 'method', 'metric', 'value'], rows)
     outputs['provenance.json'] = json.dumps(provenance, indent=2, ensure_ascii=False, allow_nan=False) + '\n'
     outputs['research_bundle.json'] = json.dumps({'provenance': provenance, **reports, 'additions': additions}, indent=2,
                                                 ensure_ascii=False, allow_nan=False) + '\n'

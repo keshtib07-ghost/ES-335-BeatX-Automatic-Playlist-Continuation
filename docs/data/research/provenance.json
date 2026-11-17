@@ -23,8 +23,11 @@
   "protocols": {
     "benchmark": "Three seeds; 5000 test queries; every remaining track is a reference.",
     "seed_study": "Same playlist cohort and reference set at every budget. First 20 deterministic shuffled tracks form the seed pool. Unrevealed seed-pool tracks may be candidates but do not receive credit.",
-    "sequence": "Same 20 known tracks, first fixed; original directed adjacency recovery."
+    "sequence": "Same 20 known tracks, first fixed; original directed adjacency recovery.",
+    "studio": "1000 fresh held-out groups; five seeds; frozen deployed settings; K=1..20. BPM uses a fixed seed-derived window and has a 947-query eligible subset."
   },
+  "studio_cohort_note": "The original Studio report calls one cohort title_tagged. Its mask means any combined context, including seed-derived tags. It is not title-classifier coverage.",
+  "studio_integrity_note": "The completed report records model/profile hashes and runtime versions. Its freeze does not include source/enrichment database hashes. Do not infer complete input-byte certification from the model ID.",
   "not_evaluated_in_ranking_benchmark": [
     "Unified Studio ranker",
     "Expanded song profiles",

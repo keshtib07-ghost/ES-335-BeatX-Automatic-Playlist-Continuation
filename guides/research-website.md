@@ -52,3 +52,5 @@ The additional checks cover download fidelity/staleness, safe parsing, metric ar
 The proposal questions appear first. `research_additions.js` renders K-dependent case metrics and measured EDA. It also displays the live Studio audit. `research_extra_data.js` contains those measured reports.
 
 See [final-research.md](final-research.md) to score the exact deployed pipeline. The command publishes true mean metrics at every K and full EDA by split. It keeps the older experiments separate.
+
+Run `python -m scripts.review_research_results` to validate a completed report and refresh its static score tables. Regenerate additions and the result bundle afterward. This does not rerun inference or change the raw evaluation.

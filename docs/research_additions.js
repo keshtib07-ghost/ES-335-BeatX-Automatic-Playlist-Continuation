@@ -17,6 +17,7 @@
   const fixed = (v) => Number(v).toFixed(4);
   const percent = (v) => `${(100 * v).toFixed(2)}%`;
   const METRICS = {recall: 'Recall', ndcg: 'NDCG', precision: 'Precision', hit_rate: 'Hit rate'};
+  const LABELS = {...METRICS, artist_diversity: 'Artist variety', catalogue_coverage: 'Catalogue coverage'};
   function element(tag, text, cls) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
@@ -58,14 +59,15 @@
     return node;
   }
   function curves(target, series, metric, selectedK) {
-    const chart = svg('svg', {viewBox: '0 0 760 310', role: 'img', 'aria-label': `${(METRICS[metric] || metric)} by K. The exact selected values follow in the table.`});
-    chart.append(svg('title', {}, `${(METRICS[metric] || metric)} as K changes`));
+    const chart = svg('svg', {viewBox: '0 0 760 310', role: 'img', 'aria-label': `${LABELS[metric]} by K. The exact selected values follow in the table.`});
+    chart.append(svg('title', {}, `${LABELS[metric]} as K changes`));
     const left = 64, right = 730, top = 26, bottom = 255;
+    const maximum = metric === 'catalogue_coverage' ? Math.max(.00001, ...series.flatMap((row) => row.values)) * 1.12 : 1;
     const x = (k) => left + (k - 1) / 19 * (right - left);
-    const y = (v) => bottom - v * (bottom - top);
-    [0, .25, .5, .75, 1].forEach((v) => {
+    const y = (v) => bottom - v / maximum * (bottom - top);
+    [0, .25, .5, .75, 1].map((fraction) => fraction * maximum).forEach((v) => {
       chart.append(svg('line', {x1: left, x2: right, y1: y(v), y2: y(v), class: 'grid'}));
-      chart.append(svg('text', {x: left - 9, y: y(v) + 4, 'text-anchor': 'end'}, v.toFixed(2)));
+      chart.append(svg('text', {x: left - 9, y: y(v) + 4, 'text-anchor': 'end'}, metric === 'catalogue_coverage' ? percent(v) : v.toFixed(2)));
     });
     [1, 5, 10, 15, 20].forEach((k) => chart.append(svg('text', {x: x(k), y: bottom + 22, 'text-anchor': 'middle'}, k)));
     chart.append(svg('line', {x1: x(selectedK), x2: x(selectedK), y1: top, y2: bottom, stroke: '#fff', 'stroke-dasharray': '4 4'}));
@@ -74,7 +76,7 @@
       const dot = svg('circle', {cx: x(selectedK), cy: y(row.values[selectedK - 1]), r: 5, fill: row.color});
       dot.append(svg('title', {}, `${row.label} at K=${selectedK}: ${fixed(row.values[selectedK - 1])}`)); chart.append(dot);
     });
-    chart.append(svg('text', {x: left, y: 16}, METRICS[metric] || metric));
+    chart.append(svg('text', {x: left, y: 16}, LABELS[metric]));
     chart.append(svg('text', {x: 400, y: 304, 'text-anchor': 'middle'}, 'K: number of recommendations inspected'));
     const legend = element('div', undefined, 'research-legend');
     series.forEach((row) => {
@@ -116,12 +118,14 @@
     const log = $('eda-scale').value === 'log';
     bars($('eda-support-chart'), support.labels.map((label, i) => ({label, value: support.counts[i]})), log);
     const head = full ? eda.top_one_percent_membership_share : part.top_one_percent_membership_share;
-    $('eda-support-note').textContent = `Each range shows how many playlists a song appears in. Bar lengths use ${log ? 'log10(count + 1)' : 'raw counts'}; labels show actual song counts. The most frequent 1% of songs account for ${percent(head)} of memberships in this scope.`;
-    const stats = full ? [['Playlists', eda.playlists], ['Training tracks', support.total]] :
+    $('eda-support-note').textContent = `Ranges count playlist memberships per song. Bar lengths use ${log ? 'log10(count + 1)' : 'raw counts'}; labels show actual song counts. The most frequent 1% account for ${percent(head)} of ${full ? 'training' : 'pilot'} memberships. ${full ? 'This song histogram stays on training data when the playlist-shape selector changes split.' : ''}`;
+    const stats = full ? [['Playlists', eda.playlists], ['Training tracks', support.total],
+      ['Training songs seen once', support.counts[support.labels.indexOf('1–1')]],
+      ['Exact-copy groups', Object.values(eda.partitions).reduce((total, row) => total + row.duplicate_group_size.total, 0)]] :
       [['Pilot playlists', eda.playlists], ['Distinct tracks', part.distinct_tracks], ['Median length', part.playlist_length_quantiles.median], ['Repeated occurrences removed', eda.repeat_occurrences_removed]];
     $('eda-stats').replaceChildren();
     stats.forEach(([label, value]) => {const card = element('article'); card.append(element('strong', number(value)), element('span', label)); $('eda-stats').append(card);});
-    $('eda-quality').textContent = full ? 'Each plot uses the existing split. No preprocessing choices are selected from these distributions.' :
+    $('eda-quality').textContent = full ? `The most frequent 1% of training songs account for ${percent(head)} of training memberships. Nearly half of training songs appear in just one playlist. This helps explain why popularity alone is limited and why rare songs have weak co-occurrence evidence. Split plots are descriptive; they do not choose model settings.` :
       `This pilot contains ${number(part.singleton_tracks)} songs seen in just one playlist. Exact set grouping finds ${part.extra_exact_group_members} extra copies. ${part.non_ascii_titles} titles contain non-ASCII characters; this is not a language label.`;
     $('eda-download').href = full ? 'data/research/eda_full.json' : 'data/research/eda_pilot.json';
   }
@@ -142,23 +146,72 @@
     const report = data.studio_evaluation;
     if (!report) return;
     const cohort = report.cohorts[$('studio-evaluation-cohort').value], metric = $('studio-evaluation-metric').value;
-    const evaluationMetrics = {...METRICS, artist_diversity: 'Artist variety', catalogue_coverage: 'Catalogue coverage'};
+    const evaluationMetrics = LABELS;
     if (!cohort.queries) { $('studio-evaluation-chart').textContent = 'No eligible queries in this subset.'; $('studio-evaluation-table').replaceChildren(); return; }
     const k = Number($('studio-evaluation-k').value);
     $('studio-evaluation-results').hidden = false;
-    $('studio-evaluation-status').textContent = `${number(cohort.queries)} test playlists with ${report.freeze.seeds} seeds each. Model settings were fixed before scoring.`;
+    $('studio-evaluation-status').textContent = `${number(cohort.queries)} held-out queries; ${report.freeze.seeds} seeds each. Frozen settings were recorded before test scoring.`;
     const rows = report.methods.map((name, i) => ({label: MODEL_LABELS[name], color: COLORS[i], values: report.cutoffs.map((n) => cohort.cutoffs[n][name][metric])}));
     curves($('studio-evaluation-chart'), rows, metric, k);
     table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], report.methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => fixed(cohort.cutoffs[k][name][m]))]));
     const ci = report.paired_unified_minus_cf_ndcg_at_20_95_ci;
     $('studio-evaluation-note').textContent = `All-query paired 95% interval for Studio minus CF NDCG@20: [${ci.map(fixed).join(', ')}]. Across all queries, ${report.unified_failures.zero_hit_queries} had no recovered song and ${report.unified_failures.short_outputs} returned fewer than 20 songs. These counts and the interval describe the full cohort, including when the graph shows a subset.`;
   }
+  function renderStudioCase() {
+    const report = data.studio_evaluation;
+    if (!report) return;
+    const name = $('studio-case').value, item = report.cases[name];
+    if (!item) return;
+    table($('studio-case-facts'), ['Known seeds', 'Hidden songs', 'Training-unseen references', 'CF candidate recall', 'Change in NDCG@20'], [[
+      `${item.known_seeds}/${report.freeze.seeds}`, item.reference_count, item.unseen_references,
+      percent(item.candidate_recall), item.ndcg_delta.toFixed(5)
+    ]]);
+    $('studio-case-ranks').replaceChildren();
+    [['Plain CF', item.hit_ranks.cf], ['Studio', item.hit_ranks.unified]].forEach(([label, hits]) => {
+      const line = element('div', undefined, 'research-rank-line');
+      line.append(element('p', `${label}: ${hits.length} recovered songs`));
+      const cells = element('div', undefined, 'research-rank-cells');
+      for (let rank = 1; rank <= 20; rank++) {
+        const cell = element('span', String(rank), hits.includes(rank) ? 'hit' : '');
+        cell.setAttribute('aria-label', `Rank ${rank}: ${hits.includes(rank) ? 'held-out hit' : 'no recovery credit'}`);
+        cells.append(cell);
+      }
+      line.append(cells); $('studio-case-ranks').append(line);
+    });
+    $('studio-case-reason').textContent = {
+      largest_gain: 'Studio recovers 16 hidden songs versus CF’s 13. Only three of five seeds are training-known, and 22 hidden songs are absent from training. The saved ranks show a useful reranking gain; they do not verify the meaning of the inferred tags.',
+      largest_loss: 'Both methods recover the same two songs. Studio moves the first hit from rank 1 to rank 2, so NDCG falls even though Recall stays at 1. This is a ranking loss rather than missing candidates.',
+      first_zero_hit: 'All six hidden songs exist in the CF candidate pool. CF places one at rank 19; Studio places none in its first 20. Retrieval found the references, but the final ranking missed them.'
+    }[name];
+  }
+  function renderStudioDiagnostics() {
+    const report = data.studio_evaluation;
+    if (!report) return;
+    const all = report.cohorts.all_queries;
+    bars($('studio-recovery-chart'), [
+      {label: 'At least one recovered song', value: all.queries - report.unified_failures.zero_hit_queries, color: '#cefb70'},
+      {label: 'No recovered song', value: report.unified_failures.zero_hit_queries, color: '#f4a8c4'}
+    ]);
+    bars($('studio-cold-chart'), ['all_seeds_known', 'some_seeds_unseen'].map((key) => {
+      const cohort = report.cohorts[key];
+      return {label: `${key === 'all_seeds_known' ? 'All seeds known' : 'Some seeds unseen'} (${cohort.queries} queries)`,
+        value: cohort.cutoffs['20'].unified.ndcg,
+        text: cohort.cutoffs['20'].unified.ndcg.toFixed(5), color: '#84b8ff'};
+    }));
+    const tempo = report.cohorts.seed_tempo_available;
+    table($('studio-tempo-table'), ['Method', 'Recall@20', 'NDCG@20', 'Artist variety'], ['unified', 'unified_seed_bpm'].map((method) => {
+      const value = tempo.cutoffs['20'][method];
+      return [MODEL_LABELS[method], value.recall.toFixed(5), value.ndcg.toFixed(5), percent(value.artist_diversity)];
+    }), `Same ${tempo.queries} queries with at least two known seed tempos`);
+    renderStudioCase();
+  }
   try {
-    renderCutoff(); renderEDA(); renderAudit(); renderEvaluation();
+    renderCutoff(); renderEDA(); renderAudit(); renderEvaluation(); renderStudioDiagnostics();
     ['cutoff-case', 'cutoff-metric'].forEach((id) => $(id).addEventListener('change', renderCutoff));
     $('cutoff-k').addEventListener('input', renderCutoff);
     ['eda-dimension', 'eda-partition', 'eda-scale'].forEach((id) => $(id).addEventListener('change', renderEDA));
     ['studio-evaluation-metric', 'studio-evaluation-k', 'studio-evaluation-cohort'].forEach((id) => $(id).addEventListener('change', renderEvaluation));
+    $('studio-case').addEventListener('change', renderStudioCase);
   } catch (error) {
     const status = $('research-status'); status.hidden = false;
     status.textContent = 'A chart could not load. The saved reports remain available below.';

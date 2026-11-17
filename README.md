@@ -55,13 +55,13 @@ node --test tests/*.cjs
 
 ## Research updates
 
-The two proposal questions lead both Research pages. The report includes a K explorer based on actual saved cases. Measured pilot distributions explain the data. Eleven live Studio requests document fallback and filtering limits.
+The two proposal questions lead both Research pages. The report includes a K explorer based on actual saved cases. Full-data distributions cover each split. Eleven live Studio requests document fallback and filtering limits.
 
-[Finish the frozen Studio evaluation and full EDA](guides/final-research.md). The Azure command uses the active model in a separate read-only evaluation process. No new Studio accuracy is claimed until that run finishes.
+[Completed Studio evaluation and reproduction steps](guides/final-research.md). On 1,000 five-seed held-out queries, Studio reaches Recall@20 of 0.10662 and NDCG@20 of 0.26347. Its gain over plain CF is uncertain. The fixed seed-tempo filter lowers recovery.
 
 ## Recorded evidence
 
-Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The unified Studio pipeline uses expanded profiles and has a separate evaluation protocol.
+Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The unified Studio pipeline is evaluated separately on 1,000 fresh five-seed queries. Compare methods within each study.
 
 These scores measure withheld-track recovery. Playlist-title labels do not establish perceived musical mood. The original 20,000-playlist pilot is documented separately in the [model study](guides/model-study.md). Published aggregates are available on the Research page; trained arrays are not included in the source clone.
 
