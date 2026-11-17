@@ -2,7 +2,7 @@
 
 Seed-based playlist continuation for ES335. BeatX studies how seed count affects recommendation quality and whether title-derived context improves collaborative filtering.
 
-[Playlist Studio](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/) · [Research](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research.html) · [Getting started](guides/getting-started.md)
+[Playlist Studio](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/) · [Research Summary](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research.html) · [Research Deep Dive](https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/research-deep-dive.html) · [Getting started](guides/getting-started.md)
 
 ## Current deployment status
 

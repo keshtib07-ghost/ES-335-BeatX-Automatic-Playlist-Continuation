@@ -1,12 +1,12 @@
 # Research page and evidence downloads
 
-The report lives in `docs/research.html`, with its own `research.css` and `research.js`. Studio and the shared stylesheet are unchanged. Serve the static site from the repository root:
+Research opens with a short summary at `docs/research.html`. The full report and all its interactions live at `docs/research-deep-dive.html`, using `research.css` and `research.js`. Both pages have Summary / Deep Dive navigation; the summary ends with a full-report link. Existing section bookmarks at `research.html#...` route to the corresponding Deep Dive section through `research-summary.js`. Studio's navigation still points to `research.html`; its API configuration is preserved. Serve the static site from the repository root:
 
 ```bash
 python -m http.server 8765 --directory docs
 ```
 
-Open `http://localhost:8765/research.html`. Studio can also be opened from this server, but its full local-model API requires the server described in [site.md](website.md). A `/api/status` 404 on a plain static server is an expected Studio probe.
+Open `http://localhost:8765/research.html` for the summary or `http://localhost:8765/research-deep-dive.html` for the full report. Studio can also be opened from this server, but its full local-model API requires the server described in [site.md](website.md). A `/api/status` 404 on a plain static server is an expected Studio probe.
 
 ## Evidence and scope
 
@@ -22,7 +22,7 @@ The ranking-score and metric tools are labeled teaching examples. Only the budge
 
 ## Rubric map and beginner explanations
 
-The report starts with “How our model works,” before the analysis. It traces offline preparation, a playlist name plus three training-known seeds, partial/complete unknown-seed fallback, title and song tagging, CF retrieval, filters, optional context boost and output. It is a source-checked explanation of unified Studio, not a new experiment. The rubric map is retained near the end, after the conclusion. Limitations contains the requested “What the tags mean” note, which distinguishes playlist grouping from listener verification.
+The Deep Dive starts with “How our model works,” before the analysis. It traces offline preparation, a playlist name plus three training-known seeds, partial/complete unknown-seed fallback, title and song tagging, CF retrieval, filters, optional context boost and output. It is a source-checked explanation of unified Studio, not a new experiment. The rubric map is retained near the end, after the conclusion. Limitations contains the requested “What the tags mean” note, which distinguishes playlist grouping from listener verification. The summary condenses these points, the two experimental protocols, results and limitations; optional details and topic links preserve access to the complete evidence.
 
 The report maps all ten ES335 rubric criteria to sections without claiming a grade. The overview, training-scope table and viva questions distinguish the full CF training split from the 60,000-title classifier fitting cap and the all-training context aggregation pass. The cap is a configurable choice, not an experimentally established optimum.
 

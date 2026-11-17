@@ -2,6 +2,7 @@
 import csv
 import io
 import json
+from html.parser import HTMLParser
 from pathlib import Path
 import tempfile
 import unittest
@@ -10,6 +11,39 @@ from scripts.export_research_bundle import ROOT, build_exports, export, read_pub
 
 
 class ResearchExportTests(unittest.TestCase):
+    def test_summary_scores_match_published_benchmark(self):
+        class Scores(HTMLParser):
+            active = False
+
+            def __init__(self):
+                super().__init__()
+                self.values = []
+                self.in_value = False
+
+            def handle_starttag(self, tag, attrs):
+                if tag == 'table' and dict(attrs).get('id') == 'summary-benchmark':
+                    self.active = True
+                if self.active and tag == 'td':
+                    self.in_value = True
+
+            def handle_endtag(self, tag):
+                if tag == 'table':
+                    self.active = False
+                if tag == 'td':
+                    self.in_value = False
+
+            def handle_data(self, value):
+                if self.active and self.in_value and value.strip():
+                    self.values.append(value.strip())
+
+        parser = Scores()
+        parser.feed((ROOT / 'docs/research.html').read_text(encoding='utf-8'))
+        benchmark = read_public_script(ROOT / 'docs/experiment.js', 'NEXT_TRACK_EXPERIMENT')
+        expected = [f'{benchmark["all_queries"][method][metric]:.5f}'
+                    for method in ('popularity', 'collaborative_filtering', 'selected_tag_ranker')
+                    for metric in ('ndcg_at_20', 'recall_at_20')]
+        self.assertEqual(parser.values, expected)
+
     def test_csv_values_are_identical_to_public_source(self):
         outputs = build_exports(ROOT / 'docs')
         bundle = json.loads(outputs['research_bundle.json'])

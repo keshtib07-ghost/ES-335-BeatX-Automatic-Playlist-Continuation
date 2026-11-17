@@ -1,6 +1,6 @@
 # BeatX website
 
-BeatX has two separate pages. `docs/index.html` is the Playlist Studio. `docs/research.html` contains the measured results and study interactions. The Studio requests rankings from the trained Python API. See [deployment](deployment.md) to connect a hosted model to GitHub Pages. If no backend is connected, Studio reports the missing connection and disables generation. It does not substitute illustrative rankings. The local server below also serves actual trained-model recommendations.
+BeatX has three pages. `docs/index.html` is the Playlist Studio. `docs/research.html` is the default Research Summary; `docs/research-deep-dive.html` keeps the complete report, measured results and study interactions. The research pages link through Summary / Deep Dive navigation. The Studio requests rankings from the trained Python API. See [deployment](deployment.md) to connect a hosted model to GitHub Pages. If no backend is connected, Studio reports the missing connection and disables generation. It does not substitute illustrative rankings. The local server below also serves actual trained-model recommendations.
 
 ## Run locally
 
@@ -30,7 +30,7 @@ To inspect the static interface without a Python model, serve just the `docs/` d
 python3 -m http.server 8001 --directory docs
 ```
 
-Open `http://127.0.0.1:8001`. The Studio should report a disconnected model unless `docs/config.js` points to a running API. Open `research.html` and change the cohort in **Results** to switch between 5,000 and 660 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. The narrative and split counts in `index.html` describe the verified November 15 submission run. Update them if publishing results from a different experiment.
+Open `http://127.0.0.1:8001`. The Studio should report a disconnected model unless `docs/config.js` points to a running API. Open `research.html` for the summary, then choose **Deep Dive** and change the cohort in **Results** to switch between 5,000 and 660 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. Update the report and summary together when publishing results from a different experiment.
 
 ## Publish when ready
 

@@ -11,7 +11,7 @@ function node(tag, content, className) {
 // Keep old research bookmarks working after the page split.
 if (document.body.dataset.page === 'studio' &&
     ['#seed-study', '#results', '#features', '#method', '#reproduce', '#findings'].includes(location.hash)) {
-  location.replace(new URL(`research.html${location.hash}`, location.href).href);
+  location.replace(new URL(`research-deep-dive.html${location.hash}`, location.href).href);
 }
 const sourceLink = document.getElementById('source-link');
 if (sourceLink) {
