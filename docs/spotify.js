@@ -131,7 +131,7 @@ class SpotifyStudio {
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     const response = await this.request(`https://api.spotify.com/v1${path}`,
       {method, headers, body: JSON.stringify(body), signal: AbortSignal.timeout(20000)});
-    if (response.status === 401) {
+    if (response.status === 401 || response.status === 403) {
       this.accessToken = null;
       this.store.removeItem(spotifyStorage.token);
     }

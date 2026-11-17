@@ -13,9 +13,9 @@
   <script src="config.js?v=azure-https" defer></script>
   <script src="common.js" defer></script>
   <script src="model_api.js" defer></script>
-  <script src="spotify.js?v=playlist-description" defer></script>
+  <script src="spotify.js?v=save-flow" defer></script>
   <script src="filters.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=save-flow" defer></script>
 </head>
 <body data-page="studio">
   <a class="skip" href="#main">Skip to content</a>
@@ -45,11 +45,14 @@
           <div class="match-list" id="track-matches" aria-label="Track search results"></div>
           <button type="button" class="button secondary" id="search-more" hidden>More matches</button>
           <button type="submit" class="button primary" id="get-recs" disabled>Recommend tracks <span aria-hidden="true">→</span></button>
-          <button type="submit" class="button secondary" id="recommend-and-save" disabled hidden>Generate &amp; save to Spotify</button>
           <p class="small status" id="demo-status" role="status"></p>
         </form>
         <div class="output-panel"><div class="playlist-cover"><div class="cover-art" id="generated-cover" aria-hidden="true"><i></i><i></i><i></i></div><div><span class="mode-label" id="mode-label">Connecting to model</span><h3 id="generated-title">Your playlist</h3><p class="small" id="inferred-tags" aria-live="polite">Add a title, seed tracks, or filters to get started.</p></div></div><div class="playlist-tools"><div class="segments" role="group" aria-label="Playlist order"><button type="button" id="relevance-order" aria-pressed="true">Relevance</button><button type="button" id="playback-order" aria-pressed="false" disabled>Playback flow</button></div><span class="small" id="generation-evidence"></span></div>
-          <div class="spotify-tools" id="spotify-tools"><button type="button" class="button secondary" id="connect-spotify">Connect Spotify</button><button type="button" class="button primary" id="save-spotify" disabled>Create Spotify playlist</button><a id="spotify-playlist-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify ↗</a><button id="copy-playlist-link" class="button secondary" type="button" hidden>Copy playlist link</button><p id="spotify-status" role="status" class="small"></p></div>
+          <div class="spotify-tools" id="spotify-tools" hidden>
+            <button type="button" class="button primary" id="save-spotify" disabled>Save to Spotify</button>
+            <a id="spotify-playlist-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify ↗</a>
+            <p id="spotify-status" role="status" class="small"></p>
+          </div>
           <p class="small filter-note" id="filter-note" role="status" hidden></p>
           <ol class="track-list" id="track-list" aria-label="Recommended tracks"></ol><p class="small live-note">Album artwork and track links are provided by Spotify. <a href="research.html">Read the measured model results.</a></p></div>
       </div>

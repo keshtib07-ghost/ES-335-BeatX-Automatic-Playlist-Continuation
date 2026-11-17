@@ -14,7 +14,6 @@ const maxSeeds = 20;
 const filterUI = setupFilters();
 let spotify;
 let savingSpotify = false;
-let pendingSpotifySave = false;
 const artworkLoader = new SpotifyArtwork();
 
 function artwork(track) {
@@ -108,7 +107,7 @@ window.addEventListener('pagehide', () => {
 function showSpotifyLink(url) {
   const link = select('spotify-playlist-link');
   link.hidden = !url;
-  select('copy-playlist-link').hidden = !url;
+  select('save-spotify').hidden = Boolean(url);
   if (url) link.href = url;
   else link.removeAttribute('href');
 }
@@ -116,54 +115,39 @@ function showSpotifyLink(url) {
 function configureSpotify(clientId) {
   if (!spotifyClientId(clientId)) return;
   spotify = new SpotifyStudio(clientId);
-  select('connect-spotify').textContent = spotify.connected ? 'Reconnect Spotify' : 'Connect Spotify';
 }
 
-function ensureSpotify(saveAfter) {
+function ensureSpotify() {
   if (spotify) return true;
-  pendingSpotifySave = saveAfter;
   select('spotify-redirect-uri').textContent = spotifyRedirectUri();
   select('spotify-setup').showModal();
   return false;
 }
 
-async function connectSpotify() {
-  if (!ensureSpotify(false)) return;
-  try {
-    await spotify.authorize(spotifyDraft(), false);
-  } catch (error) {
-    select('spotify-status').textContent = error.message;
-  }
-}
-
 async function saveSpotify(draft = spotifyDraft()) {
-  if (!realMode || draft?.realMode !== true || savingSpotify || !draft.ids.length || !ensureSpotify(true)) return;
+  if (!realMode || draft?.realMode !== true || savingSpotify || !draft.ids.length || !ensureSpotify()) return;
   const status = select('spotify-status');
   showSpotifyLink(null);
   savingSpotify = true;
   select('save-spotify').disabled = true;
-  select('recommend-and-save').disabled = true;
   try {
     if (!spotify.connected) {
       await spotify.authorize(draft, true);
       return;
     }
     status.textContent = 'Creating your Spotify playlist…';
-    const url = await spotify.save(draft);
-    // Display only a completed playlist for the order currently on screen.
-    if (spotify.playlistKey(draft) === spotify.playlistKey(spotifyDraft())) showSpotifyLink(url);
-    status.textContent = `Saved ${draft.ids.length} recommended tracks to Spotify.`;
+    await spotify.save(draft);
+    if (spotify.playlistKey(draft) === spotify.playlistKey(spotifyDraft())) {
+      status.textContent = `Saved ${draft.ids.length} recommended tracks to Spotify.`;
+    }
   } catch (error) {
-    status.textContent = `${error.message} Use Create Spotify playlist to retry.`;
+    status.textContent = `${error.message} Use Save to Spotify to retry.`;
   } finally {
     savingSpotify = false;
     renderPlaylist();
-    select('recommend-and-save').disabled = !realMode;
-    select('connect-spotify').textContent = spotify.connected ? 'Reconnect Spotify' : 'Connect Spotify';
   }
 }
 
-select('connect-spotify').addEventListener('click', connectSpotify);
 select('save-spotify').addEventListener('click', () => saveSpotify());
 select('close-spotify-setup').addEventListener('click', () => select('spotify-setup').close());
 select('spotify-setup-form').addEventListener('submit', async (event) => {
@@ -173,16 +157,7 @@ select('spotify-setup-form').addEventListener('submit', async (event) => {
   configureSpotify(clientId);
   try { localStorage.setItem('beatx.spotify.clientId', clientId.toLowerCase()); } catch {}
   select('spotify-setup').close();
-  if (pendingSpotifySave) await saveSpotify();
-  else await connectSpotify();
-});
-select('copy-playlist-link').addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(select('spotify-playlist-link').href);
-    select('spotify-status').textContent = 'Spotify playlist link copied.';
-  } catch {
-    select('spotify-status').textContent = 'Open the Spotify link and copy its address.';
-  }
+  await saveSpotify();
 });
 
 function showSeeds() {
@@ -248,6 +223,7 @@ function renderPlaylist() {
   const list = orderedTracks();
   select('track-list').replaceChildren(...list.map(trackRow));
   select('generated-cover').replaceChildren(...list.slice(0, 4).map(artwork));
+  select('spotify-tools').hidden = !list.length;
   select('save-spotify').disabled = savingSpotify || !list.length || !list.every((track) => spotifyTrackId(track.id));
   showSpotifyLink(spotify?.savedPlaylist(spotifyDraft()) || null);
   select('relevance-order').setAttribute('aria-pressed', String(!playbackMode));
@@ -269,8 +245,6 @@ async function recommend(event) {
   event?.preventDefault();
   const generation = ++recommendGeneration;
   const button = select('get-recs');
-  const saveButton = select('recommend-and-save');
-  const saveWhenReady = event?.submitter === saveButton;
   const status = select('demo-status');
   status.textContent = '';
   if (!realMode) {
@@ -278,7 +252,6 @@ async function recommend(event) {
     return;
   }
   button.disabled = true;
-  saveButton.disabled = true;
   try {
     const title = select('playlist-title').value;
     const result = await modelApi.recommend({
@@ -292,11 +265,10 @@ async function recommend(event) {
     lastResult = result;
     playbackMode = false;
     renderPlaylist();
-    if (saveWhenReady && result.tracks.length) await saveSpotify();
   } catch (error) {
     if (generation === recommendGeneration) status.textContent = error.message || 'Recommendation failed.';
   } finally {
-    if (generation === recommendGeneration) button.disabled = saveButton.disabled = !realMode;
+    if (generation === recommendGeneration) button.disabled = !realMode;
   }
 }
 
@@ -310,7 +282,7 @@ select('relevance-order').addEventListener('click', () => { playbackMode = false
 select('playback-order').addEventListener('click', () => { playbackMode = true; renderPlaylist(); });
 select('demo-form').addEventListener('submit', recommend);
 function setModelControls(ready) {
-  for (const id of ['get-recs', 'recommend-and-save', 'track-search']) {
+  for (const id of ['get-recs', 'track-search']) {
     select(id).disabled = !ready;
   }
   select('search-more').hidden = true;
@@ -349,7 +321,6 @@ async function initializeStudio() {
   const query = new URL(location.href).searchParams;
   const pending = (query.has('code') || query.has('error')) ? storedJson(sessionStorage, spotifyStorage.auth) : null;
   configureSpotify(pending?.clientId || modelStatus?.spotify_client_id || window.BEATX_CONFIG?.spotifyClientId || savedClientId);
-  select('recommend-and-save').hidden = false;
   showSeeds();
   if (spotify) {
     try {
@@ -357,7 +328,6 @@ async function initializeStudio() {
       if (session) {
         const draft = session.draft;
         select('spotify-status').textContent = 'Spotify connected.';
-        select('connect-spotify').textContent = 'Reconnect Spotify';
         if (restoreStudioDraft(draft)) {
           if (session.saveAfter) await saveSpotify(draft);
           return;
