@@ -1,5 +1,10 @@
 # Seed-count and playback-order studies
 
+These are the earlier title-model studies, preserved as development evidence.
+The final pipeline now has its own measured seed-count study and a separate
+five-seed continuation test. See [final-research.md](final-research.md) for the
+completed results and reproduction commands.
+
 Use the existing full-MPD `runs/million/model` outputs and leave the original three-seed report intact. From the WSL repository root with your virtual environment active:
 
 ```bash

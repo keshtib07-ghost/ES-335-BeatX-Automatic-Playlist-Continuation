@@ -59,13 +59,43 @@ test('final results render first and retain all earlier graph controls', () => {
   assert.equal(chart.children[0].tagName, 'SVG');
   assert.match(chart.textContent, /Final pipeline/);
   assert.match(f.elements.get('seed-description').textContent, /1,500 test playlists/);
-  assert.match(f.elements.get('final-seed-status').textContent || f.html, /not been published|seed-count/i);
+  assert.match(f.elements.get('final-seed-status').textContent, /1,000 test playlists/);
+  assert.equal(f.elements.get('final-seed-pending').hidden, true);
+  assert.equal(f.elements.get('final-seed-results').hidden, false);
   assert(f.html.indexOf('id="studio-evaluation"') < f.html.indexOf('id="development-history"'));
   assert(f.html.indexOf('id="feature-decisions"') < f.html.indexOf('id="earlier-seed-study"'));
   for (const id of ['seed-curve', 'benchmark-chart', 'tradeoff-chart', 'eda-shape-chart',
-    'studio-recovery-chart', 'studio-cold-chart', 'final-context-chart']) {
+    'studio-recovery-chart', 'studio-cold-chart', 'final-context-chart',
+    'final-seed-chart', 'final-seed-marginal-chart', 'final-seed-difference-chart']) {
     assert(f.elements.get(id).children.length, `${id} must retain its rendered evidence`);
   }
+});
+
+test('final seed controls render the uploaded scores at each metric and K', () => {
+  const f = pageFixture();
+  const study = f.context.window.BEATX_RESEARCH_ADDITIONS.studio_seed_study;
+  const metric = f.elements.get('final-seed-metric'); metric.value = 'recall'; metric.listeners.change();
+  const k = f.elements.get('final-seed-k'); k.value = '5'; k.listeners.change();
+  const table = f.elements.get('final-seed-table').children[0];
+  const rows = table.children.find(child => child.tagName === 'TBODY').children;
+  assert.equal(rows.length, 6);
+  assert.equal(rows[5].children[3].textContent, study.test.budgets[20].cutoffs[5].unified.recall.toFixed(5));
+  const split = f.elements.get('final-seed-partition'); split.value = 'validation'; split.listeners.change();
+  assert.match(f.elements.get('final-seed-difference-analysis').textContent, /^validation:/);
+  assert.match(f.elements.get('final-seed-marginal-analysis').textContent,
+    new RegExp(study.validation.budgets[20].marginal_seed_gain.ndcg_delta.toFixed(5).replace('.', '\\.')));
+  assert.deepEqual(f.errors, []);
+});
+
+test('BPM fallback and title ablation are explained using the selected seed count', () => {
+  const f = pageFixture();
+  const comparison = f.elements.get('final-seed-comparison'); comparison.value = 'tempo'; comparison.listeners.change();
+  assert.equal(f.elements.get('final-seed-tempo-note').hidden, false);
+  assert.match(f.elements.get('final-seed-tempo-note').textContent, /994 of 1000/);
+  const context = f.elements.get('final-context-seeds'); context.value = '10'; context.listeners.change();
+  assert.match(f.elements.get('final-context-note').textContent, /-0\.00008/);
+  assert.match(f.elements.get('final-context-note').textContent, /10 seeds/);
+  assert.deepEqual(f.errors, []);
 });
 
 test('final result selectors use the exact saved cohort and K', () => {

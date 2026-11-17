@@ -144,11 +144,17 @@
   const COLORS = ['#aab7c2', '#84b8ff', '#f4a8c4', '#c5a8fa', '#cefb70', '#ffd47c'];
   function renderContextEffects() {
     if (!$('final-context-chart') || !data.studio_evaluation) return;
-    const scores = data.studio_evaluation.cohorts.all_queries.cutoffs['20'];
+    const seeds = $('final-context-seeds')?.value || '20';
+    const study = data.studio_seed_study;
+    const scores = study ? study.test.budgets[seeds].cutoffs['20'] : data.studio_evaluation.cohorts.all_queries.cutoffs['20'];
     bars($('final-context-chart'), ['cf', 'unified_no_title', 'unified'].map(name => ({
       label: MODEL_LABELS[name], value: scores[name].ndcg,
       text: scores[name].ndcg.toFixed(5), color: COLORS[data.studio_evaluation.methods.indexOf(name)]
     })));
+    if ($('final-context-note')) {
+      const delta = scores.unified.ndcg - scores.unified_no_title.ndcg;
+      $('final-context-note').textContent = `${study ? `Seed-count study: ${study.test.queries} test playlists; ${seeds} seeds` : 'Five-seed continuation test'}; K = 20. Title minus blank-title NDCG: ${delta >= 0 ? '+' : ''}${delta.toFixed(5)}. This is a descriptive ablation; no paired interval for that title-only difference was published.`;
+    }
   }
   function renderEvaluation() {
     const report = data.studio_evaluation;
@@ -222,6 +228,7 @@
     ['eda-dimension', 'eda-partition', 'eda-scale'].forEach((id) => $(id).addEventListener('change', renderEDA));
     ['studio-evaluation-metric', 'studio-evaluation-k', 'studio-evaluation-cohort', 'studio-evaluation-comparison'].forEach((id) => $(id)?.addEventListener('change', renderEvaluation));
     $('studio-case').addEventListener('change', renderStudioCase);
+    $('final-context-seeds')?.addEventListener('change', renderContextEffects);
   } catch (error) {
     const status = $('research-status'); status.hidden = false;
     status.textContent = 'A chart could not load. The saved reports remain available below.';

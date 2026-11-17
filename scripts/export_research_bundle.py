@@ -50,10 +50,18 @@ def build_exports(source_dir):
                  if additions_path.is_file() else {})
     if additions:
         source_hashes['research_extra_data.js'] = hashlib.sha256(additions_path.read_bytes()).hexdigest()
+    report_hashes = {}
+    for name in ('studio_evaluation', 'studio_seed_study'):
+        report_path = source_dir / 'data/research' / f'{name}.json'
+        if report_path.is_file():
+            if additions.get(name) != json.loads(report_path.read_text()):
+                raise ValueError(f'The browser bundle differs from {name}.json; regenerate research additions first')
+            report_hashes[f'{name}.json'] = hashlib.sha256(report_path.read_bytes()).hexdigest()
     provenance = {
         'schema_version': 1,
         'generator': 'scripts/export_research_bundle.py',
         'source_sha256': source_hashes,
+        'report_sha256': report_hashes,
         'scope': 'Full-title benchmark, earlier seed/order studies and measured research additions. Each report states its own cohort.',
         'uncertainty': 'Paired group-bootstrap intervals for differences between methods.',
         'identity': 'Exact Spotify track IDs; no verified recording crosswalk in the measured run.',
@@ -77,9 +85,11 @@ def build_exports(source_dir):
             'seed_study': study['reference_protocol'],
             'sequence': 'Same 20 known tracks, first fixed; original directed adjacency recovery.',
             'studio': '1000 fresh held-out groups; five seeds; frozen deployed settings; K=1..20. BPM uses a fixed seed-derived window and has a 947-query eligible subset.',
+            'final_seed_study': ((additions.get('studio_seed_study') or {}).get('reference_protocol')
+                                 or 'Final-pipeline seed-count results have not been published.'),
         },
         'studio_cohort_note': 'The original Studio report calls one cohort title_tagged. Its mask means any combined context, including seed-derived tags. It is not title-classifier coverage.',
-        'studio_integrity_note': 'The completed report records model/profile hashes and runtime versions. Its freeze does not include source/enrichment database hashes. Do not infer complete input-byte certification from the model ID.',
+        'studio_integrity_note': 'The five-seed report records model/profile hashes and runtime versions, without database hashes. The final seed-count report additionally fingerprints source, split and enrichment databases and the inference source. Each report retains its original freeze.',
         'not_evaluated_in_ranking_benchmark': [
             'Final pipeline', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
@@ -131,14 +141,23 @@ def build_exports(source_dir):
         outputs['studio_scores.csv'] = csv_text(['cohort', 'queries', 'seeds', 'k', 'method', 'metric', 'value'], rows)
     final_seed = additions.get('studio_seed_study')
     if final_seed:
-        rows = []
+        rows, differences = [], []
         for partition in ('validation', 'test'):
             for seeds, budget in final_seed[partition]['budgets'].items():
                 for k, methods in budget['cutoffs'].items():
                     for method, metrics in methods.items():
                         for metric, value in metrics.items():
                             rows.append([partition, final_seed[partition]['queries'], seeds, k, method, metric, value])
+                delta = budget['cutoffs']['20']['unified']['ndcg'] - budget['cutoffs']['20']['cf']['ndcg']
+                differences.append([partition, 'final_minus_cf', seeds, seeds, delta, '',
+                                    *budget['paired_final_minus_cf_ndcg_at_20_95_ci']])
+                if 'marginal_seed_gain' in budget:
+                    gain = budget['marginal_seed_gain']
+                    differences.append([partition, 'added_seeds', gain['from_seeds'], seeds,
+                                        gain['ndcg_delta'], gain['ndcg_per_added_seed'], *gain['paired_ndcg_95_ci']])
         outputs['studio_seed_scores.csv'] = csv_text(['partition', 'queries', 'seeds', 'k', 'method', 'metric', 'value'], rows)
+        outputs['studio_seed_differences.csv'] = csv_text(['partition', 'comparison', 'from_seeds', 'to_seeds',
+            'ndcg_delta_at_20', 'ndcg_per_added_seed', 'paired_ci_low', 'paired_ci_high'], differences)
     outputs['provenance.json'] = json.dumps(provenance, indent=2, ensure_ascii=False, allow_nan=False) + '\n'
     outputs['research_bundle.json'] = json.dumps({'provenance': provenance, **reports, 'additions': additions}, indent=2,
                                                 ensure_ascii=False, allow_nan=False) + '\n'

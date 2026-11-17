@@ -59,9 +59,11 @@ The two proposal questions lead both Research pages. The report includes a K exp
 
 [Completed Studio evaluation and reproduction steps](guides/final-research.md). On 1,000 five-seed held-out queries, Studio reaches Recall@20 of 0.10662 and NDCG@20 of 0.26347. Its gain over plain CF is uncertain. The fixed seed-tempo filter lowers recovery.
 
+The final pipeline also has a seed-count study on 1,000 validation and 1,000 separate test playlists. With the same hidden songs at every count, test NDCG@20 rises from 0.14282 at one seed to 0.32273 at 20; Recall@20 rises from 0.05709 to 0.13142. Validation selects 20 under the fixed 95% rule, the largest count tested. The report keeps this study separate from the five-seed continuation test and the earlier title-model experiments.
+
 ## Recorded evidence
 
-Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The unified Studio pipeline is evaluated separately on 1,000 fresh five-seed queries. Compare methods within each study.
+Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The final pipeline has its own five-seed and seed-count evaluations. Compare methods within each study.
 
 These scores measure withheld-track recovery. Playlist-title labels do not establish perceived musical mood. The original 20,000-playlist pilot is documented separately in the [model study](guides/model-study.md). Published aggregates are available on the Research page; trained arrays are not included in the source clone.
 

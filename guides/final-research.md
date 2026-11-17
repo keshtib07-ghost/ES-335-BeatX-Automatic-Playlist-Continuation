@@ -2,11 +2,32 @@
 
 ## Final-pipeline seed counts
 
-The final five-seed evaluation is complete. The earlier seed curves measure an
-older title model. They are retained under Development history.
+Both final-pipeline studies are complete. The new seed-count study uses 1,000
+validation playlists and a separate 1,000-playlist test cohort. At K = 20:
 
-Run the new experiment from the repository on the machine that has your existing
-Azure key. Activate the project's virtual environment first.
+| Input seeds | Test NDCG | Test Recall | Test Hit Rate |
+| --- | --- | --- | --- |
+| 1 | 0.14282 | 0.05709 | 62.2% |
+| 5 | 0.23467 | 0.09944 | 80.0% |
+| 20 | 0.32273 | 0.13142 | 86.8% |
+
+Validation selected 20 seeds under the fixed 95% rule. Twenty is the largest
+count tested. This does not establish an earlier stopping point or a universal
+optimum. At 20 seeds, the final-minus-CF NDCG difference is +0.00036, with paired
+95% interval [-0.00134, +0.00206]. Three of the six test intervals lie above
+zero; the comparisons are pointwise, without a multiple-comparison adjustment.
+
+The five-seed continuation test and seed-count study have different hidden-song
+sets and cohorts. Their five-seed scores are not interchangeable. The original
+title-model curves remain under Development history.
+
+The uploaded seed report matches all 17 shared model/profile hashes in the
+five-seed report. Its freeze additionally fingerprints the staging, split and
+enrichment databases, with inference-source hashes. The published source report
+is retained unchanged.
+
+For a fresh reproduction, run the experiment from the repository on the machine
+that has your existing Azure key. Activate the project's virtual environment first.
 
 ```bash
 git pull --ff-only
@@ -37,6 +58,7 @@ they can be reviewed from GitHub. The generated files are:
 ```text
 docs/data/research/studio_seed_study.json
 docs/data/research/studio_seed_scores.csv
+docs/data/research/studio_seed_differences.csv
 docs/data/research/provenance.json
 docs/data/research/research_bundle.json
 docs/research_extra_data.js
@@ -73,7 +95,7 @@ not hidden-song recovery scores.
 
 ## Completed result
 
-The owner ran 1,000 held-out queries against the active Azure runtime. Studio
+The five-seed study used 1,000 held-out queries against the active Azure runtime. Studio
 reached NDCG@20 0.26347 and Recall@20 0.10662. Its paired gain over CF is
 uncertain. The BPM filter reduces recovery on the known-tempo subset.
 

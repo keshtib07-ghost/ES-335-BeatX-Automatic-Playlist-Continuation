@@ -10,7 +10,15 @@ Open `http://localhost:8765/research.html` for the summary or `http://localhost:
 
 ## Evidence and scope
 
-The public aggregate files cover three protocols.
+The main report follows one reading order: research questions, final pipeline,
+final-pipeline tests, feature decisions, development history, contributions and
+sources. The earlier experiments retain their graphs and exact tables inside
+expandable sections. Section bookmarks open those sections automatically.
+
+The public aggregate files keep each experiment's protocol explicit.
+
+- `docs/data/research/studio_evaluation.json` records the final pipeline's five-seed continuation test on 1,000 fresh playlists, including every K from 1 to 20.
+- `docs/data/research/studio_seed_study.json` records the same final pipeline at six seed counts. It uses 1,000 validation and 1,000 separate test playlists, with fixed hidden songs at every count. It also contains every K, all six comparison arms, marginal gains and paired final-minus-CF intervals.
 
 - `docs/experiment.js` contains the full-title standard reranker’s 5,000-query validation weight grid and 5,000 three-seed test results. Its frozen-settings hash matches the deployed model.
 - `docs/seed_experiment.js` contains the earlier fixed-reference seed-count study with its original fitted tagger, 1,500 validation queries, 1,500 test queries, ablations and diagnostic cases.
@@ -45,7 +53,7 @@ node tests/test_spotify_frontend.cjs
 python scripts/export_research_bundle.py --check
 ```
 
-The additional checks cover download fidelity/staleness, safe parsing, metric arithmetic, context abstention, validation-only budget selection, and saved marginal-gain claims. Browser review should exercise all selectors, ranges, metric examples and error cases at desktop and mobile widths, check links/downloads, and inspect console errors and page overflow. Chart data tables provide exact values alongside accessible SVG descriptions. Charts may scroll within their own figure on narrow screens to preserve readable axes.
+The additional checks cover download fidelity/staleness, safe parsing, metric arithmetic, context abstention, validation-only budget selection, fixed hidden references, trained-artifact identity, prefix consistency and saved marginal-gain claims. Page-rendering tests exercise the final-pipeline selectors against the actual reports and keep the earlier graphs populated. Browser review should check desktop/mobile layout, links and overflow. Chart data tables provide exact values alongside accessible SVG descriptions. Charts may scroll within their own figure on narrow screens to preserve readable axes.
 
 ## Current additions
 

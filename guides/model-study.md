@@ -15,6 +15,12 @@ The full run processed 1,000,000 playlists and trained collaborative filtering o
 
 ## Completed Studio study
 
+The final pipeline also has a fixed-reference seed-count evaluation. On 1,000
+separate test playlists, NDCG@20 increases from 0.14282 at one seed to 0.32273 at
+20. Validation selects 20, the largest count tested. Recall@20 at that count is
+0.13142. This longer-playlist cohort differs from the five-seed continuation
+test below. [Every budget, metric and K](../docs/data/research/studio_seed_study.json).
+
 The deployed pipeline was evaluated on 1,000 fresh five-seed queries. Recall@20 is 0.10662 and NDCG@20 is 0.26347. Plain CF reaches 0.26245 NDCG; the paired difference interval is [-0.00048, 0.00241], so the extra gain is uncertain. Studio has a Hit Rate of 0.806 and 194 zero-hit queries.
 
 On 947 queries with known seed tempo, a fixed BPM filter lowers NDCG from 0.26487 to 0.17011. Artist variety rises from 55.17% to 69.94%. These are different objectives. The earlier three-seed benchmark and the pilot below keep their own protocols.

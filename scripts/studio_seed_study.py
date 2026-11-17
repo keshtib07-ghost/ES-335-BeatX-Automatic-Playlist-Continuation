@@ -11,6 +11,7 @@ import hashlib
 from importlib import metadata
 import heapq
 import html
+import math
 from pathlib import Path
 import platform
 import re
@@ -34,11 +35,87 @@ def atomic_json(path, value):
     temporary.replace(path)
 
 
+def check_report(report, previous=None, previous_bytes=None):
+    """Validate saved aggregates and their relationship to the deployed run."""
+    if report.get('kind') != 'frozen_final_pipeline_seed_study' or report.get('schema_version') != 1:
+        raise ValueError('A measured final-pipeline seed study is required')
+    if report['seed_budgets'] != list(BUDGETS) or report['cutoffs'] != list(CUTOFFS) or report['methods'] != list(METHODS):
+        raise ValueError('Seed budgets, cutoffs or comparison methods differ from the protocol')
+    freeze = report['freeze']
+    if previous is not None:
+        old = previous['freeze']
+        if freeze['model_id'] != old['model_id'] or freeze['split'] != old['split']:
+            raise ValueError('The seed study and five-seed evaluation use different models or splits')
+        for name, value in old['artifacts_sha256'].items():
+            if freeze['artifacts_sha256'].get(name) != value:
+                raise ValueError(f'The shared trained artifact changed: {name}')
+        for name, value in old.get('runtime_source_sha256', {}).items():
+            if freeze['runtime_source_sha256'].get(name) != value:
+                raise ValueError(f'The shared inference source changed: {name}')
+    if previous_bytes is not None and hashlib.sha256(previous_bytes).hexdigest() != freeze['prior_evaluation_sha256']:
+        raise ValueError('The previous evaluation fingerprint differs')
+    if freeze['samples']['validation']['query_sha256'] == freeze['samples']['test']['query_sha256']:
+        raise ValueError('Validation and test sampling fingerprints must differ')
+    for part in ('validation', 'test'):
+        section = report[part]
+        queries = section['queries']
+        if queries < 1 or freeze['samples'][part]['queries'] != queries:
+            raise ValueError('Frozen and measured query counts differ')
+        last_score, last_count = None, None
+        for n in BUDGETS:
+            budget = section['budgets'][str(n)]
+            if budget['queries'] != queries:
+                raise ValueError('Seed counts must use the same query cohort')
+            for key in ('all_seeds_known', 'tempo_eligible', 'zero_hit_queries', 'short_outputs'):
+                if not 0 <= budget[key] <= queries:
+                    raise ValueError(f'Invalid query count: {key}')
+            ci = budget['paired_final_minus_cf_ndcg_at_20_95_ci']
+            if len(ci) != 2 or not all(math.isfinite(v) for v in ci) or not -1 <= ci[0] <= ci[1] <= 1:
+                raise ValueError('Invalid paired final-minus-CF interval')
+            for method in METHODS:
+                previous_prefix = {'recall': 0., 'hit_rate': 0., 'catalogue_coverage': 0.}
+                for k in CUTOFFS:
+                    scores = budget['cutoffs'][str(k)][method]
+                    required = ('recall', 'ndcg', 'precision', 'hit_rate', 'artist_diversity', 'catalogue_coverage')
+                    if any(key not in scores or not math.isfinite(scores[key]) or not 0 <= scores[key] <= 1 for key in required):
+                        raise ValueError('A metric is missing, nonfinite or outside 0 to 1')
+                    for key, value in previous_prefix.items():
+                        if scores[key] + 1e-12 < value:
+                            raise ValueError(f'{key} falls as K increases')
+                        previous_prefix[key] = scores[key]
+                    if scores['precision'] > scores['hit_rate'] + 1e-12:
+                        raise ValueError('Precision exceeds the fraction of queries with any hit')
+            final = budget['cutoffs']['20']['unified']
+            if abs(final['hit_rate'] - (1 - budget['zero_hit_queries'] / queries)) > 1e-12:
+                raise ValueError('Hit rate and zero-hit query count disagree')
+            if n == 1 and budget['tempo_eligible'] != 0:
+                raise ValueError('The tempo protocol needs at least two seed tempos')
+            if budget['tempo_eligible'] == 0:
+                for k in CUTOFFS:
+                    if budget['cutoffs'][str(k)]['unified'] != budget['cutoffs'][str(k)]['unified_seed_bpm']:
+                        raise ValueError('Without eligible tempos, the BPM arm must use the final-pipeline fallback')
+            if last_score is not None:
+                gain = budget['marginal_seed_gain']
+                if (gain['from_seeds'] != last_count or
+                    abs(gain['ndcg_delta'] - (final['ndcg'] - last_score)) > 1e-12 or
+                    abs(gain['ndcg_per_added_seed'] - gain['ndcg_delta'] / (n - last_count)) > 1e-12):
+                    raise ValueError('Marginal seed gains do not match the recorded scores')
+                ci = gain['paired_ndcg_95_ci']
+                if len(ci) != 2 or not all(math.isfinite(v) for v in ci) or not -1 <= ci[0] <= ci[1] <= 1:
+                    raise ValueError('Invalid marginal seed-gain interval')
+            last_score, last_count = final['ndcg'], n
+    if report['chosen_seed_budget'] != select_budget(report['validation']):
+        raise ValueError('The published seed choice differs from the validation-only 95% rule')
+
+
 def refresh_pages(report, docs):
     """Publish the measured seed answer in static HTML as well as the chart."""
     chosen = report['chosen_seed_budget']
-    answer = (f'Validation selected {chosen} seeds using the fixed 95% rule. '
-              'This is the smallest tested count near the best validation NDCG@20; it is not a universal minimum.')
+    first, last = (report['test']['budgets'][str(n)]['cutoffs']['20']['unified'] for n in (1, 20))
+    limit = ('Twenty is the largest count tested, so the study does not establish an earlier stopping point or a universal optimum.'
+             if chosen == max(BUDGETS) else 'This validation rule applies to the tested model and cohort; it is not a universal minimum.')
+    answer = (f'Test NDCG@20 rises from {first["ndcg"]:.5f} with one seed to {last["ndcg"]:.5f} with 20. '
+              f'Validation selected {chosen} seeds under the 95% rule. ' + limit)
     rows = []
     for n in report['seed_budgets']:
         budget = report['test']['budgets'][str(n)]
@@ -48,17 +125,58 @@ def refresh_pages(report, docs):
                     f'<td>{scores["unified"]["recall"]:.5f}</td><td>{scores["cf"]["ndcg"]:.5f}</td>'
                     f'<td>[{low:+.5f}, {high:+.5f}]</td></tr>')
     table = ('<div id="final-seed-pending"><h3>Measured final-pipeline seed curves</h3>'
-             '<div class="table-wrap"><table><caption>Same hidden songs at every seed count; test scores at K = 20.</caption>'
+             '<div class="table-wrap"><table id="final-seed-static-scores"><caption>Same hidden songs at every seed count; test scores at K = 20.</caption>'
              '<thead><tr><th>Seeds</th><th>Final NDCG</th><th>Final Recall</th><th>CF NDCG</th><th>Final minus CF: 95% interval</th></tr></thead>'
              '<tbody>' + ''.join(rows) + '</tbody></table></div><p>' + answer + '</p></div>')
+    final_budget = report['test']['budgets']['20']
+    last_gain = final_budget['marginal_seed_gain']
+    low, high = final_budget['paired_final_minus_cf_ndcg_at_20_95_ci']
+    delta = last['ndcg'] - final_budget['cutoffs']['20']['cf']['ndcg']
+    above_zero = sum(report['test']['budgets'][str(n)]['paired_final_minus_cf_ndcg_at_20_95_ci'][0] > 0 for n in BUDGETS)
+    findings = ('<div class="research-grid two research-space">'
+        '<article class="research-card"><h3>What does another seed add?</h3>'
+        '<div id="final-seed-marginal-chart"></div>'
+        f'<p id="final-seed-marginal-analysis">The gain per extra seed is {last_gain["ndcg_per_added_seed"]:.5f} NDCG from 10 to 20 seeds. '
+        f'That step adds {last_gain["ndcg_delta"]:.5f} in total. Its paired 95% interval is '
+        f'[{last_gain["paired_ndcg_95_ci"][0]:+.5f}, {last_gain["paired_ndcg_95_ci"][1]:+.5f}].</p>'
+        '<details class="research-details"><summary>Every marginal gain and interval</summary>'
+        '<div id="final-seed-marginal-table" class="table-wrap"></div></details></article>'
+        '<article class="research-card"><h3>Is the final pipeline better than CF?</h3>'
+        '<div id="final-seed-difference-chart" class="research-plot"></div>'
+        f'<p id="final-seed-difference-analysis">{above_zero} of the six test intervals lie above zero. At 20 seeds, the mean difference is '
+        f'{delta:+.5f}, with interval [{low:+.5f}, {high:+.5f}]. '
+        'The gain is small and depends on seed count; these results do not show a consistent advantage at every count.</p>'
+        '<details class="research-details"><summary>Exact differences and intervals</summary>'
+        '<div id="final-seed-difference-table" class="table-wrap"></div></details></article></div>'
+        '<p class="research-caption">These two diagnostics use NDCG@20, even when the main graph shows another metric or K. '
+        'The split selector updates all three views. Intervals use 500 paired group-bootstrap samples and are pointwise, without a multiple-comparison adjustment.</p>')
+    summary_rows = []
+    for n in BUDGETS:
+        score = report['test']['budgets'][str(n)]['cutoffs']['20']['unified']
+        summary_rows.append(f'<tr><th scope="row">{n}</th><td>{score["ndcg"]:.5f}</td>'
+                            f'<td>{score["recall"]:.5f}</td><td>{100 * score["hit_rate"]:.1f}%</td></tr>')
+    summary = ('<div class="research-card research-space" id="summary-final-seed-results">'
+        '<h3>Final pipeline across seed counts</h3>'
+        f'<p>On {report["test"]["queries"]:,} longer test playlists, Recall@20 rises from '
+        f'{100 * first["recall"]:.2f}% with one seed to {100 * last["recall"]:.2f}% with 20. '
+        f'Hit rate rises from {100 * first["hit_rate"]:.1f}% to {100 * last["hit_rate"]:.1f}%.</p>'
+        '<details class="research-details"><summary>Exact test scores at all six seed counts</summary>'
+        '<div class="table-wrap"><table id="summary-final-seed-scores">'
+        '<caption>Seed-count study; same hidden songs at every seed count; K = 20.</caption>'
+        '<thead><tr><th>Seeds</th><th>NDCG</th><th>Recall</th><th>Hit rate</th></tr></thead>'
+        '<tbody>' + ''.join(summary_rows) + '</tbody></table></div></details>'
+        '<a href="research-deep-dive.html#seed-study">Explore the curves and every K →</a></div>')
     for name in ('research.html', 'research-deep-dive.html'):
         path = docs / name
         text = path.read_text()
         for identity in ('final-seed-answer', 'summary-final-seed-answer'):
             text = re.sub(r'(<p id="' + identity + r'">).*?(</p>)',
                           lambda m: m[1] + html.escape(answer) + m[2], text, flags=re.S)
-        text = text.replace('id="final-seed-coverage">Awaiting the new run',
-                            'id="final-seed-coverage">Measured at six seed counts')
+        for marker, block in (('final-seed-findings', findings), ('final-seed-summary', summary)):
+            text = re.sub(r'<!-- ' + marker + r':start -->.*?<!-- ' + marker + r':end -->',
+                          lambda _: '<!-- ' + marker + ':start -->' + block + '<!-- ' + marker + ':end -->', text, flags=re.S)
+        text = re.sub(r'(<td id="final-seed-coverage">).*?(</td>)',
+                      lambda m: m[1] + 'Measured at six seed counts' + m[2], text, flags=re.S)
         if name == 'research-deep-dive.html':
             text = re.sub(r'(<p id="final-seed-status">).*?(</p>)', lambda m:
                 m[1] + f'{report["test"]["queries"]:,} test playlists; six seed counts; frozen final pipeline.' + m[2], text, flags=re.S)
@@ -284,6 +402,8 @@ def main():
     try:
         path = args.output / 'studio_seed_study.json'
         report = read_json(path) if args.export_only else run(args)
+        prior_bytes = args.prior_report.read_bytes() if args.prior_report.exists() else None
+        check_report(report, read_json(args.prior_report) if prior_bytes is not None else None, prior_bytes)
         if not args.export_only:
             atomic_json(path, report)
         args.public_dir.mkdir(parents=True, exist_ok=True)
