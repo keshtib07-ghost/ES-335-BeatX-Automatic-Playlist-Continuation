@@ -16,6 +16,10 @@ body[data-page="research"] { --research-pink: #f4a8c4; --research-purple: #c9a8f
 .research-task-facts dd { color: var(--muted); font-size: 13px; margin: 9px 0 0; }
 .research-scroll-table table { min-width: 680px; }
 .research-scroll-table:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.research-evidence { margin-block: 24px; }
+.research-evidence strong { color: var(--text); }
+.research-scroll-hint { margin-block: 8px; color: var(--green); font-size: 12px; }
+[data-page="research"] .research-scroll-region:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 [data-page="research"] .table-wrap { overflow-x: auto; max-width: 100%; }
 [data-page="research"] table { width: 100%; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; font-size: 13px; }
 [data-page="research"] th, [data-page="research"] td { padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }

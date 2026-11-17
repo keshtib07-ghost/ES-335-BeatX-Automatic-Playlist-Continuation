@@ -154,6 +154,29 @@
 
   const experiment = window.NEXT_TRACK_EXPERIMENT, study = window.NEXT_TRACK_SEED_STUDY, sequence = window.NEXT_TRACK_SEQUENCE;
   function fail(message) { $('research-status').hidden = false; $('research-status').textContent = message; }
+  function setupScrollableViews() {
+    // Fixed scientific axes and wide data tables remain readable on phones.
+    // Explain the local scrolling and make it available from the keyboard.
+    const regions = document.querySelectorAll('.research-plot, .table-wrap, .research-formula');
+    regions.forEach((region, i) => {
+      if (!region.hasAttribute('tabindex')) region.tabIndex = 0;
+      region.classList.add('research-scroll-region');
+      const hint = el('p', 'Swipe or scroll sideways for the full view. Keyboard: focus this area and use the arrow keys.', 'research-scroll-hint');
+      hint.id = `research-scroll-hint-${i}`;
+      region.insertAdjacentElement('afterend', hint);
+      region.setAttribute('aria-describedby', [region.getAttribute('aria-describedby'), hint.id].filter(Boolean).join(' '));
+      const refresh = () => { hint.hidden = region.scrollWidth <= region.clientWidth + 1; };
+      refresh();
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(refresh);
+        observer.observe(region);
+        [...region.children].forEach((child) => observer.observe(child));
+      }
+      if (typeof MutationObserver !== 'undefined') {
+        new MutationObserver(refresh).observe(region, { childList: true, subtree: true });
+      }
+    });
+  }
   if (!experiment || !study || !sequence) {
     fail('An experiment export could not be loaded. The written report and linked downloads remain available. Reload the page or inspect the three experiment scripts.');
     return;
@@ -279,6 +302,7 @@
     METHODS.forEach((m) => { const label = el('span'), swatch = el('i'); swatch.style.setProperty('--legend-color', m.color); label.append(swatch, m.label); $('seed-legend').append(label); });
     renderScoreLab(); renderMetricLab(); renderSeedStudy(); renderSeedRule(); renderBenchmark(); renderIntervals(); renderAblation(); renderTradeoff(); renderEffect(); renderCase(); renderSequence();
     composition($('title-coverage'), [{ value: 660, color: '#cefb70', label: '660 tagged' }, { value: 4340, color: '#52606a', label: '4340 untagged' }], '13.2% of titles receive an inferred tag; 86.8% use plain CF.');
+    setupScrollableViews();
     ['shrinkage', 'tag-weight', 'context-known'].forEach((id) => $(id).addEventListener('input', renderScoreLab));
     document.querySelectorAll('[data-example]').forEach((b) => b.addEventListener('click', () => renderMetricLab(b.dataset.example)));
     ['seed-partition', 'seed-metric'].forEach((id) => $(id).addEventListener('change', renderSeedStudy));

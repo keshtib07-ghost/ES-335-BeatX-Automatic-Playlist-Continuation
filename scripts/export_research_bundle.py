@@ -52,17 +52,24 @@ def build_exports(source_dir):
         'scope': 'Existing public aggregate exports; no new experiment or private-data verification.',
         'uncertainty': 'Published paired group-bootstrap intervals; not individual-model intervals.',
         'identity': 'Exact Spotify track IDs; no verified recording crosswalk in the measured run.',
+        'model_scope': {
+            'ranking_charts': 'Original CF and 12-tag title benchmark; not the unified Studio ranker.',
+            'sequence_chart': 'Separate directed training-transition order-recovery study.',
+            'teaching_tools': 'Invented counts and rankings; not evaluation results.',
+            'unified_studio': 'Implementation documented separately; evaluation outputs are not published in this bundle.',
+        },
         'protocols': {
             'benchmark': 'Three seeds; 5000 test queries; every remaining track is a reference.',
             'seed_study': study['reference_protocol'],
             'sequence': 'Same 20 known tracks, first fixed; original directed adjacency recovery.',
         },
         'not_evaluated_in_ranking_benchmark': [
-            'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
+            'Unified Studio ranker', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
         'missing_public_evidence': [
             'Full-million validation weight curve', 'Raw EDA distributions',
             'Private model-array checksums', 'Human listener study',
+            'Unified evaluation and tuning outputs (unified-evaluation.json, unified-tuning.json)',
         ],
     }
     outputs = {}

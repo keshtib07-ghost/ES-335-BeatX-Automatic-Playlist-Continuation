@@ -28,6 +28,8 @@ The unified Studio explanation is pinned to implementation commit `1fd19b1ecdd7a
 
 The method-status table separates weak baselines, structural failures, small gains, code revisions and untested proposals. The conclusion and viva notes use existing public evidence. Neither the rubric map nor this documentation update trains or evaluates a model. Research works on static GitHub Pages; current Studio generation needs a live Python API and must not substitute illustrative rankings.
 
+The hero and chart-scope notice explicitly identify the older benchmark. The evidence-download provenance records that model scope as well. Scrollable charts/tables have focusable regions and visible guidance when their content exceeds the available width. A live-browser audit checked every seed/metric, benchmark cohort/metric, ablation budget, context-effect budget, tradeoff method and diagnostic-case selector, plus the teaching sliders and validation-rule thresholds at 1440px, 390px and 320px. Plotted coordinates and displayed values were checked against the saved exports; this does not independently verify private training or establish results for the unified ranker.
+
 ## Update results
 
 After producing new frozen experiment exports through the existing pipeline, regenerate the public downloads:
