@@ -233,7 +233,7 @@ function renderPlaylist() {
   select('playback-order').setAttribute('aria-pressed', String(playbackMode));
   select('playback-order').disabled = lastResult.transition_evidence === null;
   const support = realMode ? ` · ${lastResult.known_seeds}/${lastResult.seed_count} seeds seen in training` : '';
-  const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported,${lastResult.has_seed_anchor ? ', including the last known seed' : ''}` : '';
+  const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported${lastResult.has_seed_anchor ? ', including the last known seed' : ''}` : '';
   const seeds = playlistSeeds.length ? `${playlistSeeds.length} seed${playlistSeeds.length === 1 ? '' : 's'} + ` : '';
   select('generation-evidence').textContent = `${seeds}${list.length} additions${support}${transitions}`;
 }
@@ -306,9 +306,7 @@ async function initializeStudio() {
     if (modelStatus.unified_model !== true) throw new Error('Update the model server to enable the unified recommender.');
     realMode = true;
     select('mode-label').textContent = 'Trained model connected';
-    const support = Number.isInteger(modelStatus.training_playlists)
-      ? ' Trained on ' + modelStatus.training_playlists.toLocaleString() + ' playlists.' : '';
-    select('demo-mode').textContent = 'Use a title, seed tracks, or filters to generate a playlist.' + support;
+    select('demo-mode').textContent = 'Use a title, seed tracks, or filters to generate a playlist.';
     select('demo-status').textContent = '';
     select('retry-model').hidden = true;
     setModelControls(true);
