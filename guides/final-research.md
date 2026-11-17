@@ -1,5 +1,64 @@
 # Completed research evidence
 
+## Final-pipeline seed counts
+
+The final five-seed evaluation is complete. The earlier seed curves measure an
+older title model. They are retained under Development history.
+
+Run the new experiment from the repository on the machine that has your existing
+Azure key. Activate the project's virtual environment first.
+
+```bash
+git pull --ff-only
+bash scripts/studio_seed_study_azure.sh
+```
+
+This uses the running API's exact Docker image and its read-only trained files.
+It scores 1,000 validation playlists and 1,000 separate fresh test playlists at
+seed counts 1, 2, 3, 5, 10 and 20. The same hidden songs remain fixed at every
+seed count. It excludes known earlier development cohorts and verifies the
+previous final evaluation's query fingerprint before excluding that cohort.
+
+All six comparison arms are included: popularity, CF, the earlier title method,
+the final pipeline without a title, the final pipeline, and the final pipeline
+with the fixed seed-derived BPM filter. Every arm is scored at K = 1 to 20.
+
+The output includes Recall, NDCG, Precision, Hit Rate, artist variety and
+catalogue coverage. Paired 95% group-bootstrap intervals accompany the
+final-minus-CF comparison and gains between successive seed counts at K = 20.
+Validation alone selects the smallest seed count reaching 95% of its best
+final-pipeline NDCG@20. Test scores never change a ranking setting.
+
+Only aggregates are downloaded. The script refreshes the graphs, static score
+table, research-question answer, evidence status and CSV downloads. Send back
+`docs/data/research/studio_seed_study.json`, or commit the generated files so
+they can be reviewed from GitHub. The generated files are:
+
+```text
+docs/data/research/studio_seed_study.json
+docs/data/research/studio_seed_scores.csv
+docs/data/research/provenance.json
+docs/data/research/research_bundle.json
+docs/research_extra_data.js
+docs/research.html
+docs/research-deep-dive.html
+```
+
+Private per-budget checkpoints remain in the staging directory printed by the
+Azure command. A completed report is not overwritten. The API keeps running.
+
+For a local trained run, use:
+
+```bash
+PYTHONPATH=src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m scripts.studio_seed_study
+```
+
+To republish a copied aggregate without running inference again, use:
+
+```bash
+PYTHONPATH=src python -m scripts.studio_seed_study --export-only --output docs/data/research
+```
+
 Research now starts with the two proposal questions. The K explorer rescales
 actual saved hit positions. It does not invent average scores at other cutoffs.
 

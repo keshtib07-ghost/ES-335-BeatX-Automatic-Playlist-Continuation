@@ -60,6 +60,9 @@ def build_exports(source_dir):
         'model_scope': {
             'benchmark': 'Standard 12-tag reranker fitted on all 804,485 training titles. This is the three-seed benchmark.',
             'seed_charts': 'Earlier CF/title seed-count study using its original fitted tagger and fixed references.',
+            'final_seed_charts': ('Frozen final-pipeline seed-count evaluation, with identical references across budgets.'
+                                  if additions.get('studio_seed_study') else
+                                  'Awaiting the final-pipeline seed-count run. Earlier curves are kept as development evidence.'),
             'sequence_chart': 'Separate directed training-transition order-recovery study.',
             'teaching_tools': 'Invented counts and rankings; not evaluation results.',
             'cutoff_cases': 'Actual saved hit ranks rescored at K=1..20. Individual cases, not model averages.',
@@ -78,13 +81,15 @@ def build_exports(source_dir):
         'studio_cohort_note': 'The original Studio report calls one cohort title_tagged. Its mask means any combined context, including seed-derived tags. It is not title-classifier coverage.',
         'studio_integrity_note': 'The completed report records model/profile hashes and runtime versions. Its freeze does not include source/enrichment database hashes. Do not infer complete input-byte certification from the model ID.',
         'not_evaluated_in_ranking_benchmark': [
-            'Unified Studio ranker', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
+            'Final pipeline', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
         'missing_public_evidence': [
             *([] if (additions.get('eda') or {}).get('kind') == 'full_staging_eda' else
               ['Full-dataset EDA by split; verified 20,000-playlist training-pilot EDA is available']),
             *([] if additions.get('studio_evaluation') else
               ['Frozen unified Studio held-out evaluation and full artifact hashes']),
+            *([] if additions.get('studio_seed_study') else
+              ['Final-pipeline seed-count evaluation at 1, 2, 3, 5, 10 and 20 seeds']),
             'Human listener study',
         ],
     }
@@ -124,6 +129,16 @@ def build_exports(source_dir):
                     for metric, value in metrics.items():
                         rows.append([cohort, result['queries'], studio['freeze']['seeds'], cutoff, method, metric, value])
         outputs['studio_scores.csv'] = csv_text(['cohort', 'queries', 'seeds', 'k', 'method', 'metric', 'value'], rows)
+    final_seed = additions.get('studio_seed_study')
+    if final_seed:
+        rows = []
+        for partition in ('validation', 'test'):
+            for seeds, budget in final_seed[partition]['budgets'].items():
+                for k, methods in budget['cutoffs'].items():
+                    for method, metrics in methods.items():
+                        for metric, value in metrics.items():
+                            rows.append([partition, final_seed[partition]['queries'], seeds, k, method, metric, value])
+        outputs['studio_seed_scores.csv'] = csv_text(['partition', 'queries', 'seeds', 'k', 'method', 'metric', 'value'], rows)
     outputs['provenance.json'] = json.dumps(provenance, indent=2, ensure_ascii=False, allow_nan=False) + '\n'
     outputs['research_bundle.json'] = json.dumps({'provenance': provenance, **reports, 'additions': additions}, indent=2,
                                                 ensure_ascii=False, allow_nan=False) + '\n'

@@ -11,7 +11,8 @@ def export(directory, target):
         return json.loads(path.read_text()) if path.is_file() else None
     report = {'eda': read('eda_full.json') or read('eda_pilot.json'),
               'studio_audit': read('studio_audit.json'),
-              'studio_evaluation': read('studio_evaluation.json')}
+              'studio_evaluation': read('studio_evaluation.json'),
+              'studio_seed_study': read('studio_seed_study.json')}
     target.write_text('window.BEATX_RESEARCH_ADDITIONS = ' + json.dumps(report, indent=2, allow_nan=False) + ';\n')
     return report
 
