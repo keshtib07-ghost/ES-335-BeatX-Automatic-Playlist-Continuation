@@ -20,14 +20,43 @@ for file in "${files[@]}"; do
   test -r "$file" || { echo "Training artifact unavailable at $file" >&2; exit 1; }
 done
 expected="$(sha256sum "$model/frozen_settings.json" | cut -d ' ' -f 1)"
-stage="$("${ssh_cmd[@]}" 'set -eu; cd "$HOME/beatx-data"; mktemp -d .full-titles.XXXXXXXX')"
+upload_digest="$(
+  find "${files[@]}" -type f -print0 | LC_ALL=C sort -z |
+    xargs -0 -r sha256sum | sha256sum | cut -d ' ' -f 1
+)"
+selection="$("${ssh_cmd[@]}" bash -s -- "$upload_digest" "${files[@]}" <<'SELECT_STAGE'
+set -euo pipefail
+upload_digest=$1
+shift
+cd "$HOME/beatx-data"
+
+for candidate in .full-titles.*; do
+  [[ -d "$candidate" ]] || continue
+  digest="$(
+    cd "$candidate"
+    find "$@" -type f -print0 | LC_ALL=C sort -z |
+      xargs -0 -r sha256sum | sha256sum | cut -d ' ' -f 1
+  )" 2>/dev/null || continue
+  if [[ "$digest" == "$upload_digest" ]]; then
+    printf '%s reused\n' "$candidate"
+    exit
+  fi
+done
+printf '%s new\n' "$(mktemp -d .full-titles.XXXXXXXX)"
+SELECT_STAGE
+)"
+read -r stage transfer <<<"$selection"
 if [[ ! "$stage" =~ ^\.full-titles\.[a-zA-Z0-9]+$ ]]; then
   echo 'Azure returned an unexpected staging directory.' >&2
   exit 1
 fi
 
-echo "Uploading the full-title artifacts to Azure."
-tar -czf - -- "${files[@]}" | "${ssh_cmd[@]}" 'cd "$HOME/beatx-data" && tar -xzf - -C '"$stage"
+if [[ "$transfer" == reused ]]; then
+  echo 'Reusing the verified artifacts already uploaded to Azure.'
+else
+  echo 'Uploading the full-title artifacts to Azure.'
+  tar -czf - -- "${files[@]}" | "${ssh_cmd[@]}" 'cd "$HOME/beatx-data" && tar -xzf - -C '"$stage"
+fi
 
 "${ssh_cmd[@]}" bash -s -- "$stage" "$expected" <<'REMOTE'
 set -euo pipefail
@@ -44,7 +73,12 @@ tag_files=(summary.json title_tagger.joblib track_tag_votes.npy track_axis_total
 
 exec 9>"$data/.model-deploy.lock"
 flock -x 9
-mount="$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Source}}{{end}}{{end}}' "$container")"
+mount_format='{{range .Mounts}}{{if eq .Destination "/data"}}{{.Source}}{{end}}{{end}}'
+docker_cmd=(docker)
+if ! mount="$("${docker_cmd[@]}" inspect --format "$mount_format" "$container" 2>/dev/null)"; then
+  docker_cmd=(sudo -n docker)
+  mount="$("${docker_cmd[@]}" inspect --format "$mount_format" "$container")"
+fi
 if [[ "$mount" != "$data" ]]; then
   echo "Unexpected model mount: $mount" >&2
   exit 1
@@ -121,7 +155,7 @@ rollback() {
       mv -- "$backup/$name" "$data/$name"
     fi
   done
-  docker restart "$container" >/dev/null
+  "${docker_cmd[@]}" restart "$container" >/dev/null
   exit "$result"
 }
 trap rollback EXIT
@@ -133,7 +167,7 @@ mv -- "$candidate" "$data/model"
 mv -- "$data/$profile_name" "$backup/$profile_name"
 mv -- "$profile_candidate" "$data/$profile_name"
 echo 'Restarting the BeatX API.'
-docker restart "$container" >/dev/null
+"${docker_cmd[@]}" restart "$container" >/dev/null
 
 model_is_ready() {
   curl -fsS --max-time 5 "$internal_api/api/status" |
