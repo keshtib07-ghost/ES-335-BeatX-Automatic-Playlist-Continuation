@@ -22,6 +22,8 @@ The ranking-score and metric tools are labeled teaching examples. Only the budge
 
 ## Rubric map and beginner explanations
 
+The report starts with “How our model works,” before the analysis. It traces offline preparation, a playlist name plus three training-known seeds, partial/complete unknown-seed fallback, title and song tagging, CF retrieval, filters, optional context boost and output. It is a source-checked explanation of unified Studio, not a new experiment. The rubric map is retained near the end, after the conclusion. Limitations contains the requested “What the tags mean” note, which distinguishes playlist grouping from listener verification.
+
 The report maps all ten ES335 rubric criteria to sections without claiming a grade. The overview, training-scope table and viva questions distinguish the full CF training split from the 60,000-title classifier fitting cap and the all-training context aggregation pass. The cap is a configurable choice, not an experimentally established optimum.
 
 The unified Studio explanation is pinned to implementation commit `1fd19b1ecdd7a3546d52d21989de02d7582e0184`. Keep its 19-tag taxonomy, filter behaviour, boost grid and deployment status separate from the 12-tag A/B benchmarks and their selected weight 1. New evaluation scripts write local outputs; do not infer scores or the selected unified weight from the existence of those scripts. Update this source snapshot and its statements when verified implementation or deployment evidence changes.

@@ -14,6 +14,13 @@ body[data-page="research"] { --research-pink: #f4a8c4; --research-purple: #c9a8f
 .research-task-facts > div { padding: 17px; border-left: 2px solid var(--green); background: var(--card); }
 .research-task-facts dt { font-size: 13px; font-weight: 600; }
 .research-task-facts dd { color: var(--muted); font-size: 13px; margin: 9px 0 0; }
+.research-walkthrough { list-style: none; counter-reset: walkthrough; margin: 20px 0 0; padding: 0; }
+.research-walkthrough > li { counter-increment: walkthrough; display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 13px; padding-block: 19px; border-top: 1px solid var(--line); }
+.research-walkthrough > li::before { content: counter(walkthrough, decimal-leading-zero); grid-column: 1; grid-row: 1 / 3; color: var(--green); font-family: var(--space); font-size: 13px; }
+.research-walkthrough h4 { grid-column: 2; margin: 0 0 8px; font-size: 16px; line-height: 1.4; }
+.research-walkthrough p { grid-column: 2; margin: 0; }
+#overview > h3 { margin-bottom: 20px; }
+.research-tag-note { margin-bottom: 20px; border-left: 3px solid var(--green); }
 .research-scroll-table table { min-width: 680px; }
 .research-scroll-table:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 .research-evidence { margin-block: 24px; }
