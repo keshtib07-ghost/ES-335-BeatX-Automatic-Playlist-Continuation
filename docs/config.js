@@ -2,4 +2,4 @@
 // Register https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/
 // as a redirect URI before setting the Client ID for the published app.
 // Set modelApiBase to the deployed HTTPS Python API origin; empty uses this origin.
-window.BEATX_CONFIG = {modelApiBase: '', spotifyClientId: 'ceb9d936fa93468bbf05e0b29a9e2afe'};
+window.BEATX_CONFIG = {modelApiBase: 'https://beatx-api.tail9c667b.ts.net', spotifyClientId: 'ceb9d936fa93468bbf05e0b29a9e2afe'};
