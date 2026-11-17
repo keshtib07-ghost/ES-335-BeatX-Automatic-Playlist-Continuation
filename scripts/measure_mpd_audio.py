@@ -114,8 +114,8 @@ def audio_file(locator):
         return
 
     # Download once and share the result across IDs with the same exact URL.
-    request = Request(locator, headers={"User-Agent": "Nextrack-audio-analysis/1.0"})
-    with tempfile.TemporaryDirectory(prefix="nextrack-audio-") as temp:
+    request = Request(locator, headers={"User-Agent": "BeatX-audio-analysis/1.0"})
+    with tempfile.TemporaryDirectory(prefix="beatx-audio-") as temp:
         path = Path(temp) / "audio"
         with urlopen(request, timeout=20) as response, path.open("wb") as stream:
             size = 0
