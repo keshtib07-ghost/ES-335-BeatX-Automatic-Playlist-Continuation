@@ -47,7 +47,7 @@ class UnifiedRecommendationTests(unittest.TestCase):
 
     def test_title_wins_against_seed_tags_without_discarding_cooccurrence(self):
         result, tags, _, note = self.recommend(('gym',), (0,))
-        self.assertEqual(result[:2].tolist(), [2, 3])
+        self.assertEqual(result[:2].tolist(), [1, 2])
         self.assertEqual(tags, ['gym'])
         self.assertIn('conflicting seeds', note)
 
@@ -55,6 +55,15 @@ class UnifiedRecommendationTests(unittest.TestCase):
         result, tags, _, _ = self.recommend(('gym',), filters={'tags': ['rainy']})
         self.assertEqual(result.tolist(), [3, 4])
         self.assertEqual(tags, ['gym', 'rainy'])
+
+    def test_no_intersection_uses_best_title_match(self):
+        result, _, _, note = self.recommend(('gym', 'happy'))
+        self.assertEqual(result.tolist(), [2, 3])
+        self.assertIn('No full tag match', note)
+
+    def test_selected_tag_refills_beyond_title_matches(self):
+        result, _, _, _ = self.recommend(('study_focus',), filters={'tags': ['gym']})
+        self.assertEqual(result.tolist(), [2, 3])
 
     def test_no_seeds_or_tags_uses_training_popularity(self):
         result, _, _, note = self.recommend()

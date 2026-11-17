@@ -57,6 +57,8 @@ def reconcile_context(explicit, title, seeds):
 
 
 class ProfileRanker:
+    context_weight = 0.0
+
     def __init__(self, path, data, catalogue_profiles=None):
         self.path = path
         self.split = data.identity['split']
@@ -76,6 +78,12 @@ class ProfileRanker:
         self.votes = np.load(tags / 'track_tag_votes.npy', mmap_mode='r')
         self.totals = np.load(tags / 'track_axis_totals.npy', mmap_mode='r')
         self.priors = np.load(tags / 'tag_priors.npy')
+        settings = path / 'ranking_settings.json'
+        if settings.is_file():
+            config = read_json(settings)
+            if config['split'] != self.split or config['weight'] not in (0.0, 0.15, 0.35):
+                raise ValueError('Ranking settings do not match the trained split.')
+            self.context_weight = config['weight']
 
     def metadata(self, catalogue):
         path = self.path / 'enrichment.sqlite3'
@@ -157,7 +165,7 @@ class ProfileRanker:
         title_tags = {CONTEXT_TAGS[i] for i in np.flatnonzero(inferred)}
         seed_tags = self.seed_context(seeds)
         explicit = constraints['tags']
-        groups, conflicts = reconcile_context(explicit, title_tags, seed_tags)
+        groups, conflicts = reconcile_context(set(), title_tags, seed_tags)
         explicit_groups = [group for tags in CONTEXT_GROUPS.values() if (group := set(tags) & explicit)]
         title_groups = [group for group in groups if group & title_tags]
         metadata = self.metadata(catalogue)
@@ -189,7 +197,7 @@ class ProfileRanker:
             scores = np.empty(0)
         candidates, scores = keep_metadata(candidates, scores)
         source_matches = self.context_matrix(candidates, groups) > 1
-        if len(candidates) < 20 or (groups and np.count_nonzero(source_matches.all(axis=1)) < 20):
+        if explicit_groups or len(candidates) < 20 or (groups and np.count_nonzero(source_matches.all(axis=1)) < 20):
             needs_context = bool(groups)
             limit = CONTEXT_BACKFILL if needs_context and not len(warm_seeds) else FILTER_BACKFILL
             if not (groups or eras or tempo_filter):
@@ -202,9 +210,8 @@ class ProfileRanker:
             candidates = np.concatenate((candidates, popular))
             scores = np.concatenate((scores, np.zeros(len(popular))))
 
-        if explicit_groups:
-            allowed = (self.context_matrix(candidates, explicit_groups) > 1).all(axis=1)
-            candidates, scores = candidates[allowed], scores[allowed]
+        selected_matches = ((self.context_matrix(candidates, explicit_groups) > 1).all(axis=1)
+                            if explicit_groups else np.ones(len(candidates), dtype=bool))
         lift = self.context_matrix(candidates, groups)
         matches = lift > 1
         title_hits = (self.context_matrix(candidates, title_groups) > 1).sum(axis=1)
@@ -215,16 +222,35 @@ class ProfileRanker:
             scores = scores / scores.max()
         # Exact context agreement comes first, then the title's context.
         # Stable candidate order breaks ties in favour of training popularity.
-        order = np.lexsort((-context_strength, -scores, -era_hint.astype(int), -matches.sum(axis=1),
-                            -title_hits, -full_match.astype(int)))
+        matched_groups = matches.sum(axis=1)
+        seed_ranking = bool(np.any(scores > 0))
+        if seed_ranking:
+            boost = np.maximum(context_strength / (2 * max(1, len(groups))), 0.2 * era_hint)
+            adjusted = scores * (1 + self.context_weight * boost)
+            fallback_context = np.where(scores > 0, 0.0, context_strength)
+            order = np.lexsort((-fallback_context, -adjusted))
+        else:
+            order = np.lexsort((-context_strength, -era_hint.astype(int), -matched_groups,
+                                -title_hits, -full_match.astype(int)))
         verified = {index: profile for index, profile in metadata.items()
                     if profile.get('match_status') == 'verified_recording'}
         seen = {verified[index]['mbid'] for index in seeds if index in verified}
         result = []
-        for index in candidates[order]:
+        best_context = None
+        for position in order:
+            if not selected_matches[position]:
+                continue
+            index = candidates[position]
             recording = verified.get(index, {}).get('mbid')
             if recording and recording in seen:
                 continue
+            # Return the best context tier, even if it is shorter than 20 tracks.
+            if not seed_ranking and not explicit_groups:
+                context = (title_hits[position], matched_groups[position])
+                if best_context is None:
+                    best_context = context
+                elif context != best_context:
+                    break
             if recording:
                 seen.add(recording)
             result.append(index)
@@ -239,13 +265,13 @@ class ProfileRanker:
                 notes.append('No seed co-occurrence evidence. Used title or selected context with training popularity.')
             else:
                 notes.append('No usable seed or context evidence. Used training popularity.')
-        if groups and np.count_nonzero(full_match) < len(result):
-            notes.append('Some suggestions match only part of the inferred context.')
+        if best_context is not None and best_context[1] < len(groups):
+            notes.append('No full tag match in the candidate pool. Used the best available context.')
         if eras:
             notes.append('Era uses reviewed recording dates when available. Catalogue edition dates can be later reissues.')
         if tempo_filter:
             notes.append('BPM filters require a known tempo.')
-        if (eras or tempo_filter or explicit_groups) and len(result) < 20:
-            notes.append('Fewer than 20 songs in the candidate pool matched the selected filters.')
+        if len(result) < 20 and (eras or tempo_filter or explicit_groups or (groups and len(result))):
+            notes.append('Fewer than 20 songs matched the active filters and context.')
         labels = set().union(*groups)
-        return result, sorted(labels | eras | hinted_eras), metadata, ' '.join(notes)
+        return result, sorted(labels | explicit | eras | hinted_eras), metadata, ' '.join(notes)
