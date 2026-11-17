@@ -27,7 +27,7 @@ test('Research opens the summary and its own anchors stay there', () => {
 });
 
 test('legacy research bookmarks keep the repository path and report section', () => {
-  for (const section of ['overview', 'known-seeds', 'unknown-seeds', 'seed-study', 'results', 'reproduce', 'playback']) {
+  for (const section of ['overview', 'known-seeds', 'unknown-seeds', 'seed-study', 'results', 'contributions', 'reproduce', 'playback']) {
     assert.equal(route(`#${section}`).destination(),
       `https://example.github.io/project/research-deep-dive.html#${section}`);
   }

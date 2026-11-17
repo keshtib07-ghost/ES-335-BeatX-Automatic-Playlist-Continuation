@@ -22,7 +22,7 @@ Compare methods on the same cohort and reference set. Paired bootstrap intervals
 
 The Deep Dive follows a Studio request through offline preparation, title tagging, known and unfamiliar seeds, collaborative retrieval, filters and fallback. Both fitted classifiers use all 804,485 training titles. The three-seed benchmark measures the standard 12-tag reranker. Studio serves the expanded 19-tag profiles and has a separate ranking evaluation protocol. Preserve that scope in the prose, charts and downloadable provenance.
 
-The rubric map and practice questions link to the evidence. The “What the tags mean” note describes the weak supervision used by both classifiers. Headline scores and validation weight values have static tables for readers with JavaScript disabled. The interactive chart labels use the query counts in the source export.
+The rubric map links to the evidence. A public Contributions section summarizes team-level work; individual role attribution requires student confirmation. Viva preparation questions are not published on the website. The “What the tags mean” note describes the weak supervision used by both classifiers. Headline scores and validation weight values have static tables for readers with JavaScript disabled. The interactive chart labels use the query counts in the source export.
 
 ## Update results
 
