@@ -124,7 +124,7 @@ def public_report(records, freeze):
     size = freeze.get('training_catalogue_tracks', 0)
     cohorts = {
         'all_queries': summarize(records, lambda row: True, size),
-        'title_tagged': summarize(records, lambda row: bool(row['context']), size),
+        'context_available': summarize(records, lambda row: bool(row['context']), size),
         'all_seeds_known': summarize(records, lambda row: row['known_seeds'] == freeze['seeds'], size),
         'some_seeds_unseen': summarize(records, lambda row: row['known_seeds'] < freeze['seeds'], size),
         'seed_tempo_available': summarize(records, lambda row: row.get('tempo_eligible', False), size),
@@ -177,6 +177,12 @@ def run(args):
         raise ValueError('The unified Studio profiles are required')
     artifact_files = [model / 'frozen_settings.json', *sorted((model / 'index').glob('*.npy')),
                       *sorted((model / 'tags').glob('*')), *sorted((profiles / 'tags').glob('*'))]
+    artifact_files.extend(path for path in (source, split, profiles / 'enrichment.sqlite3', bulk)
+                          if path.is_file())
+    for path in artifact_files:
+        wal = Path(str(path) + '-wal')
+        if wal.is_file() and wal.stat().st_size:
+            raise ValueError(f'Active SQLite WAL for {path.name}; finish and checkpoint that data job first.')
     settings = profiles / 'ranking_settings.json'
     if settings.is_file():
         artifact_files.append(settings)
@@ -191,7 +197,8 @@ def run(args):
                   'runtime': {'python': platform.python_version(),
                               **{name: metadata.version(name) for name in ('numpy', 'scipy', 'scikit-learn', 'joblib')}},
                   'runtime_source_sha256': {name: digest(Path(sys.modules[name].__file__)) for name in
-                      ('playlist_model.million', 'playlist_model.profile_ranker', 'scripts.serve_million_demo')},
+                      ('playlist_model.million', 'playlist_model.profile_ranker', 'playlist_model.profile_tags',
+                       'playlist_model.tagger', 'playlist_model.ranker', 'scripts.serve_million_demo')},
                   'seeds': args.seeds, 'queries': len(rows), 'requested_queries': args.queries,
                   'context_weight': demo.profiles.context_weight,
                   'training_catalogue_tracks': len(demo.ranker.popular),
@@ -249,6 +256,8 @@ def run(args):
                                for name, ranking in rankings.items()}})
                 if i % 50 == 0 or i == len(rows):
                     print(f'Scored {i}/{len(rows)} frozen Studio queries', flush=True)
+    if any(digest(root / name) != expected for name, expected in fingerprints.items()):
+        raise ValueError('An input changed during evaluation. Results were discarded; keep inputs frozen.')
     write_json(args.output / 'private_query_scores.json', records)
     return public_report(records, freeze), source, split, model
 
