@@ -5,7 +5,7 @@
     "experiment.js": "e4e7d8b57b435243d161e3c655e83bc7b0ae480f9d6b884f55ff96e64c168924",
     "seed_experiment.js": "51cb63068c34701204b351399ec6affb3b5e7274c7c127d575a3939ce9d9ab12",
     "sequence_experiment.js": "bb0004cc1c1c65386ed8421bcf6f479f8acd4928e16d7fd8a7bea186ccff30b2",
-    "research_extra_data.js": "282c98db64eca3dcf97fbd81d310b13c8e99c072c6240b426ca49c91a7dc4bc7"
+    "research_extra_data.js": "22180e68d31e269bb829d3af4bc18d8093c1dc7ad9c8ad0ebdb49402bd4aef0f"
   },
   "scope": "Full-title benchmark, earlier seed/order studies and measured research additions. Each report states its own cohort.",
   "uncertainty": "Paired group-bootstrap intervals for differences between methods.",
@@ -16,9 +16,9 @@
     "sequence_chart": "Separate directed training-transition order-recovery study.",
     "teaching_tools": "Invented counts and rankings; not evaluation results.",
     "cutoff_cases": "Actual saved hit ranks rescored at K=1..20. Individual cases, not model averages.",
-    "eda": "All 20,000 playlists in the original pinned training pilot. These slices were forced into training. This is a descriptive subset, not an estimate of the full MPD distribution.",
+    "eda": "Measured from the complete staged MPD and its existing grouped split. No models are fitted.",
     "studio_audit": "Prespecified requests to the live API. Functional behavior, not held-out relevance.",
-    "unified_studio": "Deployed expanded profiles. Live functional audit published; held-out relevance scores await the trained-data run."
+    "unified_studio": "Frozen expanded-profile pipeline measured in the separate Studio report."
   },
   "protocols": {
     "benchmark": "Three seeds; 5000 test queries; every remaining track is a reference.",
@@ -36,8 +36,6 @@
     "BPR"
   ],
   "missing_public_evidence": [
-    "Full-dataset EDA by split; verified 20,000-playlist training-pilot EDA is available",
-    "Frozen unified Studio held-out evaluation and full artifact hashes",
     "Human listener study"
   ]
 }

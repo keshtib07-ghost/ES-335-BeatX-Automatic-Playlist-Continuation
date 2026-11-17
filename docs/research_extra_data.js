@@ -1,156 +1,298 @@
 window.BEATX_RESEARCH_ADDITIONS = {
   "eda": {
     "schema_version": 1,
-    "kind": "verified_training_pilot_eda",
-    "scope": "All 20,000 playlists in the original pinned training pilot. These slices were forced into training. This is a descriptive subset, not an estimate of the full MPD distribution.",
-    "source": {
-      "repository": "https://github.com/DevinOgrady/spotify_million_playlist_dataset",
-      "commit": "63a10af75e411955f44f8e373dcafadcaf3f3e9a",
-      "git_blob_sha1": {
-        "mpd.slice.0-999.json": "b5af2506b31f79342b6ed12579167281a4ed9d87",
-        "mpd.slice.1000-1999.json": "eb0b47bb1257e7a0b12248400a4bdfe71a92a6f8",
-        "mpd.slice.114000-114999.json": "e758a9d45ba2ebe6476d12f4f007dad341b54f02",
-        "mpd.slice.216000-216999.json": "c355b9992fe46de7c171bf9c7ff08f8ea2e2d933",
-        "mpd.slice.22000-22999.json": "72a066a852a31adeb23d3bfecc64b8c14a1ec03f",
-        "mpd.slice.3000-3999.json": "63a856de18bfc6e9a233a113285cb9c0f465ff8b",
-        "mpd.slice.38000-38999.json": "92fc2d9ca4f05473a2d0a5b0d83d6e61fa60c08a",
-        "mpd.slice.43000-43999.json": "9c646cc16ee497c486a06b7cb43cdee7947e915d",
-        "mpd.slice.45000-45999.json": "02cc57340c50c83b2dc108e219133038461bd4fb",
-        "mpd.slice.47000-47999.json": "593803c410ce1ecd54fa94ad1f5f4111b27d3115",
-        "mpd.slice.49000-49999.json": "d2b164f545b91b702c64c794b1e1fcdacae5bfe5",
-        "mpd.slice.62000-62999.json": "1c1af8260aee0d1bb6e5e370fbb58a9430d425b9",
-        "mpd.slice.64000-64999.json": "77c62a20a57985267bcb5ebd199ec13ec625f732",
-        "mpd.slice.66000-66999.json": "c393f5f0f218125bc0fe1fe70223b22ee6c6438e",
-        "mpd.slice.68000-68999.json": "02139fdd46ed8ed64238ca24ad53f01a1b820924",
-        "mpd.slice.7000-7999.json": "5fd29de99babbdb77d049af1ff881b9beca08dc1",
-        "mpd.slice.70000-70999.json": "5f1f375899a26efe509f6e9f0c72fd8fd243d52f",
-        "mpd.slice.72000-72999.json": "2364f5515a76655b5b5f045523674d002f7b8456",
-        "mpd.slice.74000-74999.json": "4111e9b4b7f3d14c6baf7cd728ea8733943c9b94",
-        "mpd.slice.75000-75999.json": "8ca9b9e65d9a74bb8b1634b838b28145c6a0ef87"
+    "kind": "full_staging_eda",
+    "scope": "Measured from the complete staged MPD and its existing grouped split. No models are fitted.",
+    "partitions": {
+      "train": {
+        "playlists": 804485,
+        "playlist_length": {
+          "labels": [
+            "0\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201359",
+            "60\u201399",
+            "100\u2013149",
+            "150\u2013199",
+            "200\u2013299",
+            "300+"
+          ],
+          "counts": [
+            29444,
+            103527,
+            198922,
+            139383,
+            159413,
+            98969,
+            49465,
+            25361,
+            1
+          ],
+          "total": 804485
+        },
+        "title_length": {
+          "labels": [
+            "0\u20130",
+            "1\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201379",
+            "80+"
+          ],
+          "counts": [
+            0,
+            186482,
+            396528,
+            214185,
+            6644,
+            645,
+            1
+          ],
+          "total": 804485
+        },
+        "duplicate_group_size": {
+          "labels": [
+            "1\u20131",
+            "2\u20132",
+            "3\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201349",
+            "50+"
+          ],
+          "counts": [
+            801802,
+            239,
+            77,
+            61,
+            30,
+            21,
+            6
+          ],
+          "total": 802236
+        },
+        "empty_titles": 0,
+        "non_ascii_titles": 18076
+      },
+      "validation": {
+        "playlists": 97704,
+        "playlist_length": {
+          "labels": [
+            "0\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201359",
+            "60\u201399",
+            "100\u2013149",
+            "150\u2013199",
+            "200\u2013299",
+            "300+"
+          ],
+          "counts": [
+            3454,
+            12665,
+            23936,
+            17104,
+            19386,
+            11958,
+            6078,
+            3123,
+            0
+          ],
+          "total": 97704
+        },
+        "title_length": {
+          "labels": [
+            "0\u20130",
+            "1\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201379",
+            "80+"
+          ],
+          "counts": [
+            0,
+            22791,
+            47887,
+            26197,
+            775,
+            54,
+            0
+          ],
+          "total": 97704
+        },
+        "duplicate_group_size": {
+          "labels": [
+            "1\u20131",
+            "2\u20132",
+            "3\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201349",
+            "50+"
+          ],
+          "counts": [
+            97501,
+            28,
+            20,
+            2,
+            3,
+            1,
+            0
+          ],
+          "total": 97555
+        },
+        "empty_titles": 0,
+        "non_ascii_titles": 2210
+      },
+      "test": {
+        "playlists": 97811,
+        "playlist_length": {
+          "labels": [
+            "0\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201359",
+            "60\u201399",
+            "100\u2013149",
+            "150\u2013199",
+            "200\u2013299",
+            "300+"
+          ],
+          "counts": [
+            3681,
+            12723,
+            24305,
+            16662,
+            19453,
+            11954,
+            6026,
+            3007,
+            0
+          ],
+          "total": 97811
+        },
+        "title_length": {
+          "labels": [
+            "0\u20130",
+            "1\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201339",
+            "40\u201379",
+            "80+"
+          ],
+          "counts": [
+            0,
+            22612,
+            48138,
+            26188,
+            814,
+            59,
+            0
+          ],
+          "total": 97811
+        },
+        "duplicate_group_size": {
+          "labels": [
+            "1\u20131",
+            "2\u20132",
+            "3\u20134",
+            "5\u20139",
+            "10\u201319",
+            "20\u201349",
+            "50+"
+          ],
+          "counts": [
+            97652,
+            22,
+            9,
+            9,
+            3,
+            0,
+            0
+          ],
+          "total": 97695
+        },
+        "empty_titles": 0,
+        "non_ascii_titles": 2243
       }
     },
-    "playlists": 20000,
-    "raw_occurrences": 1345066,
-    "repeat_occurrences_removed": 18469,
-    "invalid_occurrences": 0,
-    "all_playlists": {
-      "playlist_length": {
-        "labels": [
-          "0\u20139",
-          "10\u201319",
-          "20\u201339",
-          "40\u201359",
-          "60\u201399",
-          "100\u2013149",
-          "150\u2013199",
-          "200\u2013299",
-          "300+"
+    "identity": {
+      "version": "full-mpd-training-v1",
+      "split": {
+        "archive_signature": "3bcb1570d93d953c79ebacd98a34ac2e911ff3f35ca97ad246ce52d4e58e1ef1",
+        "pilot_manifest_sha256": "5a3d3153d8f4cf4cad3a03b4ea6d5b292882620227ea9c1d6f6597e7d5376cac",
+        "pilot_slice_starts": [
+          0,
+          1000,
+          3000,
+          7000,
+          22000,
+          38000,
+          43000,
+          45000,
+          47000,
+          49000,
+          62000,
+          64000,
+          66000,
+          68000,
+          70000,
+          72000,
+          74000,
+          75000,
+          114000,
+          216000
         ],
-        "counts": [
-          696,
-          2522,
-          4929,
-          3401,
-          4038,
-          2504,
-          1225,
-          685,
-          0
-        ],
-        "total": 20000
+        "recording_map_sha256": null,
+        "source_is_full_mpd": true,
+        "source_playlists": 1000000,
+        "source_slices": 1000,
+        "source_track_indices": 2262292,
+        "version": "mpd-grouped-split-v1"
       },
-      "track_support": {
-        "labels": [
-          "0\u20130",
-          "1\u20131",
-          "2\u20134",
-          "5\u20139",
-          "10\u201319",
-          "20\u201349",
-          "50\u201399",
-          "100\u2013999",
-          "1000\u20139999",
-          "10000\u2013999999",
-          "1000000+"
-        ],
-        "counts": [
-          0,
-          165710,
-          63636,
-          18899,
-          9769,
-          6354,
-          2397,
-          2010,
-          0,
-          0,
-          0
-        ],
-        "total": 268775
-      },
-      "title_length": {
-        "labels": [
-          "0\u20130",
-          "1\u20134",
-          "5\u20139",
-          "10\u201319",
-          "20\u201339",
-          "40\u201379",
-          "80+"
-        ],
-        "counts": [
-          0,
-          4547,
-          10045,
-          5238,
-          154,
-          16,
-          0
-        ],
-        "total": 20000
-      },
-      "duplicate_group_size": {
-        "labels": [
-          "1\u20131",
-          "2\u20132",
-          "3\u20134",
-          "5\u20139",
-          "10\u201319",
-          "20\u201349",
-          "50+"
-        ],
-        "counts": [
-          19974,
-          4,
-          4,
-          1,
-          0,
-          0,
-          0
-        ],
-        "total": 19983
-      },
-      "playlist_length_quantiles": {
-        "min": 4.0,
-        "q25": 26.0,
-        "median": 50.0,
-        "q75": 92.0,
-        "max": 250.0
-      },
-      "distinct_tracks": 268775,
-      "memberships": 1326597,
-      "top_one_percent_membership_share": 0.3353957531940748,
-      "singleton_tracks": 165710,
-      "empty_titles": 0,
-      "non_ascii_titles": 427,
-      "extra_exact_group_members": 17,
-      "text_note": "Character/script summaries are not language identification."
+      "partition_sizes": {
+        "test": 97811,
+        "train": 804485,
+        "validation": 97704
+      }
     },
-    "metadata": {
-      "bpm_in_raw_mpd": false,
-      "bass_in_raw_mpd": false,
-      "note": "Raw MPD does not provide verified BPM or spectral bass. Enrichment coverage needs a separate source-backed audit."
-    }
+    "playlists": 1000000,
+    "training_track_support": {
+      "labels": [
+        "0\u20130",
+        "1\u20131",
+        "2\u20134",
+        "5\u20139",
+        "10\u201319",
+        "20\u201349",
+        "50\u201399",
+        "100\u2013999",
+        "1000\u20139999",
+        "10000\u2013999999",
+        "1000000+"
+      ],
+      "counts": [
+        0,
+        989072,
+        521409,
+        200931,
+        124463,
+        96504,
+        41063,
+        50509,
+        7998,
+        407,
+        0
+      ],
+      "total": 2032356
+    },
+    "top_one_percent_membership_share": 0.6522901788606915,
+    "text_note": "Non-ASCII is a script diagnostic, not language identification."
   },
   "studio_audit": {
     "schema_version": 1,
@@ -546,5 +688,5362 @@ window.BEATX_RESEARCH_ADDITIONS = {
     "all_contract_checks_passed": true,
     "scope": "Prespecified constructed requests against the deployed API. No hidden references or listener judgments. This is not Recall, NDCG or a population failure rate."
   },
-  "studio_evaluation": null
+  "studio_evaluation": {
+    "schema_version": 1,
+    "kind": "frozen_studio_heldout_evaluation",
+    "measured_utc": "2026-11-17T16:47:42.232332+00:00",
+    "freeze": {
+      "protocol": "frozen-studio-evaluation-v1",
+      "model_id": "eafaf74516ea8e0e2fbc5ae0aadc1bee991379e2adc06673fd430a07c1ca633c",
+      "artifacts_sha256": {
+        "model/frozen_settings.json": "eafaf74516ea8e0e2fbc5ae0aadc1bee991379e2adc06673fd430a07c1ca633c",
+        "model/index/playlist_indices.npy": "1309c65acc5bb9b050bbe2facf2e660b3d2b0a974214cb7b6b79df68e79515bf",
+        "model/index/playlist_offsets.npy": "2a4e071bdcc2d1c73873838e7f98731408deed53c085a3ba16d860df905197eb",
+        "model/index/track_offsets.npy": "023b35bb614d65bc3e7d47b28416b010ef93ed2442bc66568abb6da146a551d3",
+        "model/index/track_playlists.npy": "0787c3461317dee529a15cb668c7fbf861b50b509ff29d4ac9ee3a790f46f207",
+        "model/index/train_pids.npy": "3cf0c06c4ba109316b07521b86800249c8bbc86d90e3a09ff8c8612ecb4d3287",
+        "model/tags/summary.json": "9618031254962119c08a144941e0f619ad445fb80f1605c77c0aee127b366af5",
+        "model/tags/tag_priors.npy": "5956ac0735a485599642b3f0cec5bf3dec34bc3a24bf9d300a0559b393c59d40",
+        "model/tags/title_tagger.joblib": "f692f61dc65656c3a26217c336a132635530827a8c3d2a10f6f179a13b7f0a27",
+        "model/tags/track_axis_totals.npy": "04c0d95d9379798ffdc8af87d14526d690cd4e7e0d9690ed8fee687c715809b4",
+        "model/tags/track_tag_votes.npy": "5f9f3a02d546eec713db9777d8f2a719dbb4990b1a68e5aa79f42ed539a1887b",
+        "profiles-v2-expanded/tags/summary.json": "c774f56199d19b659856690758dcc93f38a879e0a7e9d228d25fb3cf4d39332a",
+        "profiles-v2-expanded/tags/tag_priors.npy": "e321c318ca1ee086afb82874a1d3286d2af4ac78b38359946b5b0e18ba2c1fdb",
+        "profiles-v2-expanded/tags/title_tagger.joblib": "fe91d3d32ea665388446b90ca336755b0aa0360394234e3bb70642a9b681621d",
+        "profiles-v2-expanded/tags/track_axis_totals.npy": "e8fda29a15dae6cdf30a119447c21a44150f8fa5f16f5b0c6d072d663322e678",
+        "profiles-v2-expanded/tags/track_tag_votes.npy": "5c12f450c6ebfd251fd815ed6525861f1707a2ebc2c9ff2eea3c11227506ec3e",
+        "profiles-v2-expanded/ranking_settings.json": "3e080488d7d531efbaccef01b24355b6740374c14f99571559af576cc814fa51"
+      },
+      "split": {
+        "version": "full-mpd-training-v1",
+        "split": {
+          "archive_signature": "3bcb1570d93d953c79ebacd98a34ac2e911ff3f35ca97ad246ce52d4e58e1ef1",
+          "pilot_manifest_sha256": "5a3d3153d8f4cf4cad3a03b4ea6d5b292882620227ea9c1d6f6597e7d5376cac",
+          "pilot_slice_starts": [
+            0,
+            1000,
+            3000,
+            7000,
+            22000,
+            38000,
+            43000,
+            45000,
+            47000,
+            49000,
+            62000,
+            64000,
+            66000,
+            68000,
+            70000,
+            72000,
+            74000,
+            75000,
+            114000,
+            216000
+          ],
+          "recording_map_sha256": null,
+          "source_is_full_mpd": true,
+          "source_playlists": 1000000,
+          "source_slices": 1000,
+          "source_track_indices": 2262292,
+          "version": "mpd-grouped-split-v1"
+        },
+        "partition_sizes": {
+          "test": 97811,
+          "train": 804485,
+          "validation": 97704
+        }
+      },
+      "runtime": {
+        "python": "3.12.16",
+        "numpy": "2.3.5",
+        "scipy": "1.17.0",
+        "scikit-learn": "1.8.0",
+        "joblib": "1.5.3"
+      },
+      "runtime_source_sha256": {
+        "playlist_model.million": "074918276091f81918774db95eafe1edd0ec28b80fd79a0f8609248688baf198",
+        "playlist_model.profile_ranker": "51efeb64ec1c6e99bccf333737f7dc3ae1dc42d1cc6d2d3544cb29ccc42e2915",
+        "scripts.serve_million_demo": "0bba01e7a086d6c526ea20ca245c63064846e61db2d216683922e24f5cb3e362"
+      },
+      "seeds": 5,
+      "queries": 1000,
+      "requested_queries": 1000,
+      "context_weight": 0.35,
+      "training_catalogue_tracks": 2032356,
+      "tempo_ablation": "At least two known seed tempos; median +/-10 BPM, clipped to 30..300. No test tuning.",
+      "query_sha256": "ccf943c54ebd85ec672019045cfbd724554e69b311395b09f63dff1daeb73466",
+      "selection": "Frozen deployed settings. No tuning or model selection in this command.",
+      "exclusions": {
+        "historical_first_100k_groups": 99865,
+        "model_benchmark_groups": 5000,
+        "model_seed_study_groups": 1500,
+        "total_excluded_groups": 106212
+      },
+      "manual_filters": "none",
+      "cutoffs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    "methods": [
+      "popularity",
+      "cf",
+      "standard_title",
+      "unified_no_title",
+      "unified",
+      "unified_seed_bpm"
+    ],
+    "cutoffs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "cohorts": {
+      "all_queries": {
+        "queries": 1000,
+        "cutoffs": {
+          "1": {
+            "popularity": {
+              "recall": 0.0008732855081870734,
+              "ndcg": 0.04,
+              "precision": 0.04,
+              "hit_rate": 0.04,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 9.840795608643368e-07
+            },
+            "cf": {
+              "recall": 0.010898528918294861,
+              "ndcg": 0.355,
+              "precision": 0.355,
+              "hit_rate": 0.355,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003892034663218452
+            },
+            "standard_title": {
+              "recall": 0.010617114517003017,
+              "ndcg": 0.36,
+              "precision": 0.36,
+              "hit_rate": 0.36,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003951079436870312
+            },
+            "unified_no_title": {
+              "recall": 0.010380503405462344,
+              "ndcg": 0.353,
+              "precision": 0.353,
+              "hit_rate": 0.353,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00038526714807838783
+            },
+            "unified": {
+              "recall": 0.010389512414471353,
+              "ndcg": 0.354,
+              "precision": 0.354,
+              "hit_rate": 0.354,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00038575918785882003
+            },
+            "unified_seed_bpm": {
+              "recall": 0.00768105615455819,
+              "ndcg": 0.288,
+              "precision": 0.288,
+              "hit_rate": 0.288,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00038772734698054866
+            }
+          },
+          "2": {
+            "popularity": {
+              "recall": 0.0017578080029773714,
+              "ndcg": 0.04154741122893816,
+              "precision": 0.042,
+              "hit_rate": 0.08,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.476119341296505e-06
+            },
+            "cf": {
+              "recall": 0.019919974254042638,
+              "ndcg": 0.34107329893955646,
+              "precision": 0.337,
+              "hit_rate": 0.482,
+              "artist_diversity": 0.7955,
+              "catalogue_coverage": 0.0007173939998701015
+            },
+            "standard_title": {
+              "recall": 0.019976065296562727,
+              "ndcg": 0.3429784764816801,
+              "precision": 0.338,
+              "hit_rate": 0.483,
+              "artist_diversity": 0.802,
+              "catalogue_coverage": 0.0007203462385526945
+            },
+            "unified_no_title": {
+              "recall": 0.019805523870643223,
+              "ndcg": 0.34178126859019814,
+              "precision": 0.3385,
+              "hit_rate": 0.486,
+              "artist_diversity": 0.7965,
+              "catalogue_coverage": 0.0007095213633831868
+            },
+            "unified": {
+              "recall": 0.019715464326874522,
+              "ndcg": 0.34200756297572904,
+              "precision": 0.3385,
+              "hit_rate": 0.486,
+              "artist_diversity": 0.7975,
+              "catalogue_coverage": 0.0007095213633831868
+            },
+            "unified_seed_bpm": {
+              "recall": 0.013833448251886163,
+              "ndcg": 0.2678836540238039,
+              "precision": 0.262,
+              "hit_rate": 0.401,
+              "artist_diversity": 0.8605,
+              "catalogue_coverage": 0.0007095213633831868
+            }
+          },
+          "3": {
+            "popularity": {
+              "recall": 0.0023947184365491893,
+              "ndcg": 0.040715048917840724,
+              "precision": 0.040666666666666657,
+              "hit_rate": 0.105,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.9681591217286735e-06
+            },
+            "cf": {
+              "recall": 0.026689936620043674,
+              "ndcg": 0.32679619654985,
+              "precision": 0.31766666666666676,
+              "hit_rate": 0.544,
+              "artist_diversity": 0.7193333333333333,
+              "catalogue_coverage": 0.0010076974703250809
+            },
+            "standard_title": {
+              "recall": 0.026965036785130916,
+              "ndcg": 0.3298437224176717,
+              "precision": 0.32066666666666666,
+              "hit_rate": 0.548,
+              "artist_diversity": 0.724,
+              "catalogue_coverage": 0.00100523727142292
+            },
+            "unified_no_title": {
+              "recall": 0.02659361522601644,
+              "ndcg": 0.32775422980818236,
+              "precision": 0.3193333333333332,
+              "hit_rate": 0.55,
+              "artist_diversity": 0.7256666666666668,
+              "catalogue_coverage": 0.000993428316692548
+            },
+            "unified": {
+              "recall": 0.02659361522601644,
+              "ndcg": 0.32792742662323926,
+              "precision": 0.3193333333333332,
+              "hit_rate": 0.55,
+              "artist_diversity": 0.7256666666666667,
+              "catalogue_coverage": 0.000993428316692548
+            },
+            "unified_seed_bpm": {
+              "recall": 0.018879744017382537,
+              "ndcg": 0.2521181818144139,
+              "precision": 0.2413333333333335,
+              "hit_rate": 0.459,
+              "artist_diversity": 0.809,
+              "catalogue_coverage": 0.0009953964758142766
+            }
+          },
+          "4": {
+            "popularity": {
+              "recall": 0.0033527851789687054,
+              "ndcg": 0.0407969368514714,
+              "precision": 0.04075,
+              "hit_rate": 0.116,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.460198902160842e-06
+            },
+            "cf": {
+              "recall": 0.03356423363924712,
+              "ndcg": 0.31594692970775606,
+              "precision": 0.30325,
+              "hit_rate": 0.589,
+              "artist_diversity": 0.67525,
+              "catalogue_coverage": 0.0012871760656105525
+            },
+            "standard_title": {
+              "recall": 0.034318889140102914,
+              "ndcg": 0.3197890565323562,
+              "precision": 0.3075,
+              "hit_rate": 0.595,
+              "artist_diversity": 0.67775,
+              "catalogue_coverage": 0.0012832397473670951
+            },
+            "unified_no_title": {
+              "recall": 0.03363336349386637,
+              "ndcg": 0.3178827376310859,
+              "precision": 0.30625,
+              "hit_rate": 0.596,
+              "artist_diversity": 0.6805,
+              "catalogue_coverage": 0.0012719228324171552
+            },
+            "unified": {
+              "recall": 0.03362639356914435,
+              "ndcg": 0.3176905602197949,
+              "precision": 0.30575,
+              "hit_rate": 0.594,
+              "artist_diversity": 0.67975,
+              "catalogue_coverage": 0.0012709387528562909
+            },
+            "unified_seed_bpm": {
+              "recall": 0.023020495119879015,
+              "ndcg": 0.24329380666337105,
+              "precision": 0.2305,
+              "hit_rate": 0.493,
+              "artist_diversity": 0.783,
+              "catalogue_coverage": 0.0012517492014194364
+            }
+          },
+          "5": {
+            "popularity": {
+              "recall": 0.0040313682610302265,
+              "ndcg": 0.04024529173483414,
+              "precision": 0.03979999999999997,
+              "hit_rate": 0.129,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.95223868259301e-06
+            },
+            "cf": {
+              "recall": 0.03958014010739426,
+              "ndcg": 0.31036470523789433,
+              "precision": 0.2967999999999991,
+              "hit_rate": 0.614,
+              "artist_diversity": 0.6442,
+              "catalogue_coverage": 0.001551401427702627
+            },
+            "standard_title": {
+              "recall": 0.04024051616013455,
+              "ndcg": 0.31421991403874416,
+              "precision": 0.30099999999999916,
+              "hit_rate": 0.619,
+              "artist_diversity": 0.648,
+              "catalogue_coverage": 0.001542544711654848
+            },
+            "unified_no_title": {
+              "recall": 0.039682935735693696,
+              "ndcg": 0.311492014050151,
+              "precision": 0.2983999999999991,
+              "hit_rate": 0.621,
+              "artist_diversity": 0.6534000000000001,
+              "catalogue_coverage": 0.0015307357569244759
+            },
+            "unified": {
+              "recall": 0.039699342939600896,
+              "ndcg": 0.3117186665235417,
+              "precision": 0.2985999999999991,
+              "hit_rate": 0.621,
+              "artist_diversity": 0.6537999999999999,
+              "catalogue_coverage": 0.001531227796704908
+            },
+            "unified_seed_bpm": {
+              "recall": 0.026831553406066633,
+              "ndcg": 0.23470425203464318,
+              "precision": 0.21959999999999974,
+              "hit_rate": 0.524,
+              "artist_diversity": 0.7652,
+              "catalogue_coverage": 0.0014982611314159526
+            }
+          },
+          "6": {
+            "popularity": {
+              "recall": 0.004879730124157787,
+              "ndcg": 0.03934388029592456,
+              "precision": 0.03833333333333333,
+              "hit_rate": 0.138,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.4442784630251786e-06
+            },
+            "cf": {
+              "recall": 0.04534399359217246,
+              "ndcg": 0.30333677454840297,
+              "precision": 0.28750000000000003,
+              "hit_rate": 0.639,
+              "artist_diversity": 0.6256666666666666,
+              "catalogue_coverage": 0.0017925009201143895
+            },
+            "standard_title": {
+              "recall": 0.04631133021244445,
+              "ndcg": 0.3066623747420659,
+              "precision": 0.29083333333333333,
+              "hit_rate": 0.643,
+              "artist_diversity": 0.6303333333333334,
+              "catalogue_coverage": 0.0017910248007730928
+            },
+            "unified_no_title": {
+              "recall": 0.0450375767159584,
+              "ndcg": 0.3036111288109259,
+              "precision": 0.28783333333333333,
+              "hit_rate": 0.649,
+              "artist_diversity": 0.6318333333333334,
+              "catalogue_coverage": 0.0017816760449448816
+            },
+            "unified": {
+              "recall": 0.04499730838858362,
+              "ndcg": 0.30348998314226544,
+              "precision": 0.2875,
+              "hit_rate": 0.647,
+              "artist_diversity": 0.632,
+              "catalogue_coverage": 0.001779707885823153
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03042420561238898,
+              "ndcg": 0.22821155944616942,
+              "precision": 0.2116666666666665,
+              "hit_rate": 0.562,
+              "artist_diversity": 0.7488333333333332,
+              "catalogue_coverage": 0.001730011867999504
+            }
+          },
+          "7": {
+            "popularity": {
+              "recall": 0.0055053308199523735,
+              "ndcg": 0.03901289833898336,
+              "precision": 0.03785714285714284,
+              "hit_rate": 0.143,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.936318243457347e-06
+            },
+            "cf": {
+              "recall": 0.05079953519482196,
+              "ndcg": 0.2965430597708427,
+              "precision": 0.2782857142857137,
+              "hit_rate": 0.663,
+              "artist_diversity": 0.6108571428571428,
+              "catalogue_coverage": 0.0020409810092326345
+            },
+            "standard_title": {
+              "recall": 0.05175094303918004,
+              "ndcg": 0.300069872232577,
+              "precision": 0.2819999999999994,
+              "hit_rate": 0.671,
+              "artist_diversity": 0.6139999999999999,
+              "catalogue_coverage": 0.0020385208103304736
+            },
+            "unified_no_title": {
+              "recall": 0.050926756985414816,
+              "ndcg": 0.29760384095258036,
+              "precision": 0.27985714285714225,
+              "hit_rate": 0.673,
+              "artist_diversity": 0.6157142857142858,
+              "catalogue_coverage": 0.0020070302643828146
+            },
+            "unified": {
+              "recall": 0.05092042733729412,
+              "ndcg": 0.29767704619824603,
+              "precision": 0.27985714285714225,
+              "hit_rate": 0.672,
+              "artist_diversity": 0.616,
+              "catalogue_coverage": 0.0020065382246023827
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03394582605494333,
+              "ndcg": 0.22160339815564092,
+              "precision": 0.20314285714285654,
+              "hit_rate": 0.584,
+              "artist_diversity": 0.74,
+              "catalogue_coverage": 0.001954874047657005
+            }
+          },
+          "8": {
+            "popularity": {
+              "recall": 0.00588199530820194,
+              "ndcg": 0.03843188599556188,
+              "precision": 0.037,
+              "hit_rate": 0.143,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.428358023889516e-06
+            },
+            "cf": {
+              "recall": 0.05661167131651387,
+              "ndcg": 0.29294762555106074,
+              "precision": 0.274,
+              "hit_rate": 0.686,
+              "artist_diversity": 0.598625,
+              "catalogue_coverage": 0.0022727317458161858
+            },
+            "standard_title": {
+              "recall": 0.05755030289255549,
+              "ndcg": 0.2962577873828296,
+              "precision": 0.277375,
+              "hit_rate": 0.695,
+              "artist_diversity": 0.60275,
+              "catalogue_coverage": 0.002269779507133593
+            },
+            "unified_no_title": {
+              "recall": 0.05684831119803958,
+              "ndcg": 0.294156322279576,
+              "precision": 0.27575,
+              "hit_rate": 0.688,
+              "artist_diversity": 0.606875,
+              "catalogue_coverage": 0.0022338606031620445
+            },
+            "unified": {
+              "recall": 0.05693836003808842,
+              "ndcg": 0.29446306976213077,
+              "precision": 0.276125,
+              "hit_rate": 0.69,
+              "artist_diversity": 0.6065,
+              "catalogue_coverage": 0.002235336722503341
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03721863789364352,
+              "ndcg": 0.21569933227648583,
+              "precision": 0.195625,
+              "hit_rate": 0.604,
+              "artist_diversity": 0.73075,
+              "catalogue_coverage": 0.0021757999090710484
+            }
+          },
+          "9": {
+            "popularity": {
+              "recall": 0.006228318038030096,
+              "ndcg": 0.03732099632408459,
+              "precision": 0.035333333333333286,
+              "hit_rate": 0.148,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-06
+            },
+            "cf": {
+              "recall": 0.06134653417470317,
+              "ndcg": 0.2882836523254819,
+              "precision": 0.2676666666666677,
+              "hit_rate": 0.702,
+              "artist_diversity": 0.589,
+              "catalogue_coverage": 0.0024911974083280685
+            },
+            "standard_title": {
+              "recall": 0.06219926803586781,
+              "ndcg": 0.2913526533812499,
+              "precision": 0.27066666666666767,
+              "hit_rate": 0.707,
+              "artist_diversity": 0.5927777777777777,
+              "catalogue_coverage": 0.002481848652499857
+            },
+            "unified_no_title": {
+              "recall": 0.06158045457666256,
+              "ndcg": 0.28898280769197415,
+              "precision": 0.26855555555555666,
+              "hit_rate": 0.701,
+              "artist_diversity": 0.5976666666666667,
+              "catalogue_coverage": 0.0024528183054543596
+            },
+            "unified": {
+              "recall": 0.061652191271340445,
+              "ndcg": 0.2892678510230515,
+              "precision": 0.26888888888889007,
+              "hit_rate": 0.701,
+              "artist_diversity": 0.5973333333333333,
+              "catalogue_coverage": 0.002453802385015224
+            },
+            "unified_seed_bpm": {
+              "recall": 0.039913959981568915,
+              "ndcg": 0.2108138855746525,
+              "precision": 0.18955555555555692,
+              "hit_rate": 0.628,
+              "artist_diversity": 0.7252222222222222,
+              "catalogue_coverage": 0.002376552139487373
+            }
+          },
+          "10": {
+            "popularity": {
+              "recall": 0.006881912592155209,
+              "ndcg": 0.03719935124743455,
+              "precision": 0.03520000000000002,
+              "hit_rate": 0.152,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.4124375847538526e-06
+            },
+            "cf": {
+              "recall": 0.0659197846630318,
+              "ndcg": 0.2842444796867886,
+              "precision": 0.26229999999999953,
+              "hit_rate": 0.72,
+              "artist_diversity": 0.5805,
+              "catalogue_coverage": 0.0027140914288638408
+            },
+            "standard_title": {
+              "recall": 0.06661460187121865,
+              "ndcg": 0.2867364309251081,
+              "precision": 0.26439999999999947,
+              "hit_rate": 0.722,
+              "artist_diversity": 0.5842,
+              "catalogue_coverage": 0.002709171031059519
+            },
+            "unified_no_title": {
+              "recall": 0.06612395016442459,
+              "ndcg": 0.28558840973691463,
+              "precision": 0.2641999999999997,
+              "hit_rate": 0.718,
+              "artist_diversity": 0.5883999999999999,
+              "catalogue_coverage": 0.0026712839679662423
+            },
+            "unified": {
+              "recall": 0.0661764649045864,
+              "ndcg": 0.2859189391747969,
+              "precision": 0.2645999999999997,
+              "hit_rate": 0.721,
+              "artist_diversity": 0.5881000000000001,
+              "catalogue_coverage": 0.002673252127087971
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04232666983942059,
+              "ndcg": 0.20653598971441164,
+              "precision": 0.1842999999999995,
+              "hit_rate": 0.648,
+              "artist_diversity": 0.7175,
+              "catalogue_coverage": 0.002568939693636351
+            }
+          },
+          "11": {
+            "popularity": {
+              "recall": 0.007327943611735907,
+              "ndcg": 0.03692962573284005,
+              "precision": 0.03481818181818184,
+              "hit_rate": 0.154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.90447736518602e-06
+            },
+            "cf": {
+              "recall": 0.06983963682285703,
+              "ndcg": 0.280853191689495,
+              "precision": 0.2577272727272739,
+              "hit_rate": 0.73,
+              "artist_diversity": 0.5735454545454545,
+              "catalogue_coverage": 0.0029266526140105374
+            },
+            "standard_title": {
+              "recall": 0.07083323415299324,
+              "ndcg": 0.28360583106044485,
+              "precision": 0.26027272727272843,
+              "hit_rate": 0.729,
+              "artist_diversity": 0.5757272727272726,
+              "catalogue_coverage": 0.002924192415108377
+            },
+            "unified_no_title": {
+              "recall": 0.07073809323919499,
+              "ndcg": 0.28282065656856364,
+              "precision": 0.2605454545454556,
+              "hit_rate": 0.733,
+              "artist_diversity": 0.5810909090909091,
+              "catalogue_coverage": 0.002867115800578245
+            },
+            "unified": {
+              "recall": 0.07071590546920019,
+              "ndcg": 0.28290069973053367,
+              "precision": 0.2605454545454556,
+              "hit_rate": 0.734,
+              "artist_diversity": 0.5816363636363636,
+              "catalogue_coverage": 0.0028690839596999737
+            },
+            "unified_seed_bpm": {
+              "recall": 0.044707777483677484,
+              "ndcg": 0.20145423724765343,
+              "precision": 0.17754545454545562,
+              "hit_rate": 0.66,
+              "artist_diversity": 0.7112727272727273,
+              "catalogue_coverage": 0.0027544386908592788
+            }
+          },
+          "12": {
+            "popularity": {
+              "recall": 0.007746091568725909,
+              "ndcg": 0.03643117880268768,
+              "precision": 0.03408333333333332,
+              "hit_rate": 0.16,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.396517145618189e-06
+            },
+            "cf": {
+              "recall": 0.07462279126774339,
+              "ndcg": 0.2782398262966286,
+              "precision": 0.2540000000000004,
+              "hit_rate": 0.741,
+              "artist_diversity": 0.5666666666666667,
+              "catalogue_coverage": 0.0031303570831094554
+            },
+            "standard_title": {
+              "recall": 0.07561387968369836,
+              "ndcg": 0.281005530727276,
+              "precision": 0.2565833333333336,
+              "hit_rate": 0.742,
+              "artist_diversity": 0.569,
+              "catalogue_coverage": 0.003127404844426862
+            },
+            "unified_no_title": {
+              "recall": 0.07502936724408633,
+              "ndcg": 0.2795710535610074,
+              "precision": 0.25583333333333363,
+              "hit_rate": 0.744,
+              "artist_diversity": 0.57425,
+              "catalogue_coverage": 0.003066391911653273
+            },
+            "unified": {
+              "recall": 0.07507549804683479,
+              "ndcg": 0.2798060395786949,
+              "precision": 0.25608333333333366,
+              "hit_rate": 0.745,
+              "artist_diversity": 0.5749166666666667,
+              "catalogue_coverage": 0.0030668839514337055
+            },
+            "unified_seed_bpm": {
+              "recall": 0.047078306649607014,
+              "ndcg": 0.19745115515833295,
+              "precision": 0.1723333333333335,
+              "hit_rate": 0.675,
+              "artist_diversity": 0.70525,
+              "catalogue_coverage": 0.0029478103245691206
+            }
+          },
+          "13": {
+            "popularity": {
+              "recall": 0.00815155491439821,
+              "ndcg": 0.03572278893468448,
+              "precision": 0.032999999999999974,
+              "hit_rate": 0.162,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.888556926050357e-06
+            },
+            "cf": {
+              "recall": 0.07870633013905949,
+              "ndcg": 0.27528902890388157,
+              "precision": 0.24953846153846154,
+              "hit_rate": 0.754,
+              "artist_diversity": 0.5614615384615386,
+              "catalogue_coverage": 0.003320284438356272
+            },
+            "standard_title": {
+              "recall": 0.07991187290756921,
+              "ndcg": 0.27823069118468885,
+              "precision": 0.2523846153846154,
+              "hit_rate": 0.758,
+              "artist_diversity": 0.5629230769230769,
+              "catalogue_coverage": 0.0033129038416497896
+            },
+            "unified_no_title": {
+              "recall": 0.07937190650897176,
+              "ndcg": 0.27750572290483677,
+              "precision": 0.2527692307692306,
+              "hit_rate": 0.756,
+              "artist_diversity": 0.5694615384615386,
+              "catalogue_coverage": 0.003259271505582683
+            },
+            "unified": {
+              "recall": 0.0793198877896653,
+              "ndcg": 0.2775820523956141,
+              "precision": 0.25276923076923064,
+              "hit_rate": 0.755,
+              "artist_diversity": 0.5697692307692307,
+              "catalogue_coverage": 0.003259271505582683
+            },
+            "unified_seed_bpm": {
+              "recall": 0.049099885346801035,
+              "ndcg": 0.19367826832102233,
+              "precision": 0.1673076923076928,
+              "hit_rate": 0.685,
+              "artist_diversity": 0.7,
+              "catalogue_coverage": 0.003134785441133345
+            }
+          },
+          "14": {
+            "popularity": {
+              "recall": 0.008988228790992384,
+              "ndcg": 0.03588537205259648,
+              "precision": 0.03328571428571433,
+              "hit_rate": 0.183,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 7.380596706482526e-06
+            },
+            "cf": {
+              "recall": 0.08307438871397832,
+              "ndcg": 0.2735350387291803,
+              "precision": 0.2468571428571433,
+              "hit_rate": 0.762,
+              "artist_diversity": 0.5565714285714287,
+              "catalogue_coverage": 0.003508735674261793
+            },
+            "standard_title": {
+              "recall": 0.08423280072975989,
+              "ndcg": 0.2762214377952531,
+              "precision": 0.24928571428571478,
+              "hit_rate": 0.766,
+              "artist_diversity": 0.5583571428571429,
+              "catalogue_coverage": 0.0035047993560183353
+            },
+            "unified_no_title": {
+              "recall": 0.08356767056767024,
+              "ndcg": 0.2752460780936083,
+              "precision": 0.24921428571428647,
+              "hit_rate": 0.767,
+              "artist_diversity": 0.5626428571428571,
+              "catalogue_coverage": 0.003459531696218576
+            },
+            "unified": {
+              "recall": 0.08363014468775307,
+              "ndcg": 0.2752924398665627,
+              "precision": 0.24914285714285792,
+              "hit_rate": 0.767,
+              "artist_diversity": 0.5630714285714286,
+              "catalogue_coverage": 0.0034610078155598726
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05128455129497096,
+              "ndcg": 0.19045161672309685,
+              "precision": 0.16299999999999992,
+              "hit_rate": 0.695,
+              "artist_diversity": 0.6979285714285713,
+              "catalogue_coverage": 0.0033212685179171367
+            }
+          },
+          "15": {
+            "popularity": {
+              "recall": 0.00945661851484515,
+              "ndcg": 0.035777421794077495,
+              "precision": 0.0331333333333333,
+              "hit_rate": 0.186,
+              "artist_diversity": 0.9978666666666668,
+              "catalogue_coverage": 7.872636486914694e-06
+            },
+            "cf": {
+              "recall": 0.08760924406786975,
+              "ndcg": 0.2717312824323365,
+              "precision": 0.2439999999999996,
+              "hit_rate": 0.772,
+              "artist_diversity": 0.5531333333333335,
+              "catalogue_coverage": 0.003711456063799846
+            },
+            "standard_title": {
+              "recall": 0.08881646012060039,
+              "ndcg": 0.2744045650819722,
+              "precision": 0.24639999999999962,
+              "hit_rate": 0.776,
+              "artist_diversity": 0.5550666666666666,
+              "catalogue_coverage": 0.0037094879046781176
+            },
+            "unified_no_title": {
+              "recall": 0.08804332936093981,
+              "ndcg": 0.27300150735499484,
+              "precision": 0.24559999999999965,
+              "hit_rate": 0.775,
+              "artist_diversity": 0.5584666666666666,
+              "catalogue_coverage": 0.0036538874094892825
+            },
+            "unified": {
+              "recall": 0.08795748089617471,
+              "ndcg": 0.27294276513720866,
+              "precision": 0.24539999999999967,
+              "hit_rate": 0.774,
+              "artist_diversity": 0.5585999999999999,
+              "catalogue_coverage": 0.0036553635288305787
+            },
+            "unified_seed_bpm": {
+              "recall": 0.052912613362847326,
+              "ndcg": 0.18704042851724975,
+              "precision": 0.15846666666666676,
+              "hit_rate": 0.701,
+              "artist_diversity": 0.6952666666666667,
+              "catalogue_coverage": 0.003500863037774878
+            }
+          },
+          "16": {
+            "popularity": {
+              "recall": 0.0099642445969152,
+              "ndcg": 0.035913368126912114,
+              "precision": 0.033375,
+              "hit_rate": 0.189,
+              "artist_diversity": 0.9379375,
+              "catalogue_coverage": 8.856716047779031e-06
+            },
+            "cf": {
+              "recall": 0.0912781225417446,
+              "ndcg": 0.2693580930171072,
+              "precision": 0.2401875,
+              "hit_rate": 0.779,
+              "artist_diversity": 0.5503125,
+              "catalogue_coverage": 0.003895970981461909
+            },
+            "standard_title": {
+              "recall": 0.09249200618886592,
+              "ndcg": 0.27193245391802995,
+              "precision": 0.2424375,
+              "hit_rate": 0.783,
+              "artist_diversity": 0.5520625,
+              "catalogue_coverage": 0.0038880983449749947
+            },
+            "unified_no_title": {
+              "recall": 0.09164995689879611,
+              "ndcg": 0.27043469186960356,
+              "precision": 0.2414375,
+              "hit_rate": 0.779,
+              "artist_diversity": 0.5566875,
+              "catalogue_coverage": 0.003833973969127456
+            },
+            "unified": {
+              "recall": 0.09161710980795341,
+              "ndcg": 0.2703382964281396,
+              "precision": 0.2411875,
+              "hit_rate": 0.778,
+              "artist_diversity": 0.5564375,
+              "catalogue_coverage": 0.003835942128249185
+            },
+            "unified_seed_bpm": {
+              "recall": 0.054318288966723076,
+              "ndcg": 0.18374547366935937,
+              "precision": 0.1540625,
+              "hit_rate": 0.706,
+              "artist_diversity": 0.6909375,
+              "catalogue_coverage": 0.003678489398510891
+            }
+          },
+          "17": {
+            "popularity": {
+              "recall": 0.010387166916300102,
+              "ndcg": 0.03566403496488005,
+              "precision": 0.032999999999999946,
+              "hit_rate": 0.192,
+              "artist_diversity": 0.9414705882352942,
+              "catalogue_coverage": 9.348755828211199e-06
+            },
+            "cf": {
+              "recall": 0.09525891756327663,
+              "ndcg": 0.26764159712365293,
+              "precision": 0.23735294117647213,
+              "hit_rate": 0.788,
+              "artist_diversity": 0.5456470588235295,
+              "catalogue_coverage": 0.004090326694732616
+            },
+            "standard_title": {
+              "recall": 0.09661169948555091,
+              "ndcg": 0.27002971245295876,
+              "precision": 0.2392352941176485,
+              "hit_rate": 0.789,
+              "artist_diversity": 0.5476470588235294,
+              "catalogue_coverage": 0.004076549580880515
+            },
+            "unified_no_title": {
+              "recall": 0.09562687662184713,
+              "ndcg": 0.2689572901678575,
+              "precision": 0.23900000000000132,
+              "hit_rate": 0.785,
+              "artist_diversity": 0.5515882352941177,
+              "catalogue_coverage": 0.004015044608326494
+            },
+            "unified": {
+              "recall": 0.0957795288382632,
+              "ndcg": 0.26907641603110605,
+              "precision": 0.2390588235294131,
+              "hit_rate": 0.785,
+              "artist_diversity": 0.5514117647058823,
+              "catalogue_coverage": 0.004015536648106926
+            },
+            "unified_seed_bpm": {
+              "recall": 0.056130992222956144,
+              "ndcg": 0.18098779482350794,
+              "precision": 0.15041176470588347,
+              "hit_rate": 0.713,
+              "artist_diversity": 0.6875294117647058,
+              "catalogue_coverage": 0.0038433227249556673
+            }
+          },
+          "18": {
+            "popularity": {
+              "recall": 0.010883982443378053,
+              "ndcg": 0.035317934528045644,
+              "precision": 0.03238888888888893,
+              "hit_rate": 0.194,
+              "artist_diversity": 0.9424444444444445,
+              "catalogue_coverage": 9.840795608643368e-06
+            },
+            "cf": {
+              "recall": 0.09907133045609048,
+              "ndcg": 0.2657985618613978,
+              "precision": 0.23422222222222167,
+              "hit_rate": 0.79,
+              "artist_diversity": 0.542,
+              "catalogue_coverage": 0.00426844509524906
+            },
+            "standard_title": {
+              "recall": 0.10033973409906179,
+              "ndcg": 0.26788530553206225,
+              "precision": 0.2356111111111105,
+              "hit_rate": 0.794,
+              "artist_diversity": 0.5440555555555555,
+              "catalogue_coverage": 0.004255652060957824
+            },
+            "unified_no_title": {
+              "recall": 0.09923029107628317,
+              "ndcg": 0.2669890224594209,
+              "precision": 0.23572222222222175,
+              "hit_rate": 0.791,
+              "artist_diversity": 0.5482777777777779,
+              "catalogue_coverage": 0.004190702809940778
+            },
+            "unified": {
+              "recall": 0.09920853152799339,
+              "ndcg": 0.266975026309835,
+              "precision": 0.23561111111111063,
+              "hit_rate": 0.791,
+              "artist_diversity": 0.5480555555555555,
+              "catalogue_coverage": 0.004189226690599482
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05833416790239548,
+              "ndcg": 0.1787239189702146,
+              "precision": 0.14733333333333365,
+              "hit_rate": 0.721,
+              "artist_diversity": 0.6863888888888889,
+              "catalogue_coverage": 0.004009140130961308
+            }
+          },
+          "19": {
+            "popularity": {
+              "recall": 0.011508954984552096,
+              "ndcg": 0.03544181885434845,
+              "precision": 0.0325789473684211,
+              "hit_rate": 0.211,
+              "artist_diversity": 0.8930000000000002,
+              "catalogue_coverage": 1.0332835389075536e-05
+            },
+            "cf": {
+              "recall": 0.10366884606394414,
+              "ndcg": 0.26427895515481636,
+              "precision": 0.2311578947368434,
+              "hit_rate": 0.796,
+              "artist_diversity": 0.5388947368421052,
+              "catalogue_coverage": 0.004446563495765506
+            },
+            "standard_title": {
+              "recall": 0.10459952103899631,
+              "ndcg": 0.26617913202262367,
+              "precision": 0.23236842105263278,
+              "hit_rate": 0.8,
+              "artist_diversity": 0.5406842105263159,
+              "catalogue_coverage": 0.004434262501254701
+            },
+            "unified_no_title": {
+              "recall": 0.10296353576319883,
+              "ndcg": 0.265088354213482,
+              "precision": 0.2323157894736856,
+              "hit_rate": 0.801,
+              "artist_diversity": 0.545,
+              "catalogue_coverage": 0.004369313250237655
+            },
+            "unified": {
+              "recall": 0.10304058928366738,
+              "ndcg": 0.2651137220081791,
+              "precision": 0.23226315789473825,
+              "hit_rate": 0.802,
+              "artist_diversity": 0.5453157894736842,
+              "catalogue_coverage": 0.004368821210457223
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06033586957058185,
+              "ndcg": 0.17615458772930478,
+              "precision": 0.14368421052631666,
+              "hit_rate": 0.727,
+              "artist_diversity": 0.6841052631578947,
+              "catalogue_coverage": 0.004183814253014727
+            }
+          },
+          "20": {
+            "popularity": {
+              "recall": 0.011981011158155183,
+              "ndcg": 0.03526038396697186,
+              "precision": 0.03225000000000005,
+              "hit_rate": 0.217,
+              "artist_diversity": 0.8503999999999997,
+              "catalogue_coverage": 1.0824875169507705e-05
+            },
+            "cf": {
+              "recall": 0.10649429685626255,
+              "ndcg": 0.2624470137850472,
+              "precision": 0.2280000000000004,
+              "hit_rate": 0.802,
+              "artist_diversity": 0.53575,
+              "catalogue_coverage": 0.0046310784134275685
+            },
+            "standard_title": {
+              "recall": 0.10724382133483303,
+              "ndcg": 0.2642259220961658,
+              "precision": 0.22910000000000041,
+              "hit_rate": 0.803,
+              "artist_diversity": 0.5374500000000001,
+              "catalogue_coverage": 0.004615333140453739
+            },
+            "unified_no_title": {
+              "recall": 0.10650599052867481,
+              "ndcg": 0.26334464644882816,
+              "precision": 0.22915000000000046,
+              "hit_rate": 0.805,
+              "artist_diversity": 0.5421,
+              "catalogue_coverage": 0.004535622696023728
+            },
+            "unified": {
+              "recall": 0.10661586456196386,
+              "ndcg": 0.26346692673059274,
+              "precision": 0.22925000000000045,
+              "hit_rate": 0.806,
+              "artist_diversity": 0.5424,
+              "catalogue_coverage": 0.0045370988153650245
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06183562565293617,
+              "ndcg": 0.17372478140689476,
+              "precision": 0.14029999999999976,
+              "hit_rate": 0.73,
+              "artist_diversity": 0.6822999999999999,
+              "catalogue_coverage": 0.004344711261216046
+            }
+          }
+        }
+      },
+      "title_tagged": {
+        "queries": 988,
+        "cutoffs": {
+          "1": {
+            "popularity": {
+              "recall": 0.0008838922147642443,
+              "ndcg": 0.04048582995951417,
+              "precision": 0.04048582995951417,
+              "hit_rate": 0.04048582995951417,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 9.840795608643368e-07
+            },
+            "cf": {
+              "recall": 0.010984108056239578,
+              "ndcg": 0.3562753036437247,
+              "precision": 0.3562753036437247,
+              "hit_rate": 0.3562753036437247,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00038329898895665915
+            },
+            "standard_title": {
+              "recall": 0.010699275666268077,
+              "ndcg": 0.36133603238866396,
+              "precision": 0.36133603238866396,
+              "hit_rate": 0.36133603238866396,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003892034663218452
+            },
+            "unified_no_title": {
+              "recall": 0.010459790735558893,
+              "ndcg": 0.354251012145749,
+              "precision": 0.354251012145749,
+              "hit_rate": 0.354251012145749,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00037936267071320183
+            },
+            "unified": {
+              "recall": 0.010468909165729953,
+              "ndcg": 0.35526315789473684,
+              "precision": 0.35526315789473684,
+              "hit_rate": 0.35526315789473684,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.000379854710493634
+            },
+            "unified_seed_bpm": {
+              "recall": 0.0077377986269707285,
+              "ndcg": 0.2894736842105263,
+              "precision": 0.2894736842105263,
+              "hit_rate": 0.2894736842105263,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00038182286961536266
+            }
+          },
+          "2": {
+            "popularity": {
+              "recall": 0.001779157897750376,
+              "ndcg": 0.04205203565682,
+              "precision": 0.04251012145748988,
+              "hit_rate": 0.08097165991902834,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.476119341296505e-06
+            },
+            "cf": {
+              "recall": 0.020059789856417775,
+              "ndcg": 0.3421794523679721,
+              "precision": 0.33805668016194335,
+              "hit_rate": 0.48380566801619435,
+              "artist_diversity": 0.7955465587044535,
+              "catalogue_coverage": 0.0007055850451397294
+            },
+            "standard_title": {
+              "recall": 0.02011656216666078,
+              "ndcg": 0.3441077697182997,
+              "precision": 0.3390688259109312,
+              "hit_rate": 0.4848178137651822,
+              "artist_diversity": 0.8021255060728745,
+              "catalogue_coverage": 0.0007085372838223225
+            },
+            "unified_no_title": {
+              "recall": 0.019943949387390032,
+              "ndcg": 0.3428960208402814,
+              "precision": 0.3395748987854251,
+              "hit_rate": 0.48785425101214575,
+              "artist_diversity": 0.7965587044534413,
+              "catalogue_coverage": 0.0006977124086528148
+            },
+            "unified": {
+              "recall": 0.019852796003008745,
+              "ndcg": 0.34312506374061646,
+              "precision": 0.3395748987854251,
+              "hit_rate": 0.48785425101214575,
+              "artist_diversity": 0.7975708502024291,
+              "catalogue_coverage": 0.0006977124086528148
+            },
+            "unified_seed_bpm": {
+              "recall": 0.013941912821910705,
+              "ndcg": 0.269504561569877,
+              "precision": 0.26366396761133604,
+              "hit_rate": 0.402834008097166,
+              "artist_diversity": 0.8618421052631579,
+              "catalogue_coverage": 0.0006977124086528148
+            }
+          },
+          "3": {
+            "popularity": {
+              "recall": 0.0024238040855761025,
+              "ndcg": 0.041209563682025024,
+              "precision": 0.04116059379217273,
+              "hit_rate": 0.1062753036437247,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.9681591217286735e-06
+            },
+            "cf": {
+              "recall": 0.02687757440897937,
+              "ndcg": 0.3279664331101835,
+              "precision": 0.3188259109311742,
+              "hit_rate": 0.5455465587044535,
+              "artist_diversity": 0.7196356275303644,
+              "catalogue_coverage": 0.0009899840382295228
+            },
+            "standard_title": {
+              "recall": 0.027156015871618283,
+              "ndcg": 0.3310509734622298,
+              "precision": 0.3218623481781377,
+              "hit_rate": 0.5495951417004049,
+              "artist_diversity": 0.7243589743589743,
+              "catalogue_coverage": 0.0009875238393273619
+            },
+            "unified_no_title": {
+              "recall": 0.02678008311947812,
+              "ndcg": 0.32893610239999355,
+              "precision": 0.3205128205128205,
+              "hit_rate": 0.5516194331983806,
+              "artist_diversity": 0.7260458839406208,
+              "catalogue_coverage": 0.0009757148845969899
+            },
+            "unified": {
+              "recall": 0.02678008311947812,
+              "ndcg": 0.32911140282009166,
+              "precision": 0.3205128205128205,
+              "hit_rate": 0.5516194331983806,
+              "artist_diversity": 0.7260458839406208,
+              "catalogue_coverage": 0.0009757148845969899
+            },
+            "unified_seed_bpm": {
+              "recall": 0.019036181921869743,
+              "ndcg": 0.2536932217493837,
+              "precision": 0.2429149797570852,
+              "hit_rate": 0.4605263157894737,
+              "artist_diversity": 0.8103913630229419,
+              "catalogue_coverage": 0.0009776830437187186
+            }
+          },
+          "4": {
+            "popularity": {
+              "recall": 0.0033935072661626575,
+              "ndcg": 0.04129244620594271,
+              "precision": 0.04124493927125506,
+              "hit_rate": 0.11740890688259109,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.460198902160842e-06
+            },
+            "cf": {
+              "recall": 0.03381427854447543,
+              "ndcg": 0.3172858044588,
+              "precision": 0.30465587044534415,
+              "hit_rate": 0.5910931174089069,
+              "artist_diversity": 0.6751012145748988,
+              "catalogue_coverage": 0.0012635581561498085
+            },
+            "standard_title": {
+              "recall": 0.034578099901616935,
+              "ndcg": 0.3211745967913912,
+              "precision": 0.3089574898785425,
+              "hit_rate": 0.597165991902834,
+              "artist_diversity": 0.6776315789473685,
+              "catalogue_coverage": 0.0012596218379063511
+            },
+            "unified_no_title": {
+              "recall": 0.033884248032956456,
+              "ndcg": 0.31924512421925527,
+              "precision": 0.3076923076923077,
+              "hit_rate": 0.5981781376518218,
+              "artist_diversity": 0.680414979757085,
+              "catalogue_coverage": 0.0012483049229564112
+            },
+            "unified": {
+              "recall": 0.03387719345327829,
+              "ndcg": 0.31905061266936563,
+              "precision": 0.30718623481781376,
+              "hit_rate": 0.5961538461538461,
+              "artist_diversity": 0.6796558704453441,
+              "catalogue_coverage": 0.0012473208433955469
+            },
+            "unified_seed_bpm": {
+              "recall": 0.023215979484000684,
+              "ndcg": 0.24484152491232686,
+              "precision": 0.2320344129554656,
+              "hit_rate": 0.4949392712550607,
+              "artist_diversity": 0.78415991902834,
+              "catalogue_coverage": 0.0012286233317391245
+            }
+          },
+          "5": {
+            "popularity": {
+              "recall": 0.004080332248006302,
+              "ndcg": 0.0407341009461884,
+              "precision": 0.04028340080971657,
+              "hit_rate": 0.1305668016194332,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.95223868259301e-06
+            },
+            "cf": {
+              "recall": 0.03989200663864145,
+              "ndcg": 0.31183080181704587,
+              "precision": 0.2983805668016187,
+              "hit_rate": 0.6163967611336032,
+              "artist_diversity": 0.6443319838056679,
+              "catalogue_coverage": 0.001522371080657129
+            },
+            "standard_title": {
+              "recall": 0.04056040345315592,
+              "ndcg": 0.31573283501628646,
+              "precision": 0.3026315789473676,
+              "hit_rate": 0.6214574898785425,
+              "artist_diversity": 0.648178137651822,
+              "catalogue_coverage": 0.00151351436460935
+            },
+            "unified_no_title": {
+              "recall": 0.039996050796839266,
+              "ndcg": 0.3129718026391679,
+              "precision": 0.2999999999999992,
+              "hit_rate": 0.6234817813765182,
+              "artist_diversity": 0.6536437246963563,
+              "catalogue_coverage": 0.0015012133700985457
+            },
+            "unified": {
+              "recall": 0.04001265727852672,
+              "ndcg": 0.3132012079766079,
+              "precision": 0.3002024291497967,
+              "hit_rate": 0.6234817813765182,
+              "artist_diversity": 0.6540485829959515,
+              "catalogue_coverage": 0.0015017054098789779
+            },
+            "unified_seed_bpm": {
+              "recall": 0.02705223955773984,
+              "ndcg": 0.23619948565725662,
+              "precision": 0.2210526315789471,
+              "hit_rate": 0.5253036437246964,
+              "artist_diversity": 0.766599190283401,
+              "catalogue_coverage": 0.001469722824150887
+            }
+          },
+          "6": {
+            "popularity": {
+              "recall": 0.004938998101374278,
+              "ndcg": 0.039821741190207045,
+              "precision": 0.038798920377867745,
+              "hit_rate": 0.1396761133603239,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.4442784630251786e-06
+            },
+            "cf": {
+              "recall": 0.04572586644104854,
+              "ndcg": 0.3049658056040713,
+              "precision": 0.28930499325236175,
+              "hit_rate": 0.6417004048582996,
+              "artist_diversity": 0.626349527665317,
+              "catalogue_coverage": 0.0017575660957037055
+            },
+            "standard_title": {
+              "recall": 0.046704952089097106,
+              "ndcg": 0.30833179770292063,
+              "precision": 0.2926788124156545,
+              "hit_rate": 0.645748987854251,
+              "artist_diversity": 0.6310728744939271,
+              "catalogue_coverage": 0.0017560899763624088
+            },
+            "unified_no_title": {
+              "recall": 0.04541572790237035,
+              "ndcg": 0.30524349210460067,
+              "precision": 0.28964237516869096,
+              "hit_rate": 0.6518218623481782,
+              "artist_diversity": 0.6325910931174089,
+              "catalogue_coverage": 0.0017462491807537655
+            },
+            "unified": {
+              "recall": 0.045374970485999123,
+              "ndcg": 0.30512087503105767,
+              "precision": 0.2893049932523617,
+              "hit_rate": 0.6497975708502024,
+              "artist_diversity": 0.6327597840755737,
+              "catalogue_coverage": 0.001744281021632037
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03068852721596084,
+              "ndcg": 0.22977403460242418,
+              "precision": 0.21322537112010784,
+              "hit_rate": 0.5637651821862348,
+              "artist_diversity": 0.7503373819163293,
+              "catalogue_coverage": 0.0016960611231496845
+            }
+          },
+          "7": {
+            "popularity": {
+              "recall": 0.005572197186186613,
+              "ndcg": 0.03948673920949733,
+              "precision": 0.03831694621168304,
+              "hit_rate": 0.14473684210526316,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.936318243457347e-06
+            },
+            "cf": {
+              "recall": 0.05124766968259662,
+              "ndcg": 0.29827788663384125,
+              "precision": 0.2802197802197796,
+              "hit_rate": 0.6659919028340081,
+              "artist_diversity": 0.6119144013880856,
+              "catalogue_coverage": 0.0020001417074567646
+            },
+            "standard_title": {
+              "recall": 0.052210633087817364,
+              "ndcg": 0.3018475348744632,
+              "precision": 0.2839791787160203,
+              "hit_rate": 0.6740890688259109,
+              "artist_diversity": 0.6150954308849045,
+              "catalogue_coverage": 0.0019976815085546037
+            },
+            "unified_no_title": {
+              "recall": 0.0513764366771238,
+              "ndcg": 0.2993515517975434,
+              "precision": 0.28181029496818916,
+              "hit_rate": 0.6761133603238867,
+              "artist_diversity": 0.6168305378831693,
+              "catalogue_coverage": 0.0019661909626069447
+            },
+            "unified": {
+              "recall": 0.05137003015068586,
+              "ndcg": 0.2994256461757475,
+              "precision": 0.2818102949681892,
+              "hit_rate": 0.6751012145748988,
+              "artist_diversity": 0.6171197223828804,
+              "catalogue_coverage": 0.001965698922826513
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03425292037644096,
+              "ndcg": 0.22319641719876654,
+              "precision": 0.20474262579525676,
+              "hit_rate": 0.5860323886639676,
+              "artist_diversity": 0.7419028340080972,
+              "catalogue_coverage": 0.0019155108652224315
+            }
+          },
+          "8": {
+            "popularity": {
+              "recall": 0.005953436546763097,
+              "ndcg": 0.03889867003599381,
+              "precision": 0.03744939271255061,
+              "hit_rate": 0.14473684210526316,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.428358023889516e-06
+            },
+            "cf": {
+              "recall": 0.057033038039564166,
+              "ndcg": 0.29454546134177656,
+              "precision": 0.2756831983805668,
+              "hit_rate": 0.6882591093117408,
+              "artist_diversity": 0.5999493927125507,
+              "catalogue_coverage": 0.0022259879666751297
+            },
+            "standard_title": {
+              "recall": 0.05798306999912047,
+              "ndcg": 0.29789582756826316,
+              "precision": 0.2790991902834008,
+              "hit_rate": 0.6973684210526315,
+              "artist_diversity": 0.6041244939271255,
+              "catalogue_coverage": 0.002223035727992537
+            },
+            "unified_no_title": {
+              "recall": 0.05727255208969141,
+              "ndcg": 0.29576883859735875,
+              "precision": 0.27745445344129555,
+              "hit_rate": 0.6902834008097166,
+              "artist_diversity": 0.6082995951417004,
+              "catalogue_coverage": 0.0021871168240209884
+            },
+            "unified": {
+              "recall": 0.05736369464034812,
+              "ndcg": 0.2960793117578393,
+              "precision": 0.277834008097166,
+              "hit_rate": 0.6923076923076923,
+              "artist_diversity": 0.6079200404858299,
+              "catalogue_coverage": 0.002188592943362285
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03748920882484736,
+              "ndcg": 0.21714677052435621,
+              "precision": 0.19698886639676114,
+              "hit_rate": 0.6052631578947368,
+              "artist_diversity": 0.7329200404858299,
+              "catalogue_coverage": 0.0021310242890517214
+            }
+          },
+          "9": {
+            "popularity": {
+              "recall": 0.006303965625536534,
+              "ndcg": 0.037774287777413554,
+              "precision": 0.03576248313090413,
+              "hit_rate": 0.14979757085020243,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-06
+            },
+            "cf": {
+              "recall": 0.061804322983750375,
+              "ndcg": 0.2898919232699452,
+              "precision": 0.26934322986954673,
+              "hit_rate": 0.7044534412955465,
+              "artist_diversity": 0.5901934322986955,
+              "catalogue_coverage": 0.0024390411916022587
+            },
+            "standard_title": {
+              "recall": 0.06266741393634616,
+              "ndcg": 0.29299819964218,
+              "precision": 0.2723796671165103,
+              "hit_rate": 0.7095141700404858,
+              "artist_diversity": 0.594017094017094,
+              "catalogue_coverage": 0.0024296924357740473
+            },
+            "unified_no_title": {
+              "recall": 0.0620410845241951,
+              "ndcg": 0.2905995704020224,
+              "precision": 0.27024291497975816,
+              "hit_rate": 0.7034412955465587,
+              "artist_diversity": 0.5989653621232568,
+              "catalogue_coverage": 0.0024001700489481173
+            },
+            "unified": {
+              "recall": 0.062113692514759754,
+              "ndcg": 0.2908880757978497,
+              "precision": 0.2705802968960875,
+              "hit_rate": 0.7034412955465587,
+              "artist_diversity": 0.5986279802069275,
+              "catalogue_coverage": 0.0024011541285089816
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04021726761829413,
+              "ndcg": 0.21228493987970107,
+              "precision": 0.1909581646423765,
+              "hit_rate": 0.6295546558704453,
+              "artist_diversity": 0.727395411605938,
+              "catalogue_coverage": 0.0023263640818832923
+            }
+          },
+          "10": {
+            "popularity": {
+              "recall": 0.006965498575055879,
+              "ndcg": 0.03765116523019691,
+              "precision": 0.035627530364372495,
+              "hit_rate": 0.15384615384615385,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.4124375847538526e-06
+            },
+            "cf": {
+              "recall": 0.06641203265479825,
+              "ndcg": 0.2858597420349198,
+              "precision": 0.26396761133603186,
+              "hit_rate": 0.7226720647773279,
+              "artist_diversity": 0.5818825910931174,
+              "catalogue_coverage": 0.0026560307347728448
+            },
+            "standard_title": {
+              "recall": 0.06711528893838815,
+              "ndcg": 0.28838195988746984,
+              "precision": 0.26609311740890634,
+              "hit_rate": 0.7246963562753036,
+              "artist_diversity": 0.5856275303643725,
+              "catalogue_coverage": 0.0026511103369685233
+            },
+            "unified_no_title": {
+              "recall": 0.06661867789912293,
+              "ndcg": 0.28721999512209184,
+              "precision": 0.26589068825910894,
+              "hit_rate": 0.7206477732793523,
+              "artist_diversity": 0.5898785425101214,
+              "catalogue_coverage": 0.0026132232738752463
+            },
+            "unified": {
+              "recall": 0.06667183047013689,
+              "ndcg": 0.28755453908755974,
+              "precision": 0.26629554655870413,
+              "hit_rate": 0.7236842105263158,
+              "artist_diversity": 0.5895748987854251,
+              "catalogue_coverage": 0.002615191432996975
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04264803558058215,
+              "ndcg": 0.2079600031788555,
+              "precision": 0.18562753036437202,
+              "hit_rate": 0.6497975708502024,
+              "artist_diversity": 0.7196356275303644,
+              "catalogue_coverage": 0.0025138312382279484
+            }
+          },
+          "11": {
+            "popularity": {
+              "recall": 0.007416946975441201,
+              "ndcg": 0.03737816369720653,
+              "precision": 0.03524107471475895,
+              "hit_rate": 0.15587044534412955,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.90447736518602e-06
+            },
+            "cf": {
+              "recall": 0.07031994133494687,
+              "ndcg": 0.2823578922831182,
+              "precision": 0.2592013249907999,
+              "hit_rate": 0.7317813765182186,
+              "artist_diversity": 0.5748987854251012,
+              "catalogue_coverage": 0.002863179482334788
+            },
+            "standard_title": {
+              "recall": 0.07132560664884992,
+              "ndcg": 0.2851439645209216,
+              "precision": 0.2617776959882235,
+              "hit_rate": 0.7307692307692307,
+              "artist_diversity": 0.577107103422893,
+              "catalogue_coverage": 0.002860719283432627
+            },
+            "unified_no_title": {
+              "recall": 0.0712293101773942,
+              "ndcg": 0.28434925349675033,
+              "precision": 0.2620537357379473,
+              "hit_rate": 0.7348178137651822,
+              "artist_diversity": 0.582535885167464,
+              "catalogue_coverage": 0.0028036426689024953
+            },
+            "unified": {
+              "recall": 0.07120685292031446,
+              "ndcg": 0.2844302688428738,
+              "precision": 0.2620537357379473,
+              "hit_rate": 0.7358299595141701,
+              "artist_diversity": 0.5830879646669119,
+              "catalogue_coverage": 0.002805610828024224
+            },
+            "unified_seed_bpm": {
+              "recall": 0.045035060248122254,
+              "ndcg": 0.20282071533780902,
+              "precision": 0.17878174457121931,
+              "hit_rate": 0.6619433198380567,
+              "artist_diversity": 0.7134707397865293,
+              "catalogue_coverage": 0.002693917797866122
+            }
+          },
+          "12": {
+            "popularity": {
+              "recall": 0.00784017365255659,
+              "ndcg": 0.036873662755756764,
+              "precision": 0.03449730094466935,
+              "hit_rate": 0.16194331983805668,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.396517145618189e-06
+            },
+            "cf": {
+              "recall": 0.07514010440332038,
+              "ndcg": 0.2797602415953538,
+              "precision": 0.25548245614035126,
+              "hit_rate": 0.742914979757085,
+              "artist_diversity": 0.5681511470985156,
+              "catalogue_coverage": 0.0030614715138489517
+            },
+            "standard_title": {
+              "recall": 0.07614323033040031,
+              "ndcg": 0.28255953757779056,
+              "precision": 0.25809716599190313,
+              "hit_rate": 0.7439271255060729,
+              "artist_diversity": 0.5705128205128205,
+              "catalogue_coverage": 0.0030585192751663584
+            },
+            "unified_no_title": {
+              "recall": 0.07555161854941649,
+              "ndcg": 0.2811076376119316,
+              "precision": 0.25733805668016224,
+              "hit_rate": 0.7459514170040485,
+              "artist_diversity": 0.5758265856950068,
+              "catalogue_coverage": 0.0029975063423927696
+            },
+            "unified": {
+              "recall": 0.07559830964531573,
+              "ndcg": 0.28134547771080554,
+              "precision": 0.25759109311740924,
+              "hit_rate": 0.7469635627530364,
+              "artist_diversity": 0.5765013495276652,
+              "catalogue_coverage": 0.002997998382173202
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04740907762254485,
+              "ndcg": 0.19877263114606977,
+              "precision": 0.17349865047233484,
+              "hit_rate": 0.6771255060728745,
+              "artist_diversity": 0.7074898785425101,
+              "catalogue_coverage": 0.0028818769939912103
+            }
+          },
+          "13": {
+            "popularity": {
+              "recall": 0.0082505616542492,
+              "ndcg": 0.036156668962231256,
+              "precision": 0.03340080971659916,
+              "hit_rate": 0.16396761133603238,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.888556926050357e-06
+            },
+            "cf": {
+              "recall": 0.07924793726902496,
+              "ndcg": 0.2768151384191109,
+              "precision": 0.2510121457489879,
+              "hit_rate": 0.7560728744939271,
+              "artist_diversity": 0.5629087511678605,
+              "catalogue_coverage": 0.0032459864315110146
+            },
+            "standard_title": {
+              "recall": 0.08046812225739511,
+              "ndcg": 0.27979252939158783,
+              "precision": 0.2538928682653379,
+              "hit_rate": 0.7601214574898786,
+              "artist_diversity": 0.564388041108689,
+              "catalogue_coverage": 0.0032386058348045322
+            },
+            "unified_no_title": {
+              "recall": 0.07992159756245842,
+              "ndcg": 0.27905875582898465,
+              "precision": 0.2542821550918716,
+              "hit_rate": 0.7580971659919028,
+              "artist_diversity": 0.5710059171597633,
+              "catalogue_coverage": 0.0031849734987374257
+            },
+            "unified": {
+              "recall": 0.07986894703684459,
+              "ndcg": 0.27913601239859737,
+              "precision": 0.2542821550918716,
+              "hit_rate": 0.757085020242915,
+              "artist_diversity": 0.5713173466209904,
+              "catalogue_coverage": 0.0031849734987374257
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04945520990715419,
+              "ndcg": 0.19500672619823062,
+              "precision": 0.16848333852382485,
+              "hit_rate": 0.687246963562753,
+              "artist_diversity": 0.7024291497975709,
+              "catalogue_coverage": 0.0030634396729706803
+            }
+          },
+          "14": {
+            "popularity": {
+              "recall": 0.009097397561733183,
+              "ndcg": 0.036321226773883074,
+              "precision": 0.03368999421631005,
+              "hit_rate": 0.18522267206477733,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 7.380596706482526e-06
+            },
+            "cf": {
+              "recall": 0.08363671675331075,
+              "ndcg": 0.2750304112347298,
+              "precision": 0.24826489300173554,
+              "hit_rate": 0.7641700404858299,
+              "artist_diversity": 0.5580537883169463,
+              "catalogue_coverage": 0.0034285331900513493
+            },
+            "standard_title": {
+              "recall": 0.08480919855066053,
+              "ndcg": 0.27774943862954027,
+              "precision": 0.25072296124927745,
+              "hit_rate": 0.7682186234817814,
+              "artist_diversity": 0.5598611914401388,
+              "catalogue_coverage": 0.0034245968718078917
+            },
+            "unified_no_title": {
+              "recall": 0.08413598988457789,
+              "ndcg": 0.2767622324537865,
+              "precision": 0.25065066512435,
+              "hit_rate": 0.7692307692307693,
+              "artist_diversity": 0.5641989589358011,
+              "catalogue_coverage": 0.0033793292120081323
+            },
+            "unified": {
+              "recall": 0.08419922279964147,
+              "ndcg": 0.2768091573251978,
+              "precision": 0.2505783689994223,
+              "hit_rate": 0.7692307692307693,
+              "artist_diversity": 0.5646327356853673,
+              "catalogue_coverage": 0.003380805331349429
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05164532388978232,
+              "ndcg": 0.1917414211074473,
+              "precision": 0.16411220358588774,
+              "hit_rate": 0.6973684210526315,
+              "artist_diversity": 0.7001879699248119,
+              "catalogue_coverage": 0.0032445103121697184
+            }
+          },
+          "15": {
+            "popularity": {
+              "recall": 0.009571476229600355,
+              "ndcg": 0.036211965378620946,
+              "precision": 0.033535762483130865,
+              "hit_rate": 0.1882591093117409,
+              "artist_diversity": 0.9978407557354927,
+              "catalogue_coverage": 7.872636486914694e-06
+            },
+            "cf": {
+              "recall": 0.08816901524465386,
+              "ndcg": 0.2731531580730763,
+              "precision": 0.2452766531713896,
+              "hit_rate": 0.7742914979757085,
+              "artist_diversity": 0.5545209176788124,
+              "catalogue_coverage": 0.003625841142004649
+            },
+            "standard_title": {
+              "recall": 0.08939089384053507,
+              "ndcg": 0.27585890974274796,
+              "precision": 0.2477058029689605,
+              "hit_rate": 0.77834008097166,
+              "artist_diversity": 0.5564777327935222,
+              "catalogue_coverage": 0.0036238729828829202
+            },
+            "unified_no_title": {
+              "recall": 0.08860837282873284,
+              "ndcg": 0.27443881082880334,
+              "precision": 0.24689608636977026,
+              "hit_rate": 0.7773279352226721,
+              "artist_diversity": 0.559919028340081,
+              "catalogue_coverage": 0.003568764527474517
+            },
+            "unified": {
+              "recall": 0.08852148167006375,
+              "ndcg": 0.27437935514278494,
+              "precision": 0.24669365721997272,
+              "hit_rate": 0.7763157894736842,
+              "artist_diversity": 0.5600539811066126,
+              "catalogue_coverage": 0.0035702406468158137
+            },
+            "unified_seed_bpm": {
+              "recall": 0.053293159990871745,
+              "ndcg": 0.18833245068904303,
+              "precision": 0.15958164642375178,
+              "hit_rate": 0.7034412955465587,
+              "artist_diversity": 0.6975708502024291,
+              "catalogue_coverage": 0.003418692394442706
+            }
+          },
+          "16": {
+            "popularity": {
+              "recall": 0.010085267810642916,
+              "ndcg": 0.036349562881489994,
+              "precision": 0.03378036437246964,
+              "hit_rate": 0.19129554655870445,
+              "artist_diversity": 0.9379428137651822,
+              "catalogue_coverage": 8.856716047779031e-06
+            },
+            "cf": {
+              "recall": 0.09185012256189111,
+              "ndcg": 0.2707453032037805,
+              "precision": 0.24139676113360323,
+              "hit_rate": 0.7813765182186235,
+              "artist_diversity": 0.5515561740890689,
+              "catalogue_coverage": 0.0038049436220819583
+            },
+            "standard_title": {
+              "recall": 0.09307874973509084,
+              "ndcg": 0.27335093164600993,
+              "precision": 0.2436740890688259,
+              "hit_rate": 0.7854251012145749,
+              "artist_diversity": 0.5533274291497976,
+              "catalogue_coverage": 0.0037970709855950436
+            },
+            "unified_no_title": {
+              "recall": 0.0922264731257084,
+              "ndcg": 0.2718349781556998,
+              "precision": 0.24266194331983806,
+              "hit_rate": 0.7813765182186235,
+              "artist_diversity": 0.5580086032388664,
+              "catalogue_coverage": 0.0037429466097475047
+            },
+            "unified": {
+              "recall": 0.09219322708234536,
+              "ndcg": 0.27173741191940026,
+              "precision": 0.2424089068825911,
+              "hit_rate": 0.7803643724696356,
+              "artist_diversity": 0.5577555668016194,
+              "catalogue_coverage": 0.0037449147688692337
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05471590857779052,
+              "ndcg": 0.18503673098554518,
+              "precision": 0.1551745951417004,
+              "hit_rate": 0.708502024291498,
+              "artist_diversity": 0.6930035425101214,
+              "catalogue_coverage": 0.0035909063175939646
+            }
+          },
+          "17": {
+            "popularity": {
+              "recall": 0.010513326838360426,
+              "ndcg": 0.036097201381457535,
+              "precision": 0.03340080971659913,
+              "hit_rate": 0.19433198380566802,
+              "artist_diversity": 0.9414741605144082,
+              "catalogue_coverage": 9.348755828211199e-06
+            },
+            "cf": {
+              "recall": 0.09580782234776598,
+              "ndcg": 0.26896442086371225,
+              "precision": 0.23844963086449303,
+              "hit_rate": 0.7894736842105263,
+              "artist_diversity": 0.5466777804239105,
+              "catalogue_coverage": 0.003993394857987479
+            },
+            "standard_title": {
+              "recall": 0.09717703481970352,
+              "ndcg": 0.27138154164236183,
+              "precision": 0.24035484639199953,
+              "hit_rate": 0.7904858299595142,
+              "artist_diversity": 0.5487020719218862,
+              "catalogue_coverage": 0.003979617744135378
+            },
+            "unified_no_title": {
+              "recall": 0.09618025054469971,
+              "ndcg": 0.27029609398537685,
+              "precision": 0.24011669445106112,
+              "hit_rate": 0.7864372469635628,
+              "artist_diversity": 0.552691116932603,
+              "catalogue_coverage": 0.003918112771581357
+            },
+            "unified": {
+              "recall": 0.09633475683661881,
+              "ndcg": 0.2704166667214583,
+              "precision": 0.24017623243629568,
+              "hit_rate": 0.7864372469635628,
+              "artist_diversity": 0.5525125029768991,
+              "catalogue_coverage": 0.003918604811361789
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05652762516028628,
+              "ndcg": 0.18224284935528323,
+              "precision": 0.15146463443677177,
+              "hit_rate": 0.7155870445344129,
+              "artist_diversity": 0.6894498690164325,
+              "catalogue_coverage": 0.003749835166673555
+            }
+          },
+          "18": {
+            "popularity": {
+              "recall": 0.011016176562123536,
+              "ndcg": 0.03574689729559276,
+              "precision": 0.03278227620332888,
+              "hit_rate": 0.19635627530364372,
+              "artist_diversity": 0.9424201529464689,
+              "catalogue_coverage": 9.840795608643368e-06
+            },
+            "cf": {
+              "recall": 0.09961823289441231,
+              "ndcg": 0.2670955520780087,
+              "precision": 0.23526765632028737,
+              "hit_rate": 0.791497975708502,
+              "artist_diversity": 0.5430161943319838,
+              "catalogue_coverage": 0.004165608781138737
+            },
+            "standard_title": {
+              "recall": 0.10090204224964644,
+              "ndcg": 0.269207640813499,
+              "precision": 0.2366734143049927,
+              "hit_rate": 0.7955465587044535,
+              "artist_diversity": 0.5450967161493477,
+              "catalogue_coverage": 0.004152815746847501
+            },
+            "unified_no_title": {
+              "recall": 0.09977912421039682,
+              "ndcg": 0.26830047171163524,
+              "precision": 0.2367858749437692,
+              "hit_rate": 0.7925101214574899,
+              "artist_diversity": 0.5493702204228521,
+              "catalogue_coverage": 0.004087866495830455
+            },
+            "unified": {
+              "recall": 0.09975710037609542,
+              "ndcg": 0.26828630556832966,
+              "precision": 0.23667341430499278,
+              "hit_rate": 0.7925101214574899,
+              "artist_diversity": 0.549145299145299,
+              "catalogue_coverage": 0.004086390376489158
+            },
+            "unified_seed_bpm": {
+              "recall": 0.058734556746027226,
+              "ndcg": 0.17994901006425307,
+              "precision": 0.14833558254610923,
+              "hit_rate": 0.7236842105263158,
+              "artist_diversity": 0.6882028789923527,
+              "catalogue_coverage": 0.003910240135094442
+            }
+          },
+          "19": {
+            "popularity": {
+              "recall": 0.01164873986290698,
+              "ndcg": 0.035872286289826374,
+              "precision": 0.03297464308544646,
+              "hit_rate": 0.21356275303643724,
+              "artist_diversity": 0.8929789047517582,
+              "catalogue_coverage": 1.0332835389075536e-05
+            },
+            "cf": {
+              "recall": 0.10421892983856884,
+              "ndcg": 0.26555433141335627,
+              "precision": 0.23215427232047858,
+              "hit_rate": 0.7975708502024291,
+              "artist_diversity": 0.5399531216705731,
+              "catalogue_coverage": 0.004338806783850861
+            },
+            "standard_title": {
+              "recall": 0.10516090855825724,
+              "ndcg": 0.2674775873524324,
+              "precision": 0.23337950138504276,
+              "hit_rate": 0.8016194331983806,
+              "artist_diversity": 0.5417643298529724,
+              "catalogue_coverage": 0.0043265057893400564
+            },
+            "unified_no_title": {
+              "recall": 0.10350505301595214,
+              "ndcg": 0.2663735612298193,
+              "precision": 0.23332623055614884,
+              "hit_rate": 0.8026315789473685,
+              "artist_diversity": 0.5461325378222885,
+              "catalogue_coverage": 0.004261064498542578
+            },
+            "unified": {
+              "recall": 0.10358304240913892,
+              "ndcg": 0.26639923713538327,
+              "precision": 0.23327295972725473,
+              "hit_rate": 0.8036437246963563,
+              "artist_diversity": 0.546452162795653,
+              "catalogue_coverage": 0.004260572458762146
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06076057058022397,
+              "ndcg": 0.17738058957381203,
+              "precision": 0.14468357127636994,
+              "hit_rate": 0.729757085020243,
+              "artist_diversity": 0.6859684636692946,
+              "catalogue_coverage": 0.004080485899123972
+            }
+          },
+          "20": {
+            "popularity": {
+              "recall": 0.012126529512302817,
+              "ndcg": 0.03568864773985007,
+              "precision": 0.03264170040485835,
+              "hit_rate": 0.21963562753036436,
+              "artist_diversity": 0.850404858299595,
+              "catalogue_coverage": 1.0824875169507705e-05
+            },
+            "cf": {
+              "recall": 0.10705761147721772,
+              "ndcg": 0.263728451119288,
+              "precision": 0.2289979757085024,
+              "hit_rate": 0.8036437246963563,
+              "artist_diversity": 0.536842105263158,
+              "catalogue_coverage": 0.00451790926392817
+            },
+            "standard_title": {
+              "recall": 0.10781623949196517,
+              "ndcg": 0.26552896560422573,
+              "precision": 0.23011133603238904,
+              "hit_rate": 0.8046558704453441,
+              "artist_diversity": 0.5385627530364373,
+              "catalogue_coverage": 0.00450216399095434
+            },
+            "unified_no_title": {
+              "recall": 0.10706944717803982,
+              "ndcg": 0.2646369862040864,
+              "precision": 0.2301619433198385,
+              "hit_rate": 0.8066801619433198,
+              "artist_diversity": 0.5432692307692307,
+              "catalogue_coverage": 0.004422453546524329
+            },
+            "unified": {
+              "recall": 0.1071806557137575,
+              "ndcg": 0.26476075167145957,
+              "precision": 0.23026315789473728,
+              "hit_rate": 0.8076923076923077,
+              "artist_diversity": 0.5435728744939271,
+              "catalogue_coverage": 0.004423929665865626
+            },
+            "unified_seed_bpm": {
+              "recall": 0.062278542323497554,
+              "ndcg": 0.17494929770591866,
+              "precision": 0.1412955465587042,
+              "hit_rate": 0.7327935222672065,
+              "artist_diversity": 0.6841093117408907,
+              "catalogue_coverage": 0.004235970469740538
+            }
+          }
+        }
+      },
+      "all_seeds_known": {
+        "queries": 935,
+        "cutoffs": {
+          "1": {
+            "popularity": {
+              "recall": 0.0009339951959220036,
+              "ndcg": 0.0427807486631016,
+              "precision": 0.0427807486631016,
+              "hit_rate": 0.0427807486631016,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 9.840795608643368e-07
+            },
+            "cf": {
+              "recall": 0.011399611899228494,
+              "ndcg": 0.3657754010695187,
+              "precision": 0.3657754010695187,
+              "hit_rate": 0.3657754010695187,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00035869699993505076
+            },
+            "standard_title": {
+              "recall": 0.011098633929932402,
+              "ndcg": 0.3711229946524064,
+              "precision": 0.3711229946524064,
+              "hit_rate": 0.3711229946524064,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00036460147730023676
+            },
+            "unified_no_title": {
+              "recall": 0.010754664826680348,
+              "ndcg": 0.360427807486631,
+              "precision": 0.360427807486631,
+              "hit_rate": 0.360427807486631,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003552527214720256
+            },
+            "unified": {
+              "recall": 0.010764300130433297,
+              "ndcg": 0.36149732620320857,
+              "precision": 0.36149732620320857,
+              "hit_rate": 0.36149732620320857,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00035574476125245773
+            },
+            "unified_seed_bpm": {
+              "recall": 0.008119236805814656,
+              "ndcg": 0.29732620320855613,
+              "precision": 0.29732620320855613,
+              "hit_rate": 0.29732620320855613,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003577129203741864
+            }
+          },
+          "2": {
+            "popularity": {
+              "recall": 0.0018389737503158384,
+              "ndcg": 0.04360824129889741,
+              "precision": 0.04385026737967915,
+              "hit_rate": 0.08342245989304813,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.476119341296505e-06
+            },
+            "cf": {
+              "recall": 0.02071404720804083,
+              "ndcg": 0.3504667873072962,
+              "precision": 0.34598930481283424,
+              "hit_rate": 0.49732620320855614,
+              "artist_diversity": 0.8021390374331551,
+              "catalogue_coverage": 0.0006588412659986735
+            },
+            "standard_title": {
+              "recall": 0.020774037627848407,
+              "ndcg": 0.35250441034700064,
+              "precision": 0.34705882352941175,
+              "hit_rate": 0.4983957219251337,
+              "artist_diversity": 0.8085561497326204,
+              "catalogue_coverage": 0.0006617935046812664
+            },
+            "unified_no_title": {
+              "recall": 0.02058094519370991,
+              "ndcg": 0.35008414953918326,
+              "precision": 0.34705882352941175,
+              "hit_rate": 0.5016042780748663,
+              "artist_diversity": 0.8032085561497326,
+              "catalogue_coverage": 0.0006509686295117587
+            },
+            "unified": {
+              "recall": 0.020484624826042845,
+              "ndcg": 0.35032617561996504,
+              "precision": 0.34705882352941175,
+              "hit_rate": 0.5016042780748663,
+              "artist_diversity": 0.8042780748663102,
+              "catalogue_coverage": 0.0006509686295117587
+            },
+            "unified_seed_bpm": {
+              "recall": 0.014544408171632411,
+              "ndcg": 0.27539764835996733,
+              "precision": 0.26898395721925134,
+              "hit_rate": 0.4128342245989305,
+              "artist_diversity": 0.8647058823529412,
+              "catalogue_coverage": 0.000654412907974784
+            }
+          },
+          "3": {
+            "popularity": {
+              "recall": 0.002520161379804414,
+              "ndcg": 0.0429121765731647,
+              "precision": 0.042780748663101595,
+              "hit_rate": 0.11016042780748662,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.9681591217286735e-06
+            },
+            "cf": {
+              "recall": 0.02776696964477194,
+              "ndcg": 0.3355451914458773,
+              "precision": 0.32584670231729057,
+              "hit_rate": 0.558288770053476,
+              "artist_diversity": 0.728698752228164,
+              "catalogue_coverage": 0.0009201143894081549
+            },
+            "standard_title": {
+              "recall": 0.028054338531057495,
+              "ndcg": 0.3385536262103804,
+              "precision": 0.32869875222816397,
+              "hit_rate": 0.5614973262032086,
+              "artist_diversity": 0.7329768270944741,
+              "catalogue_coverage": 0.0009176541905059941
+            },
+            "unified_no_title": {
+              "recall": 0.027661862246894143,
+              "ndcg": 0.3354464979048982,
+              "precision": 0.32691622103386814,
+              "hit_rate": 0.5636363636363636,
+              "artist_diversity": 0.73475935828877,
+              "catalogue_coverage": 0.000908797474458215
+            },
+            "unified": {
+              "recall": 0.027661862246894143,
+              "ndcg": 0.33563173514025324,
+              "precision": 0.32691622103386814,
+              "hit_rate": 0.5636363636363636,
+              "artist_diversity": 0.73475935828877,
+              "catalogue_coverage": 0.000908797474458215
+            },
+            "unified_seed_bpm": {
+              "recall": 0.019859602422554416,
+              "ndcg": 0.2593861154999809,
+              "precision": 0.24812834224598954,
+              "hit_rate": 0.4727272727272727,
+              "artist_diversity": 0.815686274509804,
+              "catalogue_coverage": 0.0009151939916038331
+            }
+          },
+          "4": {
+            "popularity": {
+              "recall": 0.003535531529799712,
+              "ndcg": 0.04292642196547468,
+              "precision": 0.0427807486631016,
+              "hit_rate": 0.12085561497326203,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.460198902160842e-06
+            },
+            "cf": {
+              "recall": 0.03481242012374809,
+              "ndcg": 0.32395274582247213,
+              "precision": 0.310427807486631,
+              "hit_rate": 0.6053475935828877,
+              "artist_diversity": 0.6842245989304813,
+              "catalogue_coverage": 0.0011740069161111537
+            },
+            "standard_title": {
+              "recall": 0.03561268241727273,
+              "ndcg": 0.32785321298782405,
+              "precision": 0.31470588235294117,
+              "hit_rate": 0.6106951871657754,
+              "artist_diversity": 0.6863636363636364,
+              "catalogue_coverage": 0.0011705626376481285
+            },
+            "unified_no_title": {
+              "recall": 0.034815881984270346,
+              "ndcg": 0.32490884741559267,
+              "precision": 0.31283422459893045,
+              "hit_rate": 0.6096256684491979,
+              "artist_diversity": 0.6893048128342246,
+              "catalogue_coverage": 0.0011612138818199173
+            },
+            "unified": {
+              "recall": 0.03481528340853583,
+              "ndcg": 0.32488312562412774,
+              "precision": 0.3125668449197861,
+              "hit_rate": 0.6085561497326203,
+              "artist_diversity": 0.6887700534759358,
+              "catalogue_coverage": 0.001160229802259053
+            },
+            "unified_seed_bpm": {
+              "recall": 0.024114373918737615,
+              "ndcg": 0.250234576922097,
+              "precision": 0.23689839572192514,
+              "hit_rate": 0.5080213903743316,
+              "artist_diversity": 0.789572192513369,
+              "catalogue_coverage": 0.0011464526884069524
+            }
+          },
+          "5": {
+            "popularity": {
+              "recall": 0.0042612888368173795,
+              "ndcg": 0.04242914530002393,
+              "precision": 0.04192513368983954,
+              "hit_rate": 0.13475935828877006,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.95223868259301e-06
+            },
+            "cf": {
+              "recall": 0.04105744978592136,
+              "ndcg": 0.3182702772522153,
+              "precision": 0.3039572192513363,
+              "hit_rate": 0.6288770053475936,
+              "artist_diversity": 0.652620320855615,
+              "catalogue_coverage": 0.0014131382494011876
+            },
+            "standard_title": {
+              "recall": 0.041756878445097866,
+              "ndcg": 0.3222121261273093,
+              "precision": 0.30823529411764644,
+              "hit_rate": 0.6331550802139038,
+              "artist_diversity": 0.6564705882352941,
+              "catalogue_coverage": 0.0014052656129142729
+            },
+            "unified_no_title": {
+              "recall": 0.041071679265930305,
+              "ndcg": 0.31836754698046466,
+              "precision": 0.3048128342245983,
+              "hit_rate": 0.6320855614973262,
+              "artist_diversity": 0.6613903743315508,
+              "catalogue_coverage": 0.0013929646184034686
+            },
+            "unified": {
+              "recall": 0.041096082966804594,
+              "ndcg": 0.31876617887697095,
+              "precision": 0.30524064171122933,
+              "hit_rate": 0.6331550802139038,
+              "artist_diversity": 0.6618181818181819,
+              "catalogue_coverage": 0.0013929646184034686
+            },
+            "unified_seed_bpm": {
+              "recall": 0.028114323262248237,
+              "ndcg": 0.24137407273801229,
+              "precision": 0.2256684491978608,
+              "hit_rate": 0.5390374331550802,
+              "artist_diversity": 0.7719786096256686,
+              "catalogue_coverage": 0.0013673785498209958
+            }
+          },
+          "6": {
+            "popularity": {
+              "recall": 0.005161352090335161,
+              "ndcg": 0.04141596325468643,
+              "precision": 0.04028520499108735,
+              "hit_rate": 0.14331550802139037,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.4442784630251786e-06
+            },
+            "cf": {
+              "recall": 0.04704485664802709,
+              "ndcg": 0.3109592068281266,
+              "precision": 0.294295900178253,
+              "hit_rate": 0.6524064171122995,
+              "artist_diversity": 0.6344028520499109,
+              "catalogue_coverage": 0.0016281596334500451
+            },
+            "standard_title": {
+              "recall": 0.048072585379430016,
+              "ndcg": 0.31435417900664386,
+              "precision": 0.2976827094474153,
+              "hit_rate": 0.6556149732620321,
+              "artist_diversity": 0.6388591800356507,
+              "catalogue_coverage": 0.001627667593669613
+            },
+            "unified_no_title": {
+              "recall": 0.046639468389197226,
+              "ndcg": 0.3102637000779519,
+              "precision": 0.29393939393939383,
+              "hit_rate": 0.6598930481283423,
+              "artist_diversity": 0.6401069518716578,
+              "catalogue_coverage": 0.0016183188378414018
+            },
+            "unified": {
+              "recall": 0.04660325654859346,
+              "ndcg": 0.3102735162247433,
+              "precision": 0.29376114081996424,
+              "hit_rate": 0.6588235294117647,
+              "artist_diversity": 0.6406417112299465,
+              "catalogue_coverage": 0.0016168427185001054
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03186822645317027,
+              "ndcg": 0.2347781113685255,
+              "precision": 0.21764705882352933,
+              "hit_rate": 0.5775401069518716,
+              "artist_diversity": 0.7565062388591801,
+              "catalogue_coverage": 0.0015740352576025067
+            }
+          },
+          "7": {
+            "popularity": {
+              "recall": 0.005821143580838555,
+              "ndcg": 0.041024729264595494,
+              "precision": 0.03972498090145146,
+              "hit_rate": 0.14866310160427806,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.936318243457347e-06
+            },
+            "cf": {
+              "recall": 0.052769002198766214,
+              "ndcg": 0.30404499601100654,
+              "precision": 0.28495034377387246,
+              "hit_rate": 0.6748663101604279,
+              "artist_diversity": 0.6200152788388082,
+              "catalogue_coverage": 0.0018500695744249531
+            },
+            "standard_title": {
+              "recall": 0.05377969480619708,
+              "ndcg": 0.3076699952572922,
+              "precision": 0.2887700534759352,
+              "hit_rate": 0.6823529411764706,
+              "artist_diversity": 0.6229182582123758,
+              "catalogue_coverage": 0.0018481014153032245
+            },
+            "unified_no_title": {
+              "recall": 0.05284783191298133,
+              "ndcg": 0.3042811990661171,
+              "precision": 0.28601986249044997,
+              "hit_rate": 0.6834224598930482,
+              "artist_diversity": 0.6245989304812835,
+              "catalogue_coverage": 0.00181759494891643
+            },
+            "unified": {
+              "recall": 0.05284106223584689,
+              "ndcg": 0.304388110931696,
+              "precision": 0.28601986249044997,
+              "hit_rate": 0.6823529411764706,
+              "artist_diversity": 0.6250572956455309,
+              "catalogue_coverage": 0.00181759494891643
+            },
+            "unified_seed_bpm": {
+              "recall": 0.035601259054458344,
+              "ndcg": 0.22817055079599352,
+              "precision": 0.20916730328494962,
+              "hit_rate": 0.6010695187165775,
+              "artist_diversity": 0.747746371275783,
+              "catalogue_coverage": 0.0017757715675796957
+            }
+          },
+          "8": {
+            "popularity": {
+              "recall": 0.00620741750061098,
+              "ndcg": 0.04028852195578739,
+              "precision": 0.038636363636363635,
+              "hit_rate": 0.14866310160427806,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.428358023889516e-06
+            },
+            "cf": {
+              "recall": 0.05865866234337078,
+              "ndcg": 0.29988051802484583,
+              "precision": 0.2798128342245989,
+              "hit_rate": 0.6962566844919786,
+              "artist_diversity": 0.6080213903743316,
+              "catalogue_coverage": 0.0020562342424260316
+            },
+            "standard_title": {
+              "recall": 0.059662546381917994,
+              "ndcg": 0.30337087633388055,
+              "precision": 0.28342245989304815,
+              "hit_rate": 0.7058823529411765,
+              "artist_diversity": 0.6122994652406417,
+              "catalogue_coverage": 0.0020532820037434387
+            },
+            "unified_no_title": {
+              "recall": 0.05895492622659147,
+              "ndcg": 0.30068796774685147,
+              "precision": 0.2816844919786096,
+              "hit_rate": 0.6983957219251337,
+              "artist_diversity": 0.6160427807486631,
+              "catalogue_coverage": 0.002018839219113187
+            },
+            "unified": {
+              "recall": 0.05905123514642981,
+              "ndcg": 0.30104237388686933,
+              "precision": 0.2820855614973262,
+              "hit_rate": 0.7005347593582888,
+              "artist_diversity": 0.6157754010695187,
+              "catalogue_coverage": 0.0020208073782349155
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03892020944631405,
+              "ndcg": 0.2217078828479124,
+              "precision": 0.20080213903743316,
+              "hit_rate": 0.6181818181818182,
+              "artist_diversity": 0.7393048128342246,
+              "catalogue_coverage": 0.0019740635990938595
+            }
+          },
+          "9": {
+            "popularity": {
+              "recall": 0.00657781614213842,
+              "ndcg": 0.0391580776403114,
+              "precision": 0.03695781342840162,
+              "hit_rate": 0.15401069518716579,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-06
+            },
+            "cf": {
+              "recall": 0.06357688580155742,
+              "ndcg": 0.2950859885144912,
+              "precision": 0.27332144979203926,
+              "hit_rate": 0.7122994652406417,
+              "artist_diversity": 0.597860962566845,
+              "catalogue_coverage": 0.002252066075038035
+            },
+            "standard_title": {
+              "recall": 0.06448890062633242,
+              "ndcg": 0.29832195310951337,
+              "precision": 0.27653000594177174,
+              "hit_rate": 0.7176470588235294,
+              "artist_diversity": 0.6017825311942958,
+              "catalogue_coverage": 0.0022437013987706878
+            },
+            "unified_no_title": {
+              "recall": 0.06385377127832867,
+              "ndcg": 0.2954584847580335,
+              "precision": 0.2743909685086167,
+              "hit_rate": 0.7122994652406417,
+              "artist_diversity": 0.6071301247771836,
+              "catalogue_coverage": 0.0022136869721643255
+            },
+            "unified": {
+              "recall": 0.06393049501595206,
+              "ndcg": 0.29578781462201015,
+              "precision": 0.27474747474747585,
+              "hit_rate": 0.7122994652406417,
+              "artist_diversity": 0.6067736185383243,
+              "catalogue_coverage": 0.0022146710517251898
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04176501932983755,
+              "ndcg": 0.2167402861336008,
+              "precision": 0.19465240641711368,
+              "hit_rate": 0.6438502673796791,
+              "artist_diversity": 0.7336898395721925,
+              "catalogue_coverage": 0.002150705880269008
+            }
+          },
+          "10": {
+            "popularity": {
+              "recall": 0.007267547588075534,
+              "ndcg": 0.03900812039803995,
+              "precision": 0.0367914438502674,
+              "hit_rate": 0.15828877005347594,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.4124375847538526e-06
+            },
+            "cf": {
+              "recall": 0.06828948946890016,
+              "ndcg": 0.29092784273460076,
+              "precision": 0.2678074866310154,
+              "hit_rate": 0.7315508021390374,
+              "artist_diversity": 0.5895187165775402,
+              "catalogue_coverage": 0.0024503581065521986
+            },
+            "standard_title": {
+              "recall": 0.0690326094776561,
+              "ndcg": 0.293549593084448,
+              "precision": 0.2700534759358281,
+              "hit_rate": 0.7336898395721925,
+              "artist_diversity": 0.5932620320855615,
+              "catalogue_coverage": 0.002446421788308741
+            },
+            "unified_no_title": {
+              "recall": 0.06849130142399208,
+              "ndcg": 0.29187772488285996,
+              "precision": 0.26973262032085515,
+              "hit_rate": 0.7294117647058823,
+              "artist_diversity": 0.5977540106951872,
+              "catalogue_coverage": 0.0024090267649958964
+            },
+            "unified": {
+              "recall": 0.06854746692149136,
+              "ndcg": 0.29225414614505507,
+              "precision": 0.2701604278074861,
+              "hit_rate": 0.732620320855615,
+              "artist_diversity": 0.5974331550802139,
+              "catalogue_coverage": 0.002410994924117625
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04426703578665647,
+              "ndcg": 0.2122440439486939,
+              "precision": 0.18909090909090862,
+              "hit_rate": 0.6641711229946524,
+              "artist_diversity": 0.7258823529411764,
+              "catalogue_coverage": 0.002322919803420267
+            }
+          },
+          "11": {
+            "popularity": {
+              "recall": 0.007744586111691253,
+              "ndcg": 0.038764603420308595,
+              "precision": 0.03646086533787071,
+              "hit_rate": 0.16042780748663102,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.90447736518602e-06
+            },
+            "cf": {
+              "recall": 0.07222086117649411,
+              "ndcg": 0.28737669941542965,
+              "precision": 0.26300437530384174,
+              "hit_rate": 0.7422459893048128,
+              "artist_diversity": 0.582498784637822,
+              "catalogue_coverage": 0.0026397934220185834
+            },
+            "standard_title": {
+              "recall": 0.0732903880070251,
+              "ndcg": 0.2903416361994185,
+              "precision": 0.26582401555663715,
+              "hit_rate": 0.7411764705882353,
+              "artist_diversity": 0.5847350510452114,
+              "catalogue_coverage": 0.002637825262896855
+            },
+            "unified_no_title": {
+              "recall": 0.07314898741442094,
+              "ndcg": 0.28902166030830595,
+              "precision": 0.2659212445308713,
+              "hit_rate": 0.7443850267379679,
+              "artist_diversity": 0.5900826446280992,
+              "catalogue_coverage": 0.0025817327279275873
+            },
+            "unified": {
+              "recall": 0.07314386602127065,
+              "ndcg": 0.289128856428818,
+              "precision": 0.2659212445308713,
+              "hit_rate": 0.746524064171123,
+              "artist_diversity": 0.5907632474477394,
+              "catalogue_coverage": 0.0025837008870493164
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04644312646451858,
+              "ndcg": 0.20672416988108006,
+              "precision": 0.1817209528439485,
+              "hit_rate": 0.6759358288770053,
+              "artist_diversity": 0.7195916383082158,
+              "catalogue_coverage": 0.0024852929309628824
+            }
+          },
+          "12": {
+            "popularity": {
+              "recall": 0.008182503015237874,
+              "ndcg": 0.03821361231933793,
+              "precision": 0.03565062388591799,
+              "hit_rate": 0.16684491978609625,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.396517145618189e-06
+            },
+            "cf": {
+              "recall": 0.07724599284078526,
+              "ndcg": 0.28484672572393877,
+              "precision": 0.25944741532976856,
+              "hit_rate": 0.7529411764705882,
+              "artist_diversity": 0.57602495543672,
+              "catalogue_coverage": 0.002818895902095893
+            },
+            "standard_title": {
+              "recall": 0.07831283634064112,
+              "ndcg": 0.2878245248210345,
+              "precision": 0.2622994652406419,
+              "hit_rate": 0.7540106951871658,
+              "artist_diversity": 0.5784313725490197,
+              "catalogue_coverage": 0.002817419782754596
+            },
+            "unified_no_title": {
+              "recall": 0.07765795730983871,
+              "ndcg": 0.28577883721463976,
+              "precision": 0.2612299465240644,
+              "hit_rate": 0.7561497326203208,
+              "artist_diversity": 0.5837789661319073,
+              "catalogue_coverage": 0.002757882969322304
+            },
+            "unified": {
+              "recall": 0.07770729506678893,
+              "ndcg": 0.28605060206208516,
+              "precision": 0.2614973262032088,
+              "hit_rate": 0.7572192513368984,
+              "artist_diversity": 0.5844919786096257,
+              "catalogue_coverage": 0.002758375009102736
+            },
+            "unified_seed_bpm": {
+              "recall": 0.048861152163777774,
+              "ndcg": 0.2026629717941788,
+              "precision": 0.17647058823529424,
+              "hit_rate": 0.6919786096256685,
+              "artist_diversity": 0.7132798573975044,
+              "catalogue_coverage": 0.002656522774553277
+            }
+          },
+          "13": {
+            "popularity": {
+              "recall": 0.008616153652320546,
+              "ndcg": 0.037492769625394315,
+              "precision": 0.03455368161250511,
+              "hit_rate": 0.16898395721925133,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.888556926050357e-06
+            },
+            "cf": {
+              "recall": 0.08150335645115629,
+              "ndcg": 0.28192278365595863,
+              "precision": 0.2550390785684904,
+              "hit_rate": 0.7657754010695187,
+              "artist_diversity": 0.5709584533113946,
+              "catalogue_coverage": 0.00298618942744283
+            },
+            "standard_title": {
+              "recall": 0.08279270700571216,
+              "ndcg": 0.2850353471659546,
+              "precision": 0.2580830933772111,
+              "hit_rate": 0.7700534759358288,
+              "artist_diversity": 0.5725215960510079,
+              "catalogue_coverage": 0.0029797929102972115
+            },
+            "unified_no_title": {
+              "recall": 0.08217916924587387,
+              "ndcg": 0.28387848483014416,
+              "precision": 0.2584121760592348,
+              "hit_rate": 0.7679144385026738,
+              "artist_diversity": 0.5791032496914851,
+              "catalogue_coverage": 0.0029291128129126983
+            },
+            "unified": {
+              "recall": 0.08212353425196321,
+              "ndcg": 0.2839795609516027,
+              "precision": 0.25841217605923483,
+              "hit_rate": 0.7668449197860963,
+              "artist_diversity": 0.5795146030440149,
+              "catalogue_coverage": 0.0029291128129126983
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05093041752781759,
+              "ndcg": 0.19876804257275965,
+              "precision": 0.17128753599341892,
+              "hit_rate": 0.7016042780748664,
+              "artist_diversity": 0.7082682023858495,
+              "catalogue_coverage": 0.002820372021437189
+            }
+          },
+          "14": {
+            "popularity": {
+              "recall": 0.009510992023009507,
+              "ndcg": 0.037699197586567194,
+              "precision": 0.0349121466768526,
+              "hit_rate": 0.19144385026737967,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 7.380596706482526e-06
+            },
+            "cf": {
+              "recall": 0.08605404226629706,
+              "ndcg": 0.28010568802474867,
+              "precision": 0.25225362872421747,
+              "hit_rate": 0.774331550802139,
+              "artist_diversity": 0.5662337662337661,
+              "catalogue_coverage": 0.003152498873228903
+            },
+            "standard_title": {
+              "recall": 0.08729298559868379,
+              "ndcg": 0.2829467753619695,
+              "precision": 0.25485103132162,
+              "hit_rate": 0.7786096256684492,
+              "artist_diversity": 0.5682200152788387,
+              "catalogue_coverage": 0.003150038674326742
+            },
+            "unified_no_title": {
+              "recall": 0.08651385528234753,
+              "ndcg": 0.2814907309641263,
+              "precision": 0.2546218487394965,
+              "hit_rate": 0.7796791443850267,
+              "artist_diversity": 0.5727272727272728,
+              "catalogue_coverage": 0.003106739173648711
+            },
+            "unified": {
+              "recall": 0.08658067252307783,
+              "ndcg": 0.28155886929360496,
+              "precision": 0.2545454545454553,
+              "hit_rate": 0.7796791443850267,
+              "artist_diversity": 0.5731856378915202,
+              "catalogue_coverage": 0.0031087073327704397
+            },
+            "unified_seed_bpm": {
+              "recall": 0.053122570517374984,
+              "ndcg": 0.1953435470742918,
+              "precision": 0.16669213139801362,
+              "hit_rate": 0.7112299465240641,
+              "artist_diversity": 0.7061879297173416,
+              "catalogue_coverage": 0.002984221268321101
+            }
+          },
+          "15": {
+            "popularity": {
+              "recall": 0.010002643436569774,
+              "ndcg": 0.03756716640532369,
+              "precision": 0.0347237076648841,
+              "hit_rate": 0.1946524064171123,
+              "artist_diversity": 0.9978609625668451,
+              "catalogue_coverage": 7.872636486914694e-06
+            },
+            "cf": {
+              "recall": 0.09078160143105483,
+              "ndcg": 0.278183419721464,
+              "precision": 0.2491978609625665,
+              "hit_rate": 0.7839572192513369,
+              "artist_diversity": 0.5629233511586453,
+              "catalogue_coverage": 0.003334061552208373
+            },
+            "standard_title": {
+              "recall": 0.09207274159440312,
+              "ndcg": 0.2810118465263486,
+              "precision": 0.25176470588235256,
+              "hit_rate": 0.788235294117647,
+              "artist_diversity": 0.5649910873440285,
+              "catalogue_coverage": 0.0033330774726475086
+            },
+            "unified_no_title": {
+              "recall": 0.09121475942717863,
+              "ndcg": 0.2792528336378609,
+              "precision": 0.25098039215686246,
+              "hit_rate": 0.788235294117647,
+              "artist_diversity": 0.5683422459893049,
+              "catalogue_coverage": 0.0032764928978978093
+            },
+            "unified": {
+              "recall": 0.09112294288732292,
+              "ndcg": 0.2792077699305791,
+              "precision": 0.250766488413547,
+              "hit_rate": 0.7871657754010695,
+              "artist_diversity": 0.5685561497326204,
+              "catalogue_coverage": 0.003277969017239106
+            },
+            "unified_seed_bpm": {
+              "recall": 0.054840269470399945,
+              "ndcg": 0.19190130821926077,
+              "precision": 0.1621390374331552,
+              "hit_rate": 0.7176470588235294,
+              "artist_diversity": 0.7036720142602496,
+              "catalogue_coverage": 0.003144626236741988
+            }
+          },
+          "16": {
+            "popularity": {
+              "recall": 0.010536258869613771,
+              "ndcg": 0.03769765601792109,
+              "precision": 0.03495989304812834,
+              "hit_rate": 0.19786096256684493,
+              "artist_diversity": 0.9379010695187165,
+              "catalogue_coverage": 8.856716047779031e-06
+            },
+            "cf": {
+              "recall": 0.09447720764290103,
+              "ndcg": 0.2756828866570648,
+              "precision": 0.24518716577540106,
+              "hit_rate": 0.7914438502673797,
+              "artist_diversity": 0.559692513368984,
+              "catalogue_coverage": 0.003494958560409692
+            },
+            "standard_title": {
+              "recall": 0.09576862303403588,
+              "ndcg": 0.27836389215662577,
+              "precision": 0.24752673796791444,
+              "hit_rate": 0.7957219251336899,
+              "artist_diversity": 0.5614973262032086,
+              "catalogue_coverage": 0.003488562043264074
+            },
+            "unified_no_title": {
+              "recall": 0.09487352588275388,
+              "ndcg": 0.27659965059451475,
+              "precision": 0.24665775401069517,
+              "hit_rate": 0.7925133689839572,
+              "artist_diversity": 0.5664438502673796,
+              "catalogue_coverage": 0.0034354217469773998
+            },
+            "unified": {
+              "recall": 0.09483839530431248,
+              "ndcg": 0.2765136043775799,
+              "precision": 0.2463903743315508,
+              "hit_rate": 0.7914438502673797,
+              "artist_diversity": 0.5661764705882353,
+              "catalogue_coverage": 0.0034373899060991283
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05629797233021177,
+              "ndcg": 0.18856263493322792,
+              "precision": 0.15768716577540107,
+              "hit_rate": 0.7219251336898396,
+              "artist_diversity": 0.6989973262032085,
+              "catalogue_coverage": 0.003299618767578121
+            }
+          },
+          "17": {
+            "popularity": {
+              "recall": 0.010988582205854308,
+              "ndcg": 0.03745791022536869,
+              "precision": 0.03460207612456742,
+              "hit_rate": 0.20106951871657755,
+              "artist_diversity": 0.9414281220509594,
+              "catalogue_coverage": 9.348755828211199e-06
+            },
+            "cf": {
+              "recall": 0.09847704109161415,
+              "ndcg": 0.27391749625063616,
+              "precision": 0.2422774457376547,
+              "hit_rate": 0.8,
+              "artist_diversity": 0.5550173010380623,
+              "catalogue_coverage": 0.0036656963642196544
+            },
+            "standard_title": {
+              "recall": 0.09991701078772543,
+              "ndcg": 0.27640204170992516,
+              "precision": 0.24422774457376664,
+              "hit_rate": 0.8010695187165775,
+              "artist_diversity": 0.5570305127398553,
+              "catalogue_coverage": 0.0036529033299284182
+            },
+            "unified_no_title": {
+              "recall": 0.09885911427803935,
+              "ndcg": 0.2750584267348001,
+              "precision": 0.24410191884240454,
+              "hit_rate": 0.7967914438502673,
+              "artist_diversity": 0.5612456747404844,
+              "catalogue_coverage": 0.0035928744767156936
+            },
+            "unified": {
+              "recall": 0.0990223786806234,
+              "ndcg": 0.2752022402367622,
+              "precision": 0.24416483170808556,
+              "hit_rate": 0.7967914438502673,
+              "artist_diversity": 0.5610569361434412,
+              "catalogue_coverage": 0.0035933665164961256
+            },
+            "unified_seed_bpm": {
+              "recall": 0.0581784445092297,
+              "ndcg": 0.18574063539071262,
+              "precision": 0.15394778232148565,
+              "hit_rate": 0.7272727272727273,
+              "artist_diversity": 0.6958162944322114,
+              "catalogue_coverage": 0.003441818264123018
+            }
+          },
+          "18": {
+            "popularity": {
+              "recall": 0.011519935710750513,
+              "ndcg": 0.03711226747714919,
+              "precision": 0.0339869281045752,
+              "hit_rate": 0.20320855614973263,
+              "artist_diversity": 0.9424242424242425,
+              "catalogue_coverage": 9.840795608643368e-06
+            },
+            "cf": {
+              "recall": 0.10248620392631276,
+              "ndcg": 0.27213543497987086,
+              "precision": 0.2392156862745094,
+              "hit_rate": 0.8021390374331551,
+              "artist_diversity": 0.5512774806892454,
+              "catalogue_coverage": 0.0038211809348362197
+            },
+            "standard_title": {
+              "recall": 0.10384278536264567,
+              "ndcg": 0.2743384034486729,
+              "precision": 0.24070112893642262,
+              "hit_rate": 0.8064171122994652,
+              "artist_diversity": 0.5534165181224003,
+              "catalogue_coverage": 0.0038088799403254154
+            },
+            "unified_no_title": {
+              "recall": 0.10259461032985369,
+              "ndcg": 0.27307543699673276,
+              "precision": 0.2407605466428992,
+              "hit_rate": 0.8032085561497326,
+              "artist_diversity": 0.5576351752822342,
+              "catalogue_coverage": 0.0037454068086496656
+            },
+            "unified": {
+              "recall": 0.10257133808569349,
+              "ndcg": 0.27307628716927845,
+              "precision": 0.24064171122994615,
+              "hit_rate": 0.8032085561497326,
+              "artist_diversity": 0.5573975044563281,
+              "catalogue_coverage": 0.003743438649527937
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06044062571499347,
+              "ndcg": 0.1833588855341135,
+              "precision": 0.1506833036244806,
+              "hit_rate": 0.7358288770053476,
+              "artist_diversity": 0.6945335710041592,
+              "catalogue_coverage": 0.0035845098004483465
+            }
+          },
+          "19": {
+            "popularity": {
+              "recall": 0.012155945882805072,
+              "ndcg": 0.03723088688199181,
+              "precision": 0.03416830847171409,
+              "hit_rate": 0.22139037433155082,
+              "artist_diversity": 0.8929918378834789,
+              "catalogue_coverage": 1.0332835389075536e-05
+            },
+            "cf": {
+              "recall": 0.10730619660051832,
+              "ndcg": 0.2706833139087026,
+              "precision": 0.2361947649873359,
+              "hit_rate": 0.8085561497326204,
+              "artist_diversity": 0.5483253588516745,
+              "catalogue_coverage": 0.003978633664574513
+            },
+            "standard_title": {
+              "recall": 0.10827610617403988,
+              "ndcg": 0.27265140092191015,
+              "precision": 0.23743315508021512,
+              "hit_rate": 0.8128342245989305,
+              "artist_diversity": 0.550070363073459,
+              "catalogue_coverage": 0.003967316749624574
+            },
+            "unified_no_title": {
+              "recall": 0.10651522979393505,
+              "ndcg": 0.27122708065073525,
+              "precision": 0.23737686462144808,
+              "hit_rate": 0.813903743315508,
+              "artist_diversity": 0.5545173093160708,
+              "catalogue_coverage": 0.003904827697509688
+            },
+            "unified": {
+              "recall": 0.10659763997625436,
+              "ndcg": 0.27126949402249284,
+              "precision": 0.23732057416268082,
+              "hit_rate": 0.8149732620320855,
+              "artist_diversity": 0.554798761609907,
+              "catalogue_coverage": 0.0039038436179488238
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06253807490255651,
+              "ndcg": 0.18075608142388272,
+              "precision": 0.14697438784126168,
+              "hit_rate": 0.7411764705882353,
+              "artist_diversity": 0.6923163523782718,
+              "catalogue_coverage": 0.0037365500926018866
+            }
+          },
+          "20": {
+            "popularity": {
+              "recall": 0.012660818795749545,
+              "ndcg": 0.03705866080898841,
+              "precision": 0.0338502673796792,
+              "hit_rate": 0.22780748663101605,
+              "artist_diversity": 0.8503743315508018,
+              "catalogue_coverage": 1.0824875169507705e-05
+            },
+            "cf": {
+              "recall": 0.11012786436746258,
+              "ndcg": 0.2687606633278524,
+              "precision": 0.23288770053475977,
+              "hit_rate": 0.8128342245989305,
+              "artist_diversity": 0.5451336898395722,
+              "catalogue_coverage": 0.0041424829114584255
+            },
+            "standard_title": {
+              "recall": 0.111001259068714,
+              "ndcg": 0.27065161903081303,
+              "precision": 0.23406417112299505,
+              "hit_rate": 0.8149732620320855,
+              "artist_diversity": 0.5467379679144384,
+              "catalogue_coverage": 0.004127229678265028
+            },
+            "unified_no_title": {
+              "recall": 0.11014073680738001,
+              "ndcg": 0.2694238133772965,
+              "precision": 0.23406417112299516,
+              "hit_rate": 0.8171122994652407,
+              "artist_diversity": 0.5517112299465241,
+              "catalogue_coverage": 0.004048995353176313
+            },
+            "unified": {
+              "recall": 0.1102513932532397,
+              "ndcg": 0.26953479586512163,
+              "precision": 0.234117647058824,
+              "hit_rate": 0.8181818181818182,
+              "artist_diversity": 0.5520320855614972,
+              "catalogue_coverage": 0.004050963512298042
+            },
+            "unified_seed_bpm": {
+              "recall": 0.06409843577347347,
+              "ndcg": 0.17825204278211404,
+              "precision": 0.14347593582887658,
+              "hit_rate": 0.7433155080213903,
+              "artist_diversity": 0.69048128342246,
+              "catalogue_coverage": 0.0038762893902446224
+            }
+          }
+        }
+      },
+      "some_seeds_unseen": {
+        "queries": 65,
+        "cutoffs": {
+          "1": {
+            "popularity": {
+              "recall": 0.0,
+              "ndcg": 0.0,
+              "precision": 0.0,
+              "hit_rate": 0.0,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-07
+            },
+            "cf": {
+              "recall": 0.003690642961788032,
+              "ndcg": 0.2,
+              "precision": 0.2,
+              "hit_rate": 0.2,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.198258572809095e-05
+            },
+            "standard_title": {
+              "recall": 0.003690642961788032,
+              "ndcg": 0.2,
+              "precision": 0.2,
+              "hit_rate": 0.2,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.198258572809095e-05
+            },
+            "unified_no_title": {
+              "recall": 0.0049983352694803395,
+              "ndcg": 0.24615384615384617,
+              "precision": 0.24615384615384617,
+              "hit_rate": 0.24615384615384617,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.198258572809095e-05
+            },
+            "unified": {
+              "recall": 0.0049983352694803395,
+              "ndcg": 0.24615384615384617,
+              "precision": 0.24615384615384617,
+              "hit_rate": 0.24615384615384617,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.198258572809095e-05
+            },
+            "unified_seed_bpm": {
+              "recall": 0.0013779960172536554,
+              "ndcg": 0.15384615384615385,
+              "precision": 0.15384615384615385,
+              "hit_rate": 0.15384615384615385,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.198258572809095e-05
+            }
+          },
+          "2": {
+            "popularity": {
+              "recall": 0.0005902699451086548,
+              "ndcg": 0.011903163299524358,
+              "precision": 0.015384615384615385,
+              "hit_rate": 0.03076923076923077,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 9.840795608643368e-07
+            },
+            "cf": {
+              "recall": 0.008497540223453193,
+              "ndcg": 0.20595158164976218,
+              "precision": 0.2076923076923077,
+              "hit_rate": 0.26153846153846155,
+              "artist_diversity": 0.7,
+              "catalogue_coverage": 6.39651714561819e-05
+            },
+            "standard_title": {
+              "recall": 0.008497540223453193,
+              "ndcg": 0.20595158164976218,
+              "precision": 0.2076923076923077,
+              "hit_rate": 0.26153846153846155,
+              "artist_diversity": 0.7076923076923077,
+              "catalogue_coverage": 6.39651714561819e-05
+            },
+            "unified_no_title": {
+              "recall": 0.008651386377299347,
+              "ndcg": 0.22234751955479745,
+              "precision": 0.2153846153846154,
+              "hit_rate": 0.26153846153846155,
+              "artist_diversity": 0.7,
+              "catalogue_coverage": 6.39651714561819e-05
+            },
+            "unified": {
+              "recall": 0.008651386377299347,
+              "ndcg": 0.22234751955479745,
+              "precision": 0.2153846153846154,
+              "hit_rate": 0.26153846153846155,
+              "artist_diversity": 0.7,
+              "catalogue_coverage": 6.39651714561819e-05
+            },
+            "unified_seed_bpm": {
+              "recall": 0.0036065632524593313,
+              "ndcg": 0.15979773549591603,
+              "precision": 0.16153846153846155,
+              "hit_rate": 0.23076923076923078,
+              "artist_diversity": 0.8,
+              "catalogue_coverage": 6.39651714561819e-05
+            }
+          },
+          "3": {
+            "popularity": {
+              "recall": 0.0005902699451086548,
+              "ndcg": 0.009110212645103545,
+              "precision": 0.010256410256410256,
+              "hit_rate": 0.03076923076923077,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.476119341296505e-06
+            },
+            "cf": {
+              "recall": 0.011197230802798447,
+              "ndcg": 0.20094526996853057,
+              "precision": 0.2,
+              "hit_rate": 0.3384615384615385,
+              "artist_diversity": 0.5846153846153845,
+              "catalogue_coverage": 9.594775718427284e-05
+            },
+            "standard_title": {
+              "recall": 0.011295850132187006,
+              "ndcg": 0.20455510632255178,
+              "precision": 0.20512820512820515,
+              "hit_rate": 0.35384615384615387,
+              "artist_diversity": 0.5948717948717949,
+              "catalogue_coverage": 9.594775718427284e-05
+            },
+            "unified_no_title": {
+              "recall": 0.011227292694929305,
+              "ndcg": 0.21710391180157543,
+              "precision": 0.21025641025641026,
+              "hit_rate": 0.35384615384615387,
+              "artist_diversity": 0.5948717948717949,
+              "catalogue_coverage": 9.594775718427284e-05
+            },
+            "unified": {
+              "recall": 0.011227292694929305,
+              "ndcg": 0.21710391180157543,
+              "precision": 0.21025641025641026,
+              "hit_rate": 0.35384615384615387,
+              "artist_diversity": 0.5948717948717949,
+              "catalogue_coverage": 9.594775718427284e-05
+            },
+            "unified_seed_bpm": {
+              "recall": 0.004784857727602457,
+              "ndcg": 0.14757175110664197,
+              "precision": 0.14358974358974358,
+              "hit_rate": 0.26153846153846155,
+              "artist_diversity": 0.7128205128205127,
+              "catalogue_coverage": 9.594775718427284e-05
+            }
+          },
+          "4": {
+            "popularity": {
+              "recall": 0.0007240492093227016,
+              "ndcg": 0.010165112519270422,
+              "precision": 0.011538461538461539,
+              "hit_rate": 0.046153846153846156,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.9681591217286735e-06
+            },
+            "cf": {
+              "recall": 0.015609551131425137,
+              "ndcg": 0.20078634405761045,
+              "precision": 0.2,
+              "hit_rate": 0.35384615384615387,
+              "artist_diversity": 0.5461538461538461,
+              "catalogue_coverage": 0.0001279303429123638
+            },
+            "standard_title": {
+              "recall": 0.015708170460813697,
+              "ndcg": 0.20378926751908816,
+              "precision": 0.20384615384615384,
+              "hit_rate": 0.36923076923076925,
+              "artist_diversity": 0.5538461538461539,
+              "catalogue_coverage": 0.0001279303429123638
+            },
+            "unified_no_title": {
+              "recall": 0.016623289824208923,
+              "ndcg": 0.21681485073087217,
+              "precision": 0.21153846153846154,
+              "hit_rate": 0.4,
+              "artist_diversity": 0.5538461538461539,
+              "catalogue_coverage": 0.00012743830313193162
+            },
+            "unified": {
+              "recall": 0.016524670494820363,
+              "ndcg": 0.21422827324977803,
+              "precision": 0.2076923076923077,
+              "hit_rate": 0.38461538461538464,
+              "artist_diversity": 0.55,
+              "catalogue_coverage": 0.00012743830313193162
+            },
+            "unified_seed_bpm": {
+              "recall": 0.007285469320912982,
+              "ndcg": 0.14345349601862065,
+              "precision": 0.13846153846153847,
+              "hit_rate": 0.27692307692307694,
+              "artist_diversity": 0.6884615384615385,
+              "catalogue_coverage": 0.0001279303429123638
+            }
+          },
+          "5": {
+            "popularity": {
+              "recall": 0.0007240492093227016,
+              "ndcg": 0.00883139814325787,
+              "precision": 0.009230769230769232,
+              "hit_rate": 0.046153846153846156,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.460198902160842e-06
+            },
+            "cf": {
+              "recall": 0.018329608577812073,
+              "ndcg": 0.19664609241650824,
+              "precision": 0.1938461538461538,
+              "hit_rate": 0.4,
+              "artist_diversity": 0.5230769230769231,
+              "catalogue_coverage": 0.00015892884907959038
+            },
+            "standard_title": {
+              "recall": 0.018428227907200632,
+              "ndcg": 0.1992550170724591,
+              "precision": 0.19692307692307687,
+              "hit_rate": 0.4153846153846154,
+              "artist_diversity": 0.5261538461538461,
+              "catalogue_coverage": 0.00015892884907959038
+            },
+            "unified_no_title": {
+              "recall": 0.019706394185366908,
+              "ndcg": 0.21259011728333363,
+              "precision": 0.2061538461538461,
+              "hit_rate": 0.46153846153846156,
+              "artist_diversity": 0.5384615384615384,
+              "catalogue_coverage": 0.0001584368092991582
+            },
+            "unified": {
+              "recall": 0.01960777485597835,
+              "ndcg": 0.21034291190113816,
+              "precision": 0.20307692307692304,
+              "hit_rate": 0.4461538461538462,
+              "artist_diversity": 0.5384615384615385,
+              "catalogue_coverage": 0.0001584368092991582
+            },
+            "unified_seed_bpm": {
+              "recall": 0.008379402397915847,
+              "ndcg": 0.1387614465323333,
+              "precision": 0.13230769230769232,
+              "hit_rate": 0.3076923076923077,
+              "artist_diversity": 0.6676923076923077,
+              "catalogue_coverage": 0.00015892884907959038
+            }
+          },
+          "6": {
+            "popularity": {
+              "recall": 0.0008287064568370919,
+              "ndcg": 0.009537763889119245,
+              "precision": 0.010256410256410256,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.95223868259301e-06
+            },
+            "cf": {
+              "recall": 0.02087773271180187,
+              "ndcg": 0.19369101790930127,
+              "precision": 0.18974358974358976,
+              "hit_rate": 0.4461538461538462,
+              "artist_diversity": 0.5,
+              "catalogue_coverage": 0.00019091143480768133
+            },
+            "standard_title": {
+              "recall": 0.02097635204119043,
+              "ndcg": 0.1960187287823691,
+              "precision": 0.19230769230769232,
+              "hit_rate": 0.46153846153846156,
+              "artist_diversity": 0.5076923076923077,
+              "catalogue_coverage": 0.00019091143480768133
+            },
+            "unified_no_title": {
+              "recall": 0.021994981108599983,
+              "ndcg": 0.20791644981601376,
+              "precision": 0.19999999999999998,
+              "hit_rate": 0.49230769230769234,
+              "artist_diversity": 0.5128205128205129,
+              "catalogue_coverage": 0.000189927355246817
+            },
+            "unified": {
+              "recall": 0.021896361779211424,
+              "ndcg": 0.20591146880200806,
+              "precision": 0.19743589743589743,
+              "hit_rate": 0.47692307692307695,
+              "artist_diversity": 0.5076923076923077,
+              "catalogue_coverage": 0.000189927355246817
+            },
+            "unified_seed_bpm": {
+              "recall": 0.009652521210381184,
+              "ndcg": 0.1337542356399698,
+              "precision": 0.12564102564102567,
+              "hit_rate": 0.3384615384615385,
+              "artist_diversity": 0.6384615384615384,
+              "catalogue_coverage": 0.00019041939502724916
+            }
+          },
+          "7": {
+            "popularity": {
+              "recall": 0.0009624857210511387,
+              "ndcg": 0.01007348425517805,
+              "precision": 0.010989010989010988,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.936318243457347e-06
+            },
+            "cf": {
+              "recall": 0.0224695098303927,
+              "ndcg": 0.18863059231617912,
+              "precision": 0.18241758241758244,
+              "hit_rate": 0.49230769230769234,
+              "artist_diversity": 0.47912087912087914,
+              "catalogue_coverage": 0.00022240198075534011
+            },
+            "standard_title": {
+              "recall": 0.02256812915978126,
+              "ndcg": 0.1907450256462891,
+              "precision": 0.18461538461538463,
+              "hit_rate": 0.5076923076923077,
+              "artist_diversity": 0.4857142857142857,
+              "catalogue_coverage": 0.00022240198075534011
+            },
+            "unified_no_title": {
+              "recall": 0.02329283302734227,
+              "ndcg": 0.20155261270401198,
+              "precision": 0.19120879120879122,
+              "hit_rate": 0.5230769230769231,
+              "artist_diversity": 0.48791208791208784,
+              "catalogue_coverage": 0.0002209258614140436
+            },
+            "unified": {
+              "recall": 0.02329283302734227,
+              "ndcg": 0.20114096118631047,
+              "precision": 0.19120879120879122,
+              "hit_rate": 0.5230769230769231,
+              "artist_diversity": 0.4857142857142857,
+              "catalogue_coverage": 0.0002209258614140436
+            },
+            "unified_seed_bpm": {
+              "recall": 0.010133059061919856,
+              "ndcg": 0.12713743325210666,
+              "precision": 0.11648351648351649,
+              "hit_rate": 0.3384615384615385,
+              "artist_diversity": 0.6285714285714286,
+              "catalogue_coverage": 0.00022141790119447577
+            }
+          },
+          "8": {
+            "popularity": {
+              "recall": 0.0012009222327795759,
+              "ndcg": 0.011724891798472283,
+              "precision": 0.013461538461538462,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.428358023889516e-06
+            },
+            "cf": {
+              "recall": 0.027166492699418215,
+              "ndcg": 0.19322063381276636,
+              "precision": 0.19038461538461537,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.4634615384615385,
+              "catalogue_coverage": 0.0002534004869225667
+            },
+            "standard_title": {
+              "recall": 0.027166492699418215,
+              "ndcg": 0.19393873862540298,
+              "precision": 0.19038461538461537,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.4653846153846154,
+              "catalogue_coverage": 0.0002534004869225667
+            },
+            "unified_no_title": {
+              "recall": 0.026545464248869943,
+              "ndcg": 0.20020111440415297,
+              "precision": 0.19038461538461537,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.475,
+              "catalogue_coverage": 0.00025290844714213456
+            },
+            "unified": {
+              "recall": 0.026545464248869943,
+              "ndcg": 0.19982231042935497,
+              "precision": 0.19038461538461537,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.47307692307692306,
+              "catalogue_coverage": 0.00025290844714213456
+            },
+            "unified_seed_bpm": {
+              "recall": 0.012742185559075034,
+              "ndcg": 0.12926864328750207,
+              "precision": 0.12115384615384615,
+              "hit_rate": 0.4,
+              "artist_diversity": 0.6076923076923076,
+              "catalogue_coverage": 0.00025290844714213456
+            }
+          },
+          "9": {
+            "popularity": {
+              "recall": 0.0012009222327795759,
+              "ndcg": 0.010895288159899015,
+              "precision": 0.011965811965811968,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-06
+            },
+            "cf": {
+              "recall": 0.029263783849953488,
+              "ndcg": 0.19043466252973176,
+              "precision": 0.1863247863247863,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.46153846153846156,
+              "catalogue_coverage": 0.0002848910328702255
+            },
+            "standard_title": {
+              "recall": 0.029263783849953488,
+              "ndcg": 0.19110195729007282,
+              "precision": 0.1863247863247863,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.4632478632478632,
+              "catalogue_coverage": 0.0002848910328702255
+            },
+            "unified_no_title": {
+              "recall": 0.0288796681757728,
+              "ndcg": 0.1958326837417364,
+              "precision": 0.18461538461538457,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.46153846153846156,
+              "catalogue_coverage": 0.00028390695330936114
+            },
+            "unified": {
+              "recall": 0.0288796681757728,
+              "ndcg": 0.19548068233033938,
+              "precision": 0.18461538461538457,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.46153846153846156,
+              "catalogue_coverage": 0.00028390695330936114
+            },
+            "unified_seed_bpm": {
+              "recall": 0.013287183202627681,
+              "ndcg": 0.12556489291901132,
+              "precision": 0.11623931623931624,
+              "hit_rate": 0.4,
+              "artist_diversity": 0.6034188034188034,
+              "catalogue_coverage": 0.00028439899308979334
+            }
+          },
+          "10": {
+            "popularity": {
+              "recall": 0.001334701496993623,
+              "ndcg": 0.011180902696418485,
+              "precision": 0.012307692307692308,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.4124375847538526e-06
+            },
+            "cf": {
+              "recall": 0.03183249245554094,
+              "ndcg": 0.18810687276825838,
+              "precision": 0.18307692307692308,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.45076923076923076,
+              "catalogue_coverage": 0.0003168736185983164
+            },
+            "standard_title": {
+              "recall": 0.03183249245554094,
+              "ndcg": 0.18873171370998548,
+              "precision": 0.18307692307692308,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.45384615384615384,
+              "catalogue_coverage": 0.0003168736185983164
+            },
+            "unified_no_title": {
+              "recall": 0.032070512815261,
+              "ndcg": 0.19511903032985448,
+              "precision": 0.18461538461538463,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.45384615384615384,
+              "catalogue_coverage": 0.00031392137991572344
+            },
+            "unified": {
+              "recall": 0.032070512815261,
+              "ndcg": 0.19478942352569772,
+              "precision": 0.18461538461538463,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.45384615384615384,
+              "catalogue_coverage": 0.00031392137991572344
+            },
+            "unified_seed_bpm": {
+              "recall": 0.014415251983027203,
+              "ndcg": 0.12442782495973549,
+              "precision": 0.11538461538461539,
+              "hit_rate": 0.4153846153846154,
+              "artist_diversity": 0.5969230769230771,
+              "catalogue_coverage": 0.0003144134196961556
+            }
+          },
+          "11": {
+            "popularity": {
+              "recall": 0.001334701496993623,
+              "ndcg": 0.010534177459254012,
+              "precision": 0.011188811188811189,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.90447736518602e-06
+            },
+            "cf": {
+              "recall": 0.035586640351307534,
+              "ndcg": 0.18701504209335815,
+              "precision": 0.1818181818181818,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.4447552447552447,
+              "catalogue_coverage": 0.00034639600542424656
+            },
+            "standard_title": {
+              "recall": 0.035488021021918975,
+              "ndcg": 0.1867138648305941,
+              "precision": 0.18041958041958042,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.4461538461538462,
+              "catalogue_coverage": 0.0003468880452046787
+            },
+            "unified_no_title": {
+              "recall": 0.03605830779555973,
+              "ndcg": 0.19362160277380885,
+              "precision": 0.18321678321678325,
+              "hit_rate": 0.5692307692307692,
+              "artist_diversity": 0.45174825174825173,
+              "catalogue_coverage": 0.0003454119258633822
+            },
+            "unified": {
+              "recall": 0.03579062675864792,
+              "ndcg": 0.19331106107059942,
+              "precision": 0.18321678321678322,
+              "hit_rate": 0.5538461538461539,
+              "artist_diversity": 0.45034965034965035,
+              "catalogue_coverage": 0.0003454119258633822
+            },
+            "unified_seed_bpm": {
+              "recall": 0.019745449836193776,
+              "ndcg": 0.12564828321297872,
+              "precision": 0.11748251748251745,
+              "hit_rate": 0.4307692307692308,
+              "artist_diversity": 0.5916083916083915,
+              "catalogue_coverage": 0.00034590396564381437
+            }
+          },
+          "12": {
+            "popularity": {
+              "recall": 0.0014684807612076697,
+              "ndcg": 0.010791558217026494,
+              "precision": 0.01153846153846154,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.396517145618189e-06
+            },
+            "cf": {
+              "recall": 0.03688904556321729,
+              "ndcg": 0.18320211914993614,
+              "precision": 0.17564102564102566,
+              "hit_rate": 0.5692307692307692,
+              "artist_diversity": 0.432051282051282,
+              "catalogue_coverage": 0.00037739451159147315
+            },
+            "standard_title": {
+              "recall": 0.03679042623382873,
+              "ndcg": 0.18291692337859755,
+              "precision": 0.1743589743589744,
+              "hit_rate": 0.5692307692307692,
+              "artist_diversity": 0.4333333333333333,
+              "catalogue_coverage": 0.000376902471811041
+            },
+            "unified_no_title": {
+              "recall": 0.03721811014441635,
+              "ndcg": 0.19027447331260275,
+              "precision": 0.1782051282051282,
+              "hit_rate": 0.5692307692307692,
+              "artist_diversity": 0.4371794871794872,
+              "catalogue_coverage": 0.000376902471811041
+            },
+            "unified": {
+              "recall": 0.03721811014441635,
+              "ndcg": 0.18998041000992577,
+              "precision": 0.1782051282051282,
+              "hit_rate": 0.5692307692307692,
+              "artist_diversity": 0.4371794871794872,
+              "catalogue_coverage": 0.0003764104320306088
+            },
+            "unified_seed_bpm": {
+              "recall": 0.021432759638073538,
+              "ndcg": 0.12248117739655096,
+              "precision": 0.11282051282051282,
+              "hit_rate": 0.4307692307692308,
+              "artist_diversity": 0.5897435897435898,
+              "catalogue_coverage": 0.00037739451159147315
+            }
+          },
+          "13": {
+            "popularity": {
+              "recall": 0.0014684807612076697,
+              "ndcg": 0.010262297460627633,
+              "precision": 0.010650887573964497,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.888556926050357e-06
+            },
+            "cf": {
+              "recall": 0.03847218241889762,
+              "ndcg": 0.17986501823939027,
+              "precision": 0.17041420118343192,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.42485207100591715,
+              "catalogue_coverage": 0.00040839301775869973
+            },
+            "standard_title": {
+              "recall": 0.03847218241889762,
+              "ndcg": 0.18034833206956064,
+              "precision": 0.17041420118343192,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.42485207100591715,
+              "catalogue_coverage": 0.0004074089381978354
+            },
+            "unified_no_title": {
+              "recall": 0.03899051175507213,
+              "ndcg": 0.18583599367157216,
+              "precision": 0.17159763313609463,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.4307692307692308,
+              "catalogue_coverage": 0.0004079009779782676
+            },
+            "unified": {
+              "recall": 0.03899051175507213,
+              "ndcg": 0.1855563523979362,
+              "precision": 0.17159763313609463,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.42958579881656805,
+              "catalogue_coverage": 0.0004079009779782676
+            },
+            "unified_seed_bpm": {
+              "recall": 0.022768383973716753,
+              "ndcg": 0.12046382331526262,
+              "precision": 0.11005917159763313,
+              "hit_rate": 0.4461538461538462,
+              "artist_diversity": 0.5810650887573965,
+              "catalogue_coverage": 0.00040888505753913193
+            }
+          },
+          "14": {
+            "popularity": {
+              "recall": 0.0014684807612076697,
+              "ndcg": 0.00979418937163319,
+              "precision": 0.00989010989010989,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 7.380596706482526e-06
+            },
+            "cf": {
+              "recall": 0.04021321838447046,
+              "ndcg": 0.17901877578523412,
+              "precision": 0.16923076923076918,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41758241758241754,
+              "catalogue_coverage": 0.0004393915239259264
+            },
+            "standard_title": {
+              "recall": 0.04021321838447046,
+              "ndcg": 0.17948004356633077,
+              "precision": 0.16923076923076918,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41648351648351645,
+              "catalogue_coverage": 0.0004388994841454942
+            },
+            "unified_no_title": {
+              "recall": 0.0411879365950046,
+              "ndcg": 0.18541914834077178,
+              "precision": 0.17142857142857137,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41758241758241765,
+              "catalogue_coverage": 0.0004393915239259264
+            },
+            "unified": {
+              "recall": 0.0411879365950046,
+              "ndcg": 0.18515226272372326,
+              "precision": 0.17142857142857137,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41758241758241765,
+              "catalogue_coverage": 0.0004388994841454942
+            },
+            "unified_seed_bpm": {
+              "recall": 0.02484535171115899,
+              "ndcg": 0.12008308013283019,
+              "precision": 0.1098901098901099,
+              "hit_rate": 0.46153846153846156,
+              "artist_diversity": 0.5791208791208791,
+              "catalogue_coverage": 0.0004403756034867907
+            }
+          },
+          "15": {
+            "popularity": {
+              "recall": 0.0016022600254217163,
+              "ndcg": 0.01003263392461301,
+              "precision": 0.010256410256410256,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.9979487179487181,
+              "catalogue_coverage": 7.872636486914694e-06
+            },
+            "cf": {
+              "recall": 0.04197610353589956,
+              "ndcg": 0.1789197691195037,
+              "precision": 0.16923076923076918,
+              "hit_rate": 0.6,
+              "artist_diversity": 0.41230769230769226,
+              "catalogue_coverage": 0.00047088206987358516
+            },
+            "standard_title": {
+              "recall": 0.04197610353589956,
+              "ndcg": 0.17936136276671286,
+              "precision": 0.16923076923076918,
+              "hit_rate": 0.6,
+              "artist_diversity": 0.41230769230769226,
+              "catalogue_coverage": 0.00047039003009315296
+            },
+            "unified_no_title": {
+              "recall": 0.04242352763888886,
+              "ndcg": 0.1830785831322287,
+              "precision": 0.16820512820512817,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41641025641025636,
+              "catalogue_coverage": 0.00047039003009315296
+            },
+            "unified": {
+              "recall": 0.04242352763888886,
+              "ndcg": 0.1828230808018038,
+              "precision": 0.16820512820512817,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.4153846153846154,
+              "catalogue_coverage": 0.00047039003009315296
+            },
+            "unified_seed_bpm": {
+              "recall": 0.025184021661897905,
+              "ndcg": 0.11711854357293715,
+              "precision": 0.10564102564102568,
+              "hit_rate": 0.46153846153846156,
+              "artist_diversity": 0.5743589743589743,
+              "catalogue_coverage": 0.0004718661494344495
+            }
+          },
+          "16": {
+            "popularity": {
+              "recall": 0.001736039289635763,
+              "ndcg": 0.010247073079321349,
+              "precision": 0.010576923076923078,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.9384615384615385,
+              "catalogue_coverage": 8.364676267346862e-06
+            },
+            "cf": {
+              "recall": 0.045260513778956415,
+              "ndcg": 0.17837836911925434,
+              "precision": 0.16826923076923078,
+              "hit_rate": 0.6,
+              "artist_diversity": 0.4153846153846154,
+              "catalogue_coverage": 0.0005013885362603796
+            },
+            "standard_title": {
+              "recall": 0.045359133108344975,
+              "ndcg": 0.17941868848592002,
+              "precision": 0.16923076923076924,
+              "hit_rate": 0.6,
+              "artist_diversity": 0.41634615384615387,
+              "catalogue_coverage": 0.0005008964964799475
+            },
+            "unified_no_title": {
+              "recall": 0.04528015689878858,
+              "ndcg": 0.18175413174972258,
+              "precision": 0.16634615384615384,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41634615384615387,
+              "catalogue_coverage": 0.0005008964964799475
+            },
+            "unified": {
+              "recall": 0.04528015689878858,
+              "ndcg": 0.18150886669387936,
+              "precision": 0.16634615384615384,
+              "hit_rate": 0.5846153846153846,
+              "artist_diversity": 0.41634615384615387,
+              "catalogue_coverage": 0.0005008964964799475
+            },
+            "unified_seed_bpm": {
+              "recall": 0.02584130519961623,
+              "ndcg": 0.11445246164294123,
+              "precision": 0.10192307692307692,
+              "hit_rate": 0.47692307692307695,
+              "artist_diversity": 0.575,
+              "catalogue_coverage": 0.0005033566953821083
+            }
+          },
+          "17": {
+            "popularity": {
+              "recall": 0.001736039289635763,
+              "ndcg": 0.009859829294774133,
+              "precision": 0.00995475113122172,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.9420814479638009,
+              "catalogue_coverage": 8.856716047779031e-06
+            },
+            "cf": {
+              "recall": 0.04896744834795994,
+              "ndcg": 0.17736520198935482,
+              "precision": 0.1665158371040723,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4108597285067873,
+              "catalogue_coverage": 0.0005323870424276062
+            },
+            "standard_title": {
+              "recall": 0.0490660676773485,
+              "ndcg": 0.17836620698736452,
+              "precision": 0.1674208144796379,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.41266968325791853,
+              "catalogue_coverage": 0.0005323870424276062
+            },
+            "unified_no_title": {
+              "recall": 0.0491323811058515,
+              "ndcg": 0.18119478724337498,
+              "precision": 0.1656108597285067,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.41266968325791853,
+              "catalogue_coverage": 0.000531895002647174
+            },
+            "unified": {
+              "recall": 0.0491323811058515,
+              "ndcg": 0.1809587909189741,
+              "precision": 0.1656108597285067,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.41266968325791853,
+              "catalogue_coverage": 0.000531895002647174
+            },
+            "unified_seed_bpm": {
+              "recall": 0.02667917856655936,
+              "ndcg": 0.11262001127987041,
+              "precision": 0.09954751131221715,
+              "hit_rate": 0.5076923076923077,
+              "artist_diversity": 0.5683257918552037,
+              "catalogue_coverage": 0.0005353392811101992
+            }
+          },
+          "18": {
+            "popularity": {
+              "recall": 0.001736039289635763,
+              "ndcg": 0.009507145183248536,
+              "precision": 0.009401709401709403,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.9427350427350428,
+              "catalogue_coverage": 9.348755828211199e-06
+            },
+            "cf": {
+              "recall": 0.04994968899981582,
+              "ndcg": 0.17464507931105389,
+              "precision": 0.16239316239316234,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4085470085470086,
+              "catalogue_coverage": 0.0005619094292535363
+            },
+            "standard_title": {
+              "recall": 0.04994968899981582,
+              "ndcg": 0.17505997396235556,
+              "precision": 0.16239316239316234,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4094017094017094,
+              "catalogue_coverage": 0.0005614173894731041
+            },
+            "unified_no_title": {
+              "recall": 0.05083585258261489,
+              "ndcg": 0.17943829026885597,
+              "precision": 0.16324786324786322,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4136752136752137,
+              "catalogue_coverage": 0.0005619094292535363
+            },
+            "unified": {
+              "recall": 0.05083585258261489,
+              "ndcg": 0.17921073548553107,
+              "precision": 0.16324786324786322,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4136752136752137,
+              "catalogue_coverage": 0.0005619094292535363
+            },
+            "unified_seed_bpm": {
+              "recall": 0.028033582444255162,
+              "ndcg": 0.11205170762797839,
+              "precision": 0.0991452991452991,
+              "hit_rate": 0.5076923076923077,
+              "artist_diversity": 0.5692307692307693,
+              "catalogue_coverage": 0.0005663377872774259
+            }
+          },
+          "19": {
+            "popularity": {
+              "recall": 0.0022022397558362295,
+              "ndcg": 0.009706763379786413,
+              "precision": 0.0097165991902834,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.8931174089068824,
+              "catalogue_coverage": 9.840795608643368e-06
+            },
+            "cf": {
+              "recall": 0.051346957576299666,
+              "ndcg": 0.1721547176950704,
+              "precision": 0.1587044534412955,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.40323886639676115,
+              "catalogue_coverage": 0.0005919238558598985
+            },
+            "standard_title": {
+              "recall": 0.05171325794260003,
+              "ndcg": 0.1730780332405801,
+              "precision": 0.15951417004048576,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.40566801619433196,
+              "catalogue_coverage": 0.0005914318160794664
+            },
+            "unified_no_title": {
+              "recall": 0.05187378316722391,
+              "ndcg": 0.17678513546222405,
+              "precision": 0.15951417004048576,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.40809716599190277,
+              "catalogue_coverage": 0.0005924158956403308
+            },
+            "unified": {
+              "recall": 0.05187378316722391,
+              "ndcg": 0.17656530918689747,
+              "precision": 0.15951417004048576,
+              "hit_rate": 0.6153846153846154,
+              "artist_diversity": 0.4089068825910931,
+              "catalogue_coverage": 0.0005924158956403308
+            },
+            "unified_seed_bpm": {
+              "recall": 0.028657992872177296,
+              "ndcg": 0.10996387073806767,
+              "precision": 0.09635627530364375,
+              "hit_rate": 0.5230769230769231,
+              "artist_diversity": 0.5659919028340081,
+              "catalogue_coverage": 0.0005983203730055167
+            }
+          },
+          "20": {
+            "popularity": {
+              "recall": 0.0022022397558362295,
+              "ndcg": 0.00939286323950303,
+              "precision": 0.00923076923076923,
+              "hit_rate": 0.06153846153846154,
+              "artist_diversity": 0.8507692307692306,
+              "catalogue_coverage": 1.0332835389075536e-05
+            },
+            "cf": {
+              "recall": 0.05422682573361548,
+              "ndcg": 0.171627593438542,
+              "precision": 0.15769230769230766,
+              "hit_rate": 0.6461538461538462,
+              "artist_diversity": 0.4007692307692307,
+              "catalogue_coverage": 0.0006229223620271252
+            },
+            "standard_title": {
+              "recall": 0.05319452470131445,
+              "ndcg": 0.17179474311316364,
+              "precision": 0.15769230769230766,
+              "hit_rate": 0.6307692307692307,
+              "artist_diversity": 0.40384615384615385,
+              "catalogue_coverage": 0.000622430322246693
+            },
+            "unified_no_title": {
+              "recall": 0.05422156328883769,
+              "ndcg": 0.17589816832393496,
+              "precision": 0.15846153846153843,
+              "hit_rate": 0.6307692307692307,
+              "artist_diversity": 0.40384615384615385,
+              "catalogue_coverage": 0.0006229223620271252
+            },
+            "unified": {
+              "recall": 0.05432018261822625,
+              "ndcg": 0.17618296302621456,
+              "precision": 0.15923076923076923,
+              "hit_rate": 0.6307692307692307,
+              "artist_diversity": 0.40384615384615385,
+              "catalogue_coverage": 0.0006229223620271252
+            },
+            "unified_seed_bpm": {
+              "recall": 0.029285972380591597,
+              "ndcg": 0.10860186777874045,
+              "precision": 0.09461538461538456,
+              "hit_rate": 0.5384615384615384,
+              "artist_diversity": 0.5646153846153845,
+              "catalogue_coverage": 0.0006303029587336077
+            }
+          }
+        }
+      },
+      "seed_tempo_available": {
+        "queries": 947,
+        "cutoffs": {
+          "1": {
+            "popularity": {
+              "recall": 0.0009221599875259487,
+              "ndcg": 0.042238648363252376,
+              "precision": 0.042238648363252376,
+              "hit_rate": 0.042238648363252376,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 9.840795608643368e-07
+            },
+            "cf": {
+              "recall": 0.011147476381176339,
+              "ndcg": 0.3611404435058078,
+              "precision": 0.3611404435058078,
+              "hit_rate": 0.3611404435058078,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.0003660775966415333
+            },
+            "standard_title": {
+              "recall": 0.010842547825243588,
+              "ndcg": 0.36536430834213307,
+              "precision": 0.36536430834213307,
+              "hit_rate": 0.36536430834213307,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00037149003422628715
+            },
+            "unified_no_title": {
+              "recall": 0.010582252630233508,
+              "ndcg": 0.3579725448785639,
+              "precision": 0.3579725448785639,
+              "hit_rate": 0.3579725448785639,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00036214127839807593
+            },
+            "unified": {
+              "recall": 0.01059176583932433,
+              "ndcg": 0.3590285110876452,
+              "precision": 0.3590285110876452,
+              "hit_rate": 0.3590285110876452,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00036263331817850807
+            },
+            "unified_seed_bpm": {
+              "recall": 0.007731727550081286,
+              "ndcg": 0.2893347412882788,
+              "precision": 0.2893347412882788,
+              "hit_rate": 0.2893347412882788,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 0.00036312535795894027
+            }
+          },
+          "2": {
+            "popularity": {
+              "recall": 0.001856185853196802,
+              "ndcg": 0.04387266233256405,
+              "precision": 0.044350580781414996,
+              "hit_rate": 0.08447729672650475,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.476119341296505e-06
+            },
+            "cf": {
+              "recall": 0.020403123788217226,
+              "ndcg": 0.3464343177820026,
+              "precision": 0.34213305174234426,
+              "hit_rate": 0.4931362196409715,
+              "artist_diversity": 0.7998944033790919,
+              "catalogue_coverage": 0.000672126340070342
+            },
+            "standard_title": {
+              "recall": 0.020426119899125243,
+              "ndcg": 0.34698165118737656,
+              "precision": 0.3416050686378036,
+              "hit_rate": 0.49208025343189016,
+              "artist_diversity": 0.8062302006335798,
+              "catalogue_coverage": 0.000675078578752935
+            },
+            "unified_no_title": {
+              "recall": 0.020362500777401437,
+              "ndcg": 0.34694295058570984,
+              "precision": 0.3437170010559662,
+              "hit_rate": 0.4963041182682154,
+              "artist_diversity": 0.8025343189017952,
+              "catalogue_coverage": 0.0006647457433638595
+            },
+            "unified": {
+              "recall": 0.020267400942376404,
+              "ndcg": 0.3471819098101354,
+              "precision": 0.3437170010559662,
+              "hit_rate": 0.4963041182682154,
+              "artist_diversity": 0.8035902851108765,
+              "catalogue_coverage": 0.0006642537035834273
+            },
+            "unified_seed_bpm": {
+              "recall": 0.014056190725915631,
+              "ndcg": 0.268909566671883,
+              "precision": 0.26293558606124606,
+              "hit_rate": 0.4065469904963041,
+              "artist_diversity": 0.870116156282999,
+              "catalogue_coverage": 0.0006622855444616987
+            }
+          },
+          "3": {
+            "popularity": {
+              "recall": 0.0025287417492599676,
+              "ndcg": 0.04299371585833234,
+              "precision": 0.04294262583597324,
+              "hit_rate": 0.11087645195353749,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 1.9681591217286735e-06
+            },
+            "cf": {
+              "recall": 0.02711641935737471,
+              "ndcg": 0.33086263761755763,
+              "precision": 0.32101372756071817,
+              "hit_rate": 0.5533262935586061,
+              "artist_diversity": 0.72580077437522,
+              "catalogue_coverage": 0.0009402880204058738
+            },
+            "standard_title": {
+              "recall": 0.02733313595542388,
+              "ndcg": 0.3327121032530971,
+              "precision": 0.3227736712425203,
+              "hit_rate": 0.5543822597676874,
+              "artist_diversity": 0.7303766279479057,
+              "catalogue_coverage": 0.000937827821503713
+            },
+            "unified_no_title": {
+              "recall": 0.02711828510373475,
+              "ndcg": 0.33193916961997255,
+              "precision": 0.3231256599788806,
+              "hit_rate": 0.5575501583949314,
+              "artist_diversity": 0.73389651531151,
+              "catalogue_coverage": 0.0009279870258950695
+            },
+            "unified": {
+              "recall": 0.02711828510373475,
+              "ndcg": 0.33212205960419316,
+              "precision": 0.3231256599788806,
+              "hit_rate": 0.5575501583949314,
+              "artist_diversity": 0.73389651531151,
+              "catalogue_coverage": 0.0009274949861146374
+            },
+            "unified_seed_bpm": {
+              "recall": 0.018972697766212156,
+              "ndcg": 0.25207005875010097,
+              "precision": 0.24076029567053875,
+              "hit_rate": 0.4614572333685322,
+              "artist_diversity": 0.821893699401619,
+              "catalogue_coverage": 0.0009230666280907479
+            }
+          },
+          "4": {
+            "popularity": {
+              "recall": 0.0035404278552995834,
+              "ndcg": 0.04308018674917782,
+              "precision": 0.04303062302006336,
+              "hit_rate": 0.12249208025343189,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.460198902160842e-06
+            },
+            "cf": {
+              "recall": 0.034164013923277115,
+              "ndcg": 0.3201996407633036,
+              "precision": 0.3070221752903907,
+              "hit_rate": 0.5987328405491025,
+              "artist_diversity": 0.6832101372756072,
+              "catalogue_coverage": 0.0012000850244740587
+            },
+            "standard_title": {
+              "recall": 0.03464888847240441,
+              "ndcg": 0.323118280649397,
+              "precision": 0.31045406546990495,
+              "hit_rate": 0.6019007391763463,
+              "artist_diversity": 0.6855860612460402,
+              "catalogue_coverage": 0.0011976248255718977
+            },
+            "unified_no_title": {
+              "recall": 0.034250121128814794,
+              "ndcg": 0.32176515045523724,
+              "precision": 0.309662090813094,
+              "hit_rate": 0.6050686378035903,
+              "artist_diversity": 0.689545934530095,
+              "catalogue_coverage": 0.0011848317912806616
+            },
+            "unified": {
+              "recall": 0.03425052558124821,
+              "ndcg": 0.32173975459988374,
+              "precision": 0.3093980992608237,
+              "hit_rate": 0.6029567053854277,
+              "artist_diversity": 0.688753959873284,
+              "catalogue_coverage": 0.001183355671939365
+            },
+            "unified_seed_bpm": {
+              "recall": 0.023051055201876176,
+              "ndcg": 0.24317929677895023,
+              "precision": 0.22993664202745512,
+              "hit_rate": 0.4963041182682154,
+              "artist_diversity": 0.7977824709609292,
+              "catalogue_coverage": 0.0011587536829177566
+            }
+          },
+          "5": {
+            "popularity": {
+              "recall": 0.004256988660010798,
+              "ndcg": 0.04249766814660416,
+              "precision": 0.04202745512143608,
+              "hit_rate": 0.13621964097148892,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 2.95223868259301e-06
+            },
+            "cf": {
+              "recall": 0.04019069799338123,
+              "ndcg": 0.3144044598833199,
+              "precision": 0.3003167898627237,
+              "hit_rate": 0.6251319957761352,
+              "artist_diversity": 0.6530095036958818,
+              "catalogue_coverage": 0.001443644715787982
+            },
+            "standard_title": {
+              "recall": 0.040576016631087716,
+              "ndcg": 0.3174629992466165,
+              "precision": 0.3039070749736002,
+              "hit_rate": 0.6272439281942978,
+              "artist_diversity": 0.657233368532207,
+              "catalogue_coverage": 0.0014367561588619316
+            },
+            "unified_no_title": {
+              "recall": 0.040320007047379064,
+              "ndcg": 0.31531756970627506,
+              "precision": 0.30179514255543743,
+              "hit_rate": 0.6314677930306231,
+              "artist_diversity": 0.6623020063357973,
+              "catalogue_coverage": 0.0014249472041315597
+            },
+            "unified": {
+              "recall": 0.040337332500290576,
+              "ndcg": 0.31557260217271765,
+              "precision": 0.3020063357972537,
+              "hit_rate": 0.6314677930306231,
+              "artist_diversity": 0.6625131995776135,
+              "catalogue_coverage": 0.0014244551643511274
+            },
+            "unified_seed_bpm": {
+              "recall": 0.026749381567308255,
+              "ndcg": 0.23424798286025877,
+              "precision": 0.21858500527983082,
+              "hit_rate": 0.529039070749736,
+              "artist_diversity": 0.7801478352692715,
+              "catalogue_coverage": 0.0013836158625752575
+            }
+          },
+          "6": {
+            "popularity": {
+              "recall": 0.005152830120546765,
+              "ndcg": 0.04154580812663629,
+              "precision": 0.040478704681450185,
+              "hit_rate": 0.1457233368532207,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.4442784630251786e-06
+            },
+            "cf": {
+              "recall": 0.045803221294086066,
+              "ndcg": 0.3067127259584314,
+              "precision": 0.2900387187609995,
+              "hit_rate": 0.6494192185850053,
+              "artist_diversity": 0.6353396691305879,
+              "catalogue_coverage": 0.0016650626169824579
+            },
+            "standard_title": {
+              "recall": 0.046541149595832075,
+              "ndcg": 0.30952965244179487,
+              "precision": 0.29320661738824344,
+              "hit_rate": 0.6515311510031679,
+              "artist_diversity": 0.6402675114396339,
+              "catalogue_coverage": 0.0016645705772020255
+            },
+            "unified_no_title": {
+              "recall": 0.04552412768556489,
+              "ndcg": 0.3067550334741223,
+              "precision": 0.2902147131291797,
+              "hit_rate": 0.6589229144667371,
+              "artist_diversity": 0.6411474832805351,
+              "catalogue_coverage": 0.0016547297815933822
+            },
+            "unified": {
+              "recall": 0.04548160569256091,
+              "ndcg": 0.3066411110919808,
+              "precision": 0.28986272439281924,
+              "hit_rate": 0.6568109820485745,
+              "artist_diversity": 0.6413234776487151,
+              "catalogue_coverage": 0.0016532536622520858
+            },
+            "unified_seed_bpm": {
+              "recall": 0.03009290159943033,
+              "ndcg": 0.22714963939599764,
+              "precision": 0.20978528687082007,
+              "hit_rate": 0.5670538542766631,
+              "artist_diversity": 0.7646955297430483,
+              "catalogue_coverage": 0.0015937168488197933
+            }
+          },
+          "7": {
+            "popularity": {
+              "recall": 0.005813443315683604,
+              "ndcg": 0.041196302364290775,
+              "precision": 0.0399758636295067,
+              "hit_rate": 0.15100316789862725,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 3.936318243457347e-06
+            },
+            "cf": {
+              "recall": 0.051095073257443224,
+              "ndcg": 0.2994865091880194,
+              "precision": 0.28028360235329536,
+              "hit_rate": 0.672650475184794,
+              "artist_diversity": 0.6206064263086439,
+              "catalogue_coverage": 0.0018953372342247125
+            },
+            "standard_title": {
+              "recall": 0.05205285347512495,
+              "ndcg": 0.3025072056510517,
+              "precision": 0.28375320561170553,
+              "hit_rate": 0.6800422386483632,
+              "artist_diversity": 0.6236234726203048,
+              "catalogue_coverage": 0.0018923849955421197
+            },
+            "unified_no_title": {
+              "recall": 0.05122335325154822,
+              "ndcg": 0.3004786785847856,
+              "precision": 0.28194297782470884,
+              "hit_rate": 0.6821541710665259,
+              "artist_diversity": 0.6252828480917182,
+              "catalogue_coverage": 0.0018618785291553252
+            },
+            "unified": {
+              "recall": 0.051216669357017394,
+              "ndcg": 0.30056870113767975,
+              "precision": 0.28194297782470884,
+              "hit_rate": 0.6810982048574445,
+              "artist_diversity": 0.6255845527228843,
+              "catalogue_coverage": 0.001861386489374893
+            },
+            "unified_seed_bpm": {
+              "recall": 0.033292063990226724,
+              "ndcg": 0.2202374994031442,
+              "precision": 0.20093528435661423,
+              "hit_rate": 0.5881731784582893,
+              "artist_diversity": 0.7565243626489666,
+              "catalogue_coverage": 0.0017984053974795754
+            }
+          },
+          "8": {
+            "popularity": {
+              "recall": 0.00621118828743605,
+              "ndcg": 0.04058277296257855,
+              "precision": 0.03907074973600845,
+              "hit_rate": 0.15100316789862725,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.428358023889516e-06
+            },
+            "cf": {
+              "recall": 0.05659923416475459,
+              "ndcg": 0.29545862958192914,
+              "precision": 0.2754751847940866,
+              "hit_rate": 0.6958817317845829,
+              "artist_diversity": 0.6082365364308342,
+              "catalogue_coverage": 0.002106914339810545
+            },
+            "standard_title": {
+              "recall": 0.05754352307481598,
+              "ndcg": 0.2983034836598994,
+              "precision": 0.27864308342133054,
+              "hit_rate": 0.7043294614572334,
+              "artist_diversity": 0.612064413938754,
+              "catalogue_coverage": 0.0021054382204692486
+            },
+            "unified_no_title": {
+              "recall": 0.05686319262094507,
+              "ndcg": 0.2966172048779104,
+              "precision": 0.27732312565997885,
+              "hit_rate": 0.6969376979936642,
+              "artist_diversity": 0.6168162618796198,
+              "catalogue_coverage": 0.002071979515399861
+            },
+            "unified": {
+              "recall": 0.0569387262234058,
+              "ndcg": 0.29686856479551854,
+              "precision": 0.2775871172122492,
+              "hit_rate": 0.6979936642027456,
+              "artist_diversity": 0.6165522703273495,
+              "catalogue_coverage": 0.002072471555180293
+            },
+            "unified_seed_bpm": {
+              "recall": 0.036115365986399556,
+              "ndcg": 0.21369671950972643,
+              "precision": 0.1925818373812038,
+              "hit_rate": 0.6071805702217529,
+              "artist_diversity": 0.7477560718057022,
+              "catalogue_coverage": 0.0019981735483350356
+            }
+          },
+          "9": {
+            "popularity": {
+              "recall": 0.006576893387571378,
+              "ndcg": 0.039409711007481085,
+              "precision": 0.03731080605420622,
+              "hit_rate": 0.1562829989440338,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 4.920397804321684e-06
+            },
+            "cf": {
+              "recall": 0.061495334418968844,
+              "ndcg": 0.2907499352874189,
+              "precision": 0.26915405373694834,
+              "hit_rate": 0.7117212249208026,
+              "artist_diversity": 0.5981461926551683,
+              "catalogue_coverage": 0.002310618808909463
+            },
+            "standard_title": {
+              "recall": 0.06234891824468281,
+              "ndcg": 0.29338332369378983,
+              "precision": 0.2719699636278317,
+              "hit_rate": 0.7159450897571278,
+              "artist_diversity": 0.6019007391763463,
+              "catalogue_coverage": 0.002301762092861684
+            },
+            "unified_no_title": {
+              "recall": 0.06169895660519452,
+              "ndcg": 0.29145350055197006,
+              "precision": 0.27021001994602967,
+              "hit_rate": 0.7096092925026399,
+              "artist_diversity": 0.6072978998005397,
+              "catalogue_coverage": 0.0022742078651574824
+            },
+            "unified": {
+              "recall": 0.06177470813072554,
+              "ndcg": 0.29176179099981236,
+              "precision": 0.2705620086823901,
+              "hit_rate": 0.7096092925026399,
+              "artist_diversity": 0.6070632406429661,
+              "catalogue_coverage": 0.0022732237855966177
+            },
+            "unified_seed_bpm": {
+              "recall": 0.038819870443532786,
+              "ndcg": 0.20891705451787032,
+              "precision": 0.18678868942860632,
+              "hit_rate": 0.6325237592397043,
+              "artist_diversity": 0.7421095858265869,
+              "catalogue_coverage": 0.002177276028412345
+            }
+          },
+          "10": {
+            "popularity": {
+              "recall": 0.0072670671511670636,
+              "ndcg": 0.039281257917037536,
+              "precision": 0.03717001055966212,
+              "hit_rate": 0.16050686378035903,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.4124375847538526e-06
+            },
+            "cf": {
+              "recall": 0.06605409474788788,
+              "ndcg": 0.2865310731137029,
+              "precision": 0.26356916578669426,
+              "hit_rate": 0.7286166842661035,
+              "artist_diversity": 0.5891235480464626,
+              "catalogue_coverage": 0.0025167834769105413
+            },
+            "standard_title": {
+              "recall": 0.06676047885400385,
+              "ndcg": 0.2886583864130818,
+              "precision": 0.26557550158394866,
+              "hit_rate": 0.7307286166842661,
+              "artist_diversity": 0.5926082365364308,
+              "catalogue_coverage": 0.0025118630791062194
+            },
+            "unified_no_title": {
+              "recall": 0.06628785398004935,
+              "ndcg": 0.28791770751807166,
+              "precision": 0.265681098204857,
+              "hit_rate": 0.7265047518479408,
+              "artist_diversity": 0.5974656810982049,
+              "catalogue_coverage": 0.0024764362149151033
+            },
+            "unified": {
+              "recall": 0.0663433077711389,
+              "ndcg": 0.2882735656871612,
+              "precision": 0.26610348468848954,
+              "hit_rate": 0.7296726504751848,
+              "artist_diversity": 0.5971488912354804,
+              "catalogue_coverage": 0.0024779123342564
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04115873008880965,
+              "ndcg": 0.20444785347978492,
+              "precision": 0.18130939809926036,
+              "hit_rate": 0.6525871172122492,
+              "artist_diversity": 0.733790918690602,
+              "catalogue_coverage": 0.0023509660709049003
+            }
+          },
+          "11": {
+            "popularity": {
+              "recall": 0.007738060836046364,
+              "ndcg": 0.03899643688789868,
+              "precision": 0.03676682346164925,
+              "hit_rate": 0.16261879619852165,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 5.90447736518602e-06
+            },
+            "cf": {
+              "recall": 0.06997029944375499,
+              "ndcg": 0.28291108279649074,
+              "precision": 0.25871172122492203,
+              "hit_rate": 0.7391763463569165,
+              "artist_diversity": 0.5823173658442931,
+              "catalogue_coverage": 0.002714583468644273
+            },
+            "standard_title": {
+              "recall": 0.07099218526259471,
+              "ndcg": 0.2853405111970655,
+              "precision": 0.2612076413554779,
+              "hit_rate": 0.7381203801478353,
+              "artist_diversity": 0.5841413074781607,
+              "catalogue_coverage": 0.002712123269742112
+            },
+            "unified_no_title": {
+              "recall": 0.07090125200823039,
+              "ndcg": 0.28508018766411625,
+              "precision": 0.26197561678026426,
+              "hit_rate": 0.7423442449841605,
+              "artist_diversity": 0.590285110876452,
+              "catalogue_coverage": 0.002658982973455438
+            },
+            "unified": {
+              "recall": 0.07087782247286105,
+              "ndcg": 0.28517114571491986,
+              "precision": 0.2619756167802642,
+              "hit_rate": 0.7434002111932418,
+              "artist_diversity": 0.5908610924450417,
+              "catalogue_coverage": 0.00265947501323587
+            },
+            "unified_seed_bpm": {
+              "recall": 0.0434141181586871,
+              "ndcg": 0.19916643348378965,
+              "precision": 0.1743304214265154,
+              "hit_rate": 0.665258711721225,
+              "artist_diversity": 0.7277527119132188,
+              "catalogue_coverage": 0.002519735715593134
+            }
+          },
+          "12": {
+            "popularity": {
+              "recall": 0.008179610949024191,
+              "ndcg": 0.03847009377263747,
+              "precision": 0.035990848292854614,
+              "hit_rate": 0.1689545934530095,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.396517145618189e-06
+            },
+            "cf": {
+              "recall": 0.07486992295333916,
+              "ndcg": 0.2803419636126618,
+              "precision": 0.2551038366772267,
+              "hit_rate": 0.750791974656811,
+              "artist_diversity": 0.5758535726856739,
+              "catalogue_coverage": 0.002899098386306336
+            },
+            "standard_title": {
+              "recall": 0.07588915944358202,
+              "ndcg": 0.28280838431370425,
+              "precision": 0.2576557550158398,
+              "hit_rate": 0.7518479408658922,
+              "artist_diversity": 0.5778775079197466,
+              "catalogue_coverage": 0.0028981143067454717
+            },
+            "unified_no_title": {
+              "recall": 0.07514202850448744,
+              "ndcg": 0.28166626675597095,
+              "precision": 0.257039774727209,
+              "hit_rate": 0.7539598732840549,
+              "artist_diversity": 0.5837733192537838,
+              "catalogue_coverage": 0.002837593413752315
+            },
+            "unified": {
+              "recall": 0.0751907410733876,
+              "ndcg": 0.2819204977543665,
+              "precision": 0.2573037662794793,
+              "hit_rate": 0.7550158394931362,
+              "artist_diversity": 0.5845652939105948,
+              "catalogue_coverage": 0.002837593413752315
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04562665300873322,
+              "ndcg": 0.19495652265366764,
+              "precision": 0.16886659626891948,
+              "hit_rate": 0.6810982048574445,
+              "artist_diversity": 0.7221928898275255,
+              "catalogue_coverage": 0.002694409837646554
+            }
+          },
+          "13": {
+            "popularity": {
+              "recall": 0.008607766541075194,
+              "ndcg": 0.03772205800917052,
+              "precision": 0.03484688489968318,
+              "hit_rate": 0.17106652587117213,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 6.888556926050357e-06
+            },
+            "cf": {
+              "recall": 0.07877417916822138,
+              "ndcg": 0.27724508652979696,
+              "precision": 0.2505076760620584,
+              "hit_rate": 0.7634635691657867,
+              "artist_diversity": 0.5707903500934124,
+              "catalogue_coverage": 0.0030703282298967308
+            },
+            "standard_title": {
+              "recall": 0.08001987220815249,
+              "ndcg": 0.279917614135154,
+              "precision": 0.253350662009585,
+              "hit_rate": 0.7676874340021119,
+              "artist_diversity": 0.5719275444724229,
+              "catalogue_coverage": 0.0030658998718728413
+            },
+            "unified_no_title": {
+              "recall": 0.0794316462803226,
+              "ndcg": 0.2795102437278442,
+              "precision": 0.25391925919909014,
+              "hit_rate": 0.7655755015839493,
+              "artist_diversity": 0.5789131670863455,
+              "catalogue_coverage": 0.003011775496025303
+            },
+            "unified": {
+              "recall": 0.07937671627049529,
+              "ndcg": 0.27959663993558787,
+              "precision": 0.25391925919909014,
+              "hit_rate": 0.764519535374868,
+              "artist_diversity": 0.5792380797660629,
+              "catalogue_coverage": 0.0030112834562448705
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04746541485247602,
+              "ndcg": 0.19099707913876443,
+              "precision": 0.1636747624076036,
+              "hit_rate": 0.6906019007391764,
+              "artist_diversity": 0.7167573714564212,
+              "catalogue_coverage": 0.00286367152211522
+            }
+          },
+          "14": {
+            "popularity": {
+              "recall": 0.00949126588277971,
+              "ndcg": 0.037893740287852674,
+              "precision": 0.035148589530849345,
+              "hit_rate": 0.1932418162618796,
+              "artist_diversity": 1.0,
+              "catalogue_coverage": 7.380596706482526e-06
+            },
+            "cf": {
+              "recall": 0.08316174845795946,
+              "ndcg": 0.27541561654403074,
+              "precision": 0.24777492834515055,
+              "hit_rate": 0.7719112988384371,
+              "artist_diversity": 0.5654699049630412,
+              "catalogue_coverage": 0.003241558073487125
+            },
+            "standard_title": {
+              "recall": 0.08437837823538698,
+              "ndcg": 0.2778847177077676,
+              "precision": 0.25026399155227075,
+              "hit_rate": 0.7761351636747624,
+              "artist_diversity": 0.5670538542766631,
+              "catalogue_coverage": 0.0032395899143653965
+            },
+            "unified_no_title": {
+              "recall": 0.08373186744828912,
+              "ndcg": 0.27724831132490985,
+              "precision": 0.25041484386785406,
+              "hit_rate": 0.7771911298838438,
+              "artist_diversity": 0.5721074068486951,
+              "catalogue_coverage": 0.003194322254565637
+            },
+            "unified": {
+              "recall": 0.08379783800803867,
+              "ndcg": 0.27730279830715937,
+              "precision": 0.2503394177100626,
+              "hit_rate": 0.7771911298838438,
+              "artist_diversity": 0.5724845376376527,
+              "catalogue_coverage": 0.0031948142943460695
+            },
+            "unified_seed_bpm": {
+              "recall": 0.04964198437257703,
+              "ndcg": 0.18771375591701595,
+              "precision": 0.159375471413486,
+              "hit_rate": 0.7011615628299894,
+              "artist_diversity": 0.7148891235480465,
+              "catalogue_coverage": 0.003029488928120861
+            }
+          },
+          "15": {
+            "popularity": {
+              "recall": 0.009985869603849156,
+              "ndcg": 0.037779748462595034,
+              "precision": 0.034987680394227345,
+              "hit_rate": 0.19640971488912354,
+              "artist_diversity": 0.9977472720872933,
+              "catalogue_coverage": 7.872636486914694e-06
+            },
+            "cf": {
+              "recall": 0.08777905916132091,
+              "ndcg": 0.27357619401573624,
+              "precision": 0.2449137627595913,
+              "hit_rate": 0.781414994720169,
+              "artist_diversity": 0.562055614220345,
+              "catalogue_coverage": 0.003425088911588324
+            },
+            "standard_title": {
+              "recall": 0.08904722435263336,
+              "ndcg": 0.27604541407834243,
+              "precision": 0.24737768391411438,
+              "hit_rate": 0.7856388595564942,
+              "artist_diversity": 0.5638155579021472,
+              "catalogue_coverage": 0.0034255809513687565
+            },
+            "unified_no_title": {
+              "recall": 0.08814365209014491,
+              "ndcg": 0.27484702100732694,
+              "precision": 0.2466033086941215,
+              "hit_rate": 0.7856388595564942,
+              "artist_diversity": 0.5678282294966561,
+              "catalogue_coverage": 0.0033709645357407857
+            },
+            "unified": {
+              "recall": 0.08804523455483176,
+              "ndcg": 0.27474524644527076,
+              "precision": 0.2463217177050331,
+              "hit_rate": 0.7845828933474129,
+              "artist_diversity": 0.5679690249912003,
+              "catalogue_coverage": 0.00337194861530165
+            },
+            "unified_seed_bpm": {
+              "recall": 0.051039038637907395,
+              "ndcg": 0.18403528169346622,
+              "precision": 0.1545230552622319,
+              "hit_rate": 0.7074973600844773,
+              "artist_diversity": 0.7122844068989792,
+              "catalogue_coverage": 0.0031889098169808833
+            }
+          },
+          "16": {
+            "popularity": {
+              "recall": 0.010521905593363464,
+              "ndcg": 0.037923303196316906,
+              "precision": 0.0352428722280887,
+              "hit_rate": 0.19957761351636746,
+              "artist_diversity": 0.9379619852164731,
+              "catalogue_coverage": 8.856716047779031e-06
+            },
+            "cf": {
+              "recall": 0.09149621902013368,
+              "ndcg": 0.27113997508744614,
+              "precision": 0.24109028511087646,
+              "hit_rate": 0.7888067581837381,
+              "artist_diversity": 0.5592001055966209,
+              "catalogue_coverage": 0.0035904142778135327
+            },
+            "standard_title": {
+              "recall": 0.09277142496581858,
+              "ndcg": 0.2735173001494149,
+              "precision": 0.24340021119324182,
+              "hit_rate": 0.7930306230200633,
+              "artist_diversity": 0.5607840549102429,
+              "catalogue_coverage": 0.0035869699993505075
+            },
+            "unified_no_title": {
+              "recall": 0.0918688237064677,
+              "ndcg": 0.2723014046029456,
+              "precision": 0.24254223864836325,
+              "hit_rate": 0.7898627243928195,
+              "artist_diversity": 0.5661958817317846,
+              "catalogue_coverage": 0.003532845623502969
+            },
+            "unified": {
+              "recall": 0.0918341382884712,
+              "ndcg": 0.2722037716295453,
+              "precision": 0.2422782470960929,
+              "hit_rate": 0.7888067581837381,
+              "artist_diversity": 0.5658658922914467,
+              "catalogue_coverage": 0.0035343217428442653
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05244784384155425,
+              "ndcg": 0.18076467684730657,
+              "precision": 0.15027719112988383,
+              "hit_rate": 0.7127771911298838,
+              "artist_diversity": 0.7078933474128828,
+              "catalogue_coverage": 0.003345378467158313
+            }
+          },
+          "17": {
+            "popularity": {
+              "recall": 0.010968497271700213,
+              "ndcg": 0.03766001580240765,
+              "precision": 0.03484688489968315,
+              "hit_rate": 0.20274551214361142,
+              "artist_diversity": 0.9414870488850239,
+              "catalogue_coverage": 9.348755828211199e-06
+            },
+            "cf": {
+              "recall": 0.0955557665504575,
+              "ndcg": 0.2694365279618604,
+              "precision": 0.23833778495558872,
+              "hit_rate": 0.7983104540654699,
+              "artist_diversity": 0.5545064910864029,
+              "catalogue_coverage": 0.003766564519208249
+            },
+            "standard_title": {
+              "recall": 0.09669294760914737,
+              "ndcg": 0.2714897953152001,
+              "precision": 0.2401391390769627,
+              "hit_rate": 0.7993664202745512,
+              "artist_diversity": 0.5562457295484191,
+              "catalogue_coverage": 0.0037567237235996056
+            },
+            "unified_no_title": {
+              "recall": 0.0958751246921735,
+              "ndcg": 0.27073095289729326,
+              "precision": 0.24001490775824716,
+              "hit_rate": 0.795142555438226,
+              "artist_diversity": 0.5607801726815329,
+              "catalogue_coverage": 0.0036957107908260167
+            },
+            "unified": {
+              "recall": 0.09603632027445026,
+              "ndcg": 0.2708607460297458,
+              "precision": 0.24007702341760487,
+              "hit_rate": 0.795142555438226,
+              "artist_diversity": 0.5605317100441021,
+              "catalogue_coverage": 0.003696202830606449
+            },
+            "unified_seed_bpm": {
+              "recall": 0.05416880536916293,
+              "ndcg": 0.17784213862995912,
+              "precision": 0.14646872476551437,
+              "hit_rate": 0.7191129883843717,
+              "artist_diversity": 0.7042673457978758,
+              "catalogue_coverage": 0.0034905302023858025
+            }
+          },
+          "18": {
+            "popularity": {
+              "recall": 0.01149311768044145,
+              "ndcg": 0.037294545436162244,
+              "precision": 0.034201572216355794,
+              "hit_rate": 0.20485744456177402,
+              "artist_diversity": 0.9423325120262819,
+              "catalogue_coverage": 9.840795608643368e-06
+            },
+            "cf": {
+              "recall": 0.09942186044940785,
+              "ndcg": 0.2675727296435069,
+              "precision": 0.23524580546755788,
+              "hit_rate": 0.8004223864836325,
+              "artist_diversity": 0.550862372404083,
+              "catalogue_coverage": 0.003927461527409568
+            },
+            "standard_title": {
+              "recall": 0.10043642116556137,
+              "ndcg": 0.26924400205613,
+              "precision": 0.23641910125542595,
+              "hit_rate": 0.8046462513199577,
+              "artist_diversity": 0.5527983104540655,
+              "catalogue_coverage": 0.003918604811361789
+            },
+            "unified_no_title": {
+              "recall": 0.0994985240064236,
+              "ndcg": 0.2687016397991694,
+              "precision": 0.2367124252023931,
+              "hit_rate": 0.8014783526927138,
+              "artist_diversity": 0.5574914936055378,
+              "catalogue_coverage": 0.0038546396399056072
+            },
+            "unified": {
+              "recall": 0.09947554665870471,
+              "ndcg": 0.2686907174963804,
+              "precision": 0.23659509562360628,
+              "hit_rate": 0.8014783526927138,
+              "artist_diversity": 0.557198169658571,
+              "catalogue_coverage": 0.0038531635205643106
+            },
+            "unified_seed_bpm": {
+              "recall": 0.056313599852371186,
+              "ndcg": 0.175500530231734,
+              "precision": 0.1433767452774851,
+              "hit_rate": 0.7275607180570222,
+              "artist_diversity": 0.7032734952481521,
+              "catalogue_coverage": 0.0036376500967350207
+            }
+          },
+          "19": {
+            "popularity": {
+              "recall": 0.012153067565524917,
+              "ndcg": 0.03742536309857281,
+              "precision": 0.034402267548491135,
+              "hit_rate": 0.22280887011615627,
+              "artist_diversity": 0.8929027955315958,
+              "catalogue_coverage": 1.0332835389075536e-05
+            },
+            "cf": {
+              "recall": 0.10334135048000723,
+              "ndcg": 0.2656740841807464,
+              "precision": 0.23186794864669721,
+              "hit_rate": 0.805702217529039,
+              "artist_diversity": 0.5476574223309063,
+              "catalogue_coverage": 0.004089342615171751
+            },
+            "standard_title": {
+              "recall": 0.10429679241808237,
+              "ndcg": 0.2673288139817314,
+              "precision": 0.23303506919357653,
+              "hit_rate": 0.8099260823653643,
+              "artist_diversity": 0.5493247373978769,
+              "catalogue_coverage": 0.004080977938904404
+            },
+            "unified_no_title": {
+              "recall": 0.10281356611000524,
+              "ndcg": 0.26657311605664324,
+              "precision": 0.2331462235313747,
+              "hit_rate": 0.8109820485744457,
+              "artist_diversity": 0.5540487967542934,
+              "catalogue_coverage": 0.0040170127674482225
+            },
+            "unified": {
+              "recall": 0.10289493202391081,
+              "ndcg": 0.26660362974710833,
+              "precision": 0.2330906463624757,
+              "hit_rate": 0.8120380147835269,
+              "artist_diversity": 0.5543266825987884,
+              "catalogue_coverage": 0.004016028687887359
+            },
+            "unified_seed_bpm": {
+              "recall": 0.057800191038604065,
+              "ndcg": 0.17266578995949017,
+              "precision": 0.13955427110543056,
+              "hit_rate": 0.7328405491024287,
+              "artist_diversity": 0.7008836769854944,
+              "catalogue_coverage": 0.0037916585480102893
+            }
+          },
+          "20": {
+            "popularity": {
+              "recall": 0.012651542933637997,
+              "ndcg": 0.03723377398835466,
+              "precision": 0.03405491024287228,
+              "hit_rate": 0.22914466737064415,
+              "artist_diversity": 0.8504223864836323,
+              "catalogue_coverage": 1.0824875169507705e-05
+            },
+            "cf": {
+              "recall": 0.1062474297175443,
+              "ndcg": 0.26380606936633877,
+              "precision": 0.22872228088701188,
+              "hit_rate": 0.8109820485744457,
+              "artist_diversity": 0.5445617740232314,
+              "catalogue_coverage": 0.004255160021177392
+            },
+            "standard_title": {
+              "recall": 0.10701158285257652,
+              "ndcg": 0.2653427099525166,
+              "precision": 0.22977824709609324,
+              "hit_rate": 0.8120380147835269,
+              "artist_diversity": 0.5460929250263992,
+              "catalogue_coverage": 0.004244335146007885
+            },
+            "unified_no_title": {
+              "recall": 0.1062264996095746,
+              "ndcg": 0.264739934429254,
+              "precision": 0.22998944033790955,
+              "hit_rate": 0.8141499472016895,
+              "artist_diversity": 0.5513199577613517,
+              "catalogue_coverage": 0.004166100820919169
+            },
+            "unified": {
+              "recall": 0.10634252287598334,
+              "ndcg": 0.26487266393376757,
+              "precision": 0.2300950369588177,
+              "hit_rate": 0.8152059134107709,
+              "artist_diversity": 0.55168954593453,
+              "catalogue_coverage": 0.004167084900480034
+            },
+            "unified_seed_bpm": {
+              "recall": 0.059056103753462035,
+              "ndcg": 0.1701079909414784,
+              "precision": 0.1361668426610345,
+              "hit_rate": 0.7349524815205913,
+              "artist_diversity": 0.6994192185850052,
+              "catalogue_coverage": 0.003932873964994322
+            }
+          }
+        }
+      }
+    },
+    "paired_unified_minus_cf_ndcg_at_20_95_ci": [
+      -0.0004778159288792857,
+      0.0024110476631609345
+    ],
+    "unified_failures": {
+      "zero_hit_queries": 194,
+      "short_outputs": 0,
+      "mean_candidate_recall": 0.5068914070650379,
+      "unseen_reference_occurrences": 1103
+    },
+    "cases": {
+      "largest_gain": {
+        "known_seeds": 3,
+        "reference_count": 100,
+        "unseen_references": 22,
+        "candidate_recall": 0.31,
+        "result_count": 20,
+        "context": [
+          "relax",
+          "sleep",
+          "study_focus"
+        ],
+        "note": "",
+        "hit_ranks": {
+          "popularity": [],
+          "cf": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "standard_title": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "unified_no_title": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            17,
+            18,
+            19
+          ],
+          "unified": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            17,
+            18,
+            19
+          ],
+          "unified_seed_bpm": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10,
+            11,
+            13,
+            14,
+            20
+          ]
+        },
+        "ndcg_delta": 0.19007880142813283
+      },
+      "largest_loss": {
+        "known_seeds": 5,
+        "reference_count": 2,
+        "unseen_references": 0,
+        "candidate_recall": 1.0,
+        "result_count": 20,
+        "context": [
+          "dance",
+          "drive",
+          "gym",
+          "happy",
+          "party",
+          "romantic",
+          "summer",
+          "upbeat"
+        ],
+        "note": "",
+        "hit_ranks": {
+          "popularity": [],
+          "cf": [
+            1,
+            4
+          ],
+          "standard_title": [
+            1,
+            4
+          ],
+          "unified_no_title": [
+            2,
+            4
+          ],
+          "unified": [
+            2,
+            4
+          ],
+          "unified_seed_bpm": [
+            2,
+            3
+          ]
+        },
+        "ndcg_delta": -0.22629438553091674
+      },
+      "first_zero_hit": {
+        "known_seeds": 5,
+        "reference_count": 6,
+        "unseen_references": 0,
+        "candidate_recall": 1.0,
+        "result_count": 20,
+        "context": [
+          "drive",
+          "gym",
+          "heartbreak",
+          "party",
+          "summer",
+          "upbeat"
+        ],
+        "note": "",
+        "hit_ranks": {
+          "popularity": [],
+          "cf": [
+            19
+          ],
+          "standard_title": [
+            19
+          ],
+          "unified_no_title": [],
+          "unified": [],
+          "unified_seed_bpm": [
+            13
+          ]
+        },
+        "ndcg_delta": -0.07001560573318603
+      }
+    },
+    "scope": "Same sampled queries and references for all methods and cutoffs. The BPM ablation uses a prespecified +/-10 BPM window around the median of at least two known seed tempos; it falls back to ordinary Studio when tempo is unavailable. No hidden reference determines the tempo target. Explicit user tags are absent; their contract is checked separately. Unknown unrecorded development cohorts cannot be certified."
+  }
 };

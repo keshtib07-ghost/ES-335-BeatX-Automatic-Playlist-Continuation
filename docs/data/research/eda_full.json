@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "kind": "full_staging_eda",
+  "scope": "Measured from the complete staged MPD and its existing grouped split. No models are fitted.",
+  "partitions": {
+    "train": {
+      "playlists": 804485,
+      "playlist_length": {
+        "labels": [
+          "0–9",
+          "10–19",
+          "20–39",
+          "40–59",
+          "60–99",
+          "100–149",
+          "150–199",
+          "200–299",
+          "300+"
+        ],
+        "counts": [
+          29444,
+          103527,
+          198922,
+          139383,
+          159413,
+          98969,
+          49465,
+          25361,
+          1
+        ],
+        "total": 804485
+      },
+      "title_length": {
+        "labels": [
+          "0–0",
+          "1–4",
+          "5–9",
+          "10–19",
+          "20–39",
+          "40–79",
+          "80+"
+        ],
+        "counts": [
+          0,
+          186482,
+          396528,
+          214185,
+          6644,
+          645,
+          1
+        ],
+        "total": 804485
+      },
+      "duplicate_group_size": {
+        "labels": [
+          "1–1",
+          "2–2",
+          "3–4",
+          "5–9",
+          "10–19",
+          "20–49",
+          "50+"
+        ],
+        "counts": [
+          801802,
+          239,
+          77,
+          61,
+          30,
+          21,
+          6
+        ],
+        "total": 802236
+      },
+      "empty_titles": 0,
+      "non_ascii_titles": 18076
+    },
+    "validation": {
+      "playlists": 97704,
+      "playlist_length": {
+        "labels": [
+          "0–9",
+          "10–19",
+          "20–39",
+          "40–59",
+          "60–99",
+          "100–149",
+          "150–199",
+          "200–299",
+          "300+"
+        ],
+        "counts": [
+          3454,
+          12665,
+          23936,
+          17104,
+          19386,
+          11958,
+          6078,
+          3123,
+          0
+        ],
+        "total": 97704
+      },
+      "title_length": {
+        "labels": [
+          "0–0",
+          "1–4",
+          "5–9",
+          "10–19",
+          "20–39",
+          "40–79",
+          "80+"
+        ],
+        "counts": [
+          0,
+          22791,
+          47887,
+          26197,
+          775,
+          54,
+          0
+        ],
+        "total": 97704
+      },
+      "duplicate_group_size": {
+        "labels": [
+          "1–1",
+          "2–2",
+          "3–4",
+          "5–9",
+          "10–19",
+          "20–49",
+          "50+"
+        ],
+        "counts": [
+          97501,
+          28,
+          20,
+          2,
+          3,
+          1,
+          0
+        ],
+        "total": 97555
+      },
+      "empty_titles": 0,
+      "non_ascii_titles": 2210
+    },
+    "test": {
+      "playlists": 97811,
+      "playlist_length": {
+        "labels": [
+          "0–9",
+          "10–19",
+          "20–39",
+          "40–59",
+          "60–99",
+          "100–149",
+          "150–199",
+          "200–299",
+          "300+"
+        ],
+        "counts": [
+          3681,
+          12723,
+          24305,
+          16662,
+          19453,
+          11954,
+          6026,
+          3007,
+          0
+        ],
+        "total": 97811
+      },
+      "title_length": {
+        "labels": [
+          "0–0",
+          "1–4",
+          "5–9",
+          "10–19",
+          "20–39",
+          "40–79",
+          "80+"
+        ],
+        "counts": [
+          0,
+          22612,
+          48138,
+          26188,
+          814,
+          59,
+          0
+        ],
+        "total": 97811
+      },
+      "duplicate_group_size": {
+        "labels": [
+          "1–1",
+          "2–2",
+          "3–4",
+          "5–9",
+          "10–19",
+          "20–49",
+          "50+"
+        ],
+        "counts": [
+          97652,
+          22,
+          9,
+          9,
+          3,
+          0,
+          0
+        ],
+        "total": 97695
+      },
+      "empty_titles": 0,
+      "non_ascii_titles": 2243
+    }
+  },
+  "identity": {
+    "version": "full-mpd-training-v1",
+    "split": {
+      "archive_signature": "3bcb1570d93d953c79ebacd98a34ac2e911ff3f35ca97ad246ce52d4e58e1ef1",
+      "pilot_manifest_sha256": "5a3d3153d8f4cf4cad3a03b4ea6d5b292882620227ea9c1d6f6597e7d5376cac",
+      "pilot_slice_starts": [
+        0,
+        1000,
+        3000,
+        7000,
+        22000,
+        38000,
+        43000,
+        45000,
+        47000,
+        49000,
+        62000,
+        64000,
+        66000,
+        68000,
+        70000,
+        72000,
+        74000,
+        75000,
+        114000,
+        216000
+      ],
+      "recording_map_sha256": null,
+      "source_is_full_mpd": true,
+      "source_playlists": 1000000,
+      "source_slices": 1000,
+      "source_track_indices": 2262292,
+      "version": "mpd-grouped-split-v1"
+    },
+    "partition_sizes": {
+      "test": 97811,
+      "train": 804485,
+      "validation": 97704
+    }
+  },
+  "playlists": 1000000,
+  "training_track_support": {
+    "labels": [
+      "0–0",
+      "1–1",
+      "2–4",
+      "5–9",
+      "10–19",
+      "20–49",
+      "50–99",
+      "100–999",
+      "1000–9999",
+      "10000–999999",
+      "1000000+"
+    ],
+    "counts": [
+      0,
+      989072,
+      521409,
+      200931,
+      124463,
+      96504,
+      41063,
+      50509,
+      7998,
+      407,
+      0
+    ],
+    "total": 2032356
+  },
+  "top_one_percent_membership_share": 0.6522901788606915,
+  "text_note": "Non-ASCII is a script diagnostic, not language identification."
+}
