@@ -11,7 +11,7 @@ from scripts.export_research_bundle import ROOT, build_exports, export, read_pub
 
 
 class ResearchExportTests(unittest.TestCase):
-    def test_summary_scores_match_published_benchmark(self):
+    def table_values(self, filename, table_id):
         class Scores(HTMLParser):
             active = False
 
@@ -21,7 +21,7 @@ class ResearchExportTests(unittest.TestCase):
                 self.in_value = False
 
             def handle_starttag(self, tag, attrs):
-                if tag == 'table' and dict(attrs).get('id') == 'summary-benchmark':
+                if tag == 'table' and dict(attrs).get('id') == table_id:
                     self.active = True
                 if self.active and tag == 'td':
                     self.in_value = True
@@ -37,12 +37,24 @@ class ResearchExportTests(unittest.TestCase):
                     self.values.append(value.strip())
 
         parser = Scores()
-        parser.feed((ROOT / 'docs/research.html').read_text(encoding='utf-8'))
+        parser.feed((ROOT / 'docs' / filename).read_text(encoding='utf-8'))
+        return parser.values
+
+    def test_summary_scores_match_published_benchmark(self):
         benchmark = read_public_script(ROOT / 'docs/experiment.js', 'NEXT_TRACK_EXPERIMENT')
         expected = [f'{benchmark["all_queries"][method][metric]:.5f}'
                     for method in ('popularity', 'collaborative_filtering', 'selected_tag_ranker')
                     for metric in ('ndcg_at_20', 'recall_at_20')]
-        self.assertEqual(parser.values, expected)
+        self.assertEqual(self.table_values('research.html', 'summary-benchmark'), expected)
+
+    def test_weight_table_matches_frozen_validation_results(self):
+        benchmark = read_public_script(ROOT / 'docs/experiment.js', 'NEXT_TRACK_EXPERIMENT')
+        scores = benchmark['weight_validation']['scores']
+        expected = [f'{float(row[cohort]):.6f}' for row in scores.values()
+                    for cohort in ('all_queries', 'title_tagged_queries')]
+        self.assertEqual(self.table_values('research-deep-dive.html', 'weight-validation'), expected)
+        chosen_weight = max(scores, key=lambda weight: scores[weight]['title_tagged_queries'])
+        self.assertEqual(float(chosen_weight), benchmark['selected_tag_weight'])
 
     def test_csv_values_are_identical_to_public_source(self):
         outputs = build_exports(ROOT / 'docs')

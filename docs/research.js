@@ -204,18 +204,20 @@
     $('seed-rule').replaceChildren(large, el('span', `First tested budget at or above ${num(choice.target)} NDCG (${pct(fraction, 0)} of validation peak ${num(choice.peak)}). Published choice: ${study.chosen_seed_budget} seeds at 95%.`));
   }
   let cohort = 'all_queries', metric = 'ndcg_at_20';
+  const { eligible_queries_evaluated: benchmarkQueries, title_tagged_queries: taggedQueries } = experiment.sample;
   function renderBenchmark() {
     const names = [['popularity', 'Popularity', '#aab7c2'], ['collaborative_filtering', 'Collaborative filtering', '#84b8ff'], ['selected_tag_ranker', 'CF + learned title', '#cefb70']];
     const scores = experiment[cohort], cf = scores.collaborative_filtering[metric], hybrid = scores.selected_tag_ranker[metric];
     bars($('benchmark-chart'), names.map(([key, label, color]) => ({ label, color, value: scores[key][metric], formatted: format(metric, scores[key][metric]) })), 1);
-    $('benchmark-description').textContent = `${cohort === 'all_queries' ? '5,000 test queries' : '660 test queries with inferred tags'} · ${METRICS[metric][1]} Same three seeds and reference set for every method.`;
+    const queryLabel = cohort === 'all_queries' ? `${count(benchmarkQueries)} test queries` : `${count(taggedQueries)} test queries with inferred tags`;
+    $('benchmark-description').textContent = `${queryLabel} · ${METRICS[metric][1]} Same three seeds and reference set for every method.`;
     $('benchmark-delta').textContent = `Title minus CF: ${signed(hybrid - cf)} ${METRICS[metric][0]} (${signed(100 * (hybrid / cf - 1), 2)}% relative). ${metric === 'ndcg_at_20' ? 'Paired uncertainty for this metric is shown below.' : 'The public benchmark export includes paired intervals for NDCG only; no interval for this metric is inferred.'}`;
     pressed('data-cohort', cohort); pressed('data-metric', metric);
   }
   function renderIntervals() {
     const rows = [
-      { label: 'All 5,000 queries', key: 'all_queries', ci: experiment.tag_ranker_minus_cf_ndcg_95_ci_all, color: '#84b8ff' },
-      { label: '660 tagged queries', key: 'title_tagged_queries', ci: experiment.tag_ranker_minus_cf_ndcg_95_ci_tagged, color: '#cefb70' }
+      { label: `All ${count(benchmarkQueries)} queries`, key: 'all_queries', ci: experiment.tag_ranker_minus_cf_ndcg_95_ci_all, color: '#84b8ff' },
+      { label: `${count(taggedQueries)} tagged queries`, key: 'title_tagged_queries', ci: experiment.tag_ranker_minus_cf_ndcg_95_ci_tagged, color: '#cefb70' }
     ].map((r) => ({ ...r, delta: experiment[r.key].selected_tag_ranker.ndcg_at_20 - experiment[r.key].collaborative_filtering.ndcg_at_20 }));
     const svg = svgRoot('Title minus CF: paired NDCG intervals', 'Two paired 95% confidence intervals. Exact bounds follow in the table.', 205, 480);
     const x = (v) => 120 + (v + 0.001) / 0.019 * 345;
@@ -301,7 +303,11 @@
   try {
     METHODS.forEach((m) => { const label = el('span'), swatch = el('i'); swatch.style.setProperty('--legend-color', m.color); label.append(swatch, m.label); $('seed-legend').append(label); });
     renderScoreLab(); renderMetricLab(); renderSeedStudy(); renderSeedRule(); renderBenchmark(); renderIntervals(); renderAblation(); renderTradeoff(); renderEffect(); renderCase(); renderSequence();
-    composition($('title-coverage'), [{ value: 660, color: '#cefb70', label: '660 tagged' }, { value: 4340, color: '#52606a', label: '4340 untagged' }], '13.2% of titles receive an inferred tag; 86.8% use plain CF.');
+    const untaggedQueries = benchmarkQueries - taggedQueries;
+    composition($('title-coverage'), [
+      { value: taggedQueries, color: '#cefb70', label: `${count(taggedQueries)} tagged` },
+      { value: untaggedQueries, color: '#52606a', label: `${count(untaggedQueries)} untagged` }
+    ], `${pct(taggedQueries / benchmarkQueries, 2)} of titles receive an inferred tag. Untagged queries use plain CF.`);
     setupScrollableViews();
     ['shrinkage', 'tag-weight', 'context-known'].forEach((id) => $(id).addEventListener('input', renderScoreLab));
     document.querySelectorAll('[data-example]').forEach((b) => b.addEventListener('click', () => renderMetricLab(b.dataset.example)));

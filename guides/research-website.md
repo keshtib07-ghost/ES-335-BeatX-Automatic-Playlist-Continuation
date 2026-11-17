@@ -10,33 +10,26 @@ Open `http://localhost:8765/research.html` for the summary or `http://localhost:
 
 ## Evidence and scope
 
-All measured chart values come from the existing public aggregate files:
+The public aggregate files cover three protocols.
 
-- `docs/experiment.js`: Experiment A, 5,000 three-seed test queries.
-- `docs/seed_experiment.js`: Experiment B, 1,500 validation and 1,500 test queries across six seed budgets, including ablations and diagnostic cases.
-- `docs/sequence_experiment.js`: separate order-recovery comparison on fixed known tracks.
+- `docs/experiment.js` contains the full-title standard reranker’s 5,000-query validation weight grid and 5,000 three-seed test results. Its frozen-settings hash matches the deployed model.
+- `docs/seed_experiment.js` contains the earlier fixed-reference seed-count study with its original fitted tagger, 1,500 validation queries, 1,500 test queries, ablations and diagnostic cases.
+- `docs/sequence_experiment.js` contains the order-recovery comparison on fixed known tracks.
 
-The two ranking protocols use different cohorts and reference sets. Their three-seed scores must not be compared as if one model changed. Paired bootstrap intervals describe differences, not individual-model scores. The report keeps the original exports intact and does not retune on test.
+Compare methods on the same cohort and reference set. Paired bootstrap intervals describe the differences between rankers. The ranking-score and metric tools use illustrative examples. The budget explorer uses the earlier study’s saved validation scores.
 
-The ranking-score and metric tools are labeled teaching examples. Only the budget-rule explorer uses saved validation scores; it does not change the published 95% rule. Expanded profiles, bass, treble, BPM, era and ALS/BPR have no measured ranking gain in these exports. Missing EDA distributions and validation-grid scores are explicitly described rather than invented. Current source code documents the implementation; it is not independent verification of the original private run.
+## Report scope
 
-## Rubric map and beginner explanations
+The Deep Dive follows a Studio request through offline preparation, title tagging, known and unfamiliar seeds, collaborative retrieval, filters and fallback. Both fitted classifiers use all 804,485 training titles. The three-seed benchmark measures the standard 12-tag reranker. Studio serves the expanded 19-tag profiles and has a separate ranking evaluation protocol. Preserve that scope in the prose, charts and downloadable provenance.
 
-The Deep Dive starts with “How our model works,” before the analysis. It traces offline preparation, a playlist name plus three training-known seeds, partial/complete unknown-seed fallback, title and song tagging, CF retrieval, filters, optional context boost and output. It is a source-checked explanation of unified Studio, not a new experiment. The rubric map is retained near the end, after the conclusion. Limitations contains the requested “What the tags mean” note, which distinguishes playlist grouping from listener verification. The summary condenses these points, the two experimental protocols, results and limitations; optional details and topic links preserve access to the complete evidence.
-
-The report maps all ten ES335 rubric criteria to sections without claiming a grade. The overview, training-scope table and viva questions distinguish the full CF training split from the 60,000-title classifier fitting cap and the all-training context aggregation pass. The cap is a configurable choice, not an experimentally established optimum.
-
-The unified Studio explanation is pinned to implementation commit `1fd19b1ecdd7a3546d52d21989de02d7582e0184`. Keep its 19-tag taxonomy, filter behaviour, boost grid and deployment status separate from the 12-tag A/B benchmarks and their selected weight 1. New evaluation scripts write local outputs; do not infer scores or the selected unified weight from the existence of those scripts. Update this source snapshot and its statements when verified implementation or deployment evidence changes.
-
-The method-status table separates weak baselines, structural failures, small gains, code revisions and untested proposals. The conclusion and viva notes use existing public evidence. Neither the rubric map nor this documentation update trains or evaluates a model. Research works on static GitHub Pages; current Studio generation needs a live Python API and must not substitute illustrative rankings.
-
-The hero and chart-scope notice explicitly identify the older benchmark. The evidence-download provenance records that model scope as well. Scrollable charts/tables have focusable regions and visible guidance when their content exceeds the available width. A live-browser audit checked every seed/metric, benchmark cohort/metric, ablation budget, context-effect budget, tradeoff method and diagnostic-case selector, plus the teaching sliders and validation-rule thresholds at 1440px, 390px and 320px. Plotted coordinates and displayed values were checked against the saved exports; this does not independently verify private training or establish results for the unified ranker.
+The rubric map and practice questions link to the evidence. The “What the tags mean” note describes the weak supervision used by both classifiers. Headline scores and validation weight values have static tables for readers with JavaScript disabled. The interactive chart labels use the query counts in the source export.
 
 ## Update results
 
-After producing new frozen experiment exports through the existing pipeline, regenerate the public downloads:
+After testing a frozen full-title run, regenerate its public aggregate and evidence downloads:
 
 ```bash
+python scripts/export_site_results.py --input runs/million/model-full-titles/test_metrics.json
 python scripts/export_research_bundle.py
 python scripts/export_research_bundle.py --check
 ```

@@ -49,14 +49,15 @@ def build_exports(source_dir):
         'schema_version': 1,
         'generator': 'scripts/export_research_bundle.py',
         'source_sha256': source_hashes,
-        'scope': 'Existing public aggregate exports; no new experiment or private-data verification.',
-        'uncertainty': 'Published paired group-bootstrap intervals; not individual-model intervals.',
+        'scope': 'Public aggregates from the completed full-title benchmark and the earlier seed-count and order studies.',
+        'uncertainty': 'Paired group-bootstrap intervals for differences between methods.',
         'identity': 'Exact Spotify track IDs; no verified recording crosswalk in the measured run.',
         'model_scope': {
-            'ranking_charts': 'Original CF and 12-tag title benchmark; not the unified Studio ranker.',
+            'benchmark': 'Standard 12-tag reranker fitted on all 804,485 training titles. This is the three-seed benchmark.',
+            'seed_charts': 'Earlier CF/title seed-count study using its original fitted tagger and fixed references.',
             'sequence_chart': 'Separate directed training-transition order-recovery study.',
             'teaching_tools': 'Invented counts and rankings; not evaluation results.',
-            'unified_studio': 'Implementation documented separately; evaluation outputs are not published in this bundle.',
+            'unified_studio': 'Deployed with expanded 19-tag profiles rebuilt from the full training split. Ranking quality requires a separate evaluation.',
         },
         'protocols': {
             'benchmark': 'Three seeds; 5000 test queries; every remaining track is a reference.',
@@ -67,8 +68,7 @@ def build_exports(source_dir):
             'Unified Studio ranker', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
         'missing_public_evidence': [
-            'Full-million validation weight curve', 'Raw EDA distributions',
-            'Private model-array checksums', 'Human listener study',
+            'Raw EDA distributions', 'Private model-array checksums', 'Human listener study',
             'Unified evaluation and tuning outputs (unified-evaluation.json, unified-tuning.json)',
         ],
     }

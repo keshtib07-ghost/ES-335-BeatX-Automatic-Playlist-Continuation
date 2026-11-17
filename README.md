@@ -6,7 +6,7 @@ Seed-based playlist continuation for ES335. BeatX studies how seed count affects
 
 ## Current deployment status
 
-The website and Research interactions are published on GitHub Pages. Real playlist generation needs the Python API and the existing trained artifacts on a model host. That hosted model has not yet been verified. Studio reports a disconnected model when the backend is unavailable; it does not substitute sample rankings.
+GitHub Pages hosts Studio and Research. Studio generates playlists through the [Azure model API](https://beatx-api-keshav.centralindia.cloudapp.azure.com/api/status), which serves the frozen full-title run and expanded song profiles.
 
 If training already finished on your computer, preserve that run. Do not retrain to deploy it. Start with the [local inventory and deployment steps](guides/getting-started.md).
 
@@ -55,7 +55,7 @@ node --test tests/*.cjs
 
 ## Recorded evidence
 
-The recorded full run processed 1,000,000 playlists and trained collaborative filtering on 804,485. For 5,000 fresh test queries with three seeds, NDCG@20 was 0.0372 for popularity, 0.2497 for CF and 0.2513 for the selected title-aware ranker.
+Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The unified Studio pipeline uses expanded profiles and has a separate evaluation protocol.
 
 These scores measure withheld-track recovery. Playlist-title labels do not establish perceived musical mood. The original 20,000-playlist pilot is documented separately in the [model study](guides/model-study.md). Published aggregates are available on the Research page; trained arrays are not included in the source clone.
 

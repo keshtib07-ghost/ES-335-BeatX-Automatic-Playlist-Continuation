@@ -2,18 +2,19 @@
   "schema_version": 1,
   "generator": "scripts/export_research_bundle.py",
   "source_sha256": {
-    "experiment.js": "d2a3f876550fe18b5c3f1841c0ddc06737a1364204c57f7a575a31350777ab6f",
+    "experiment.js": "e4e7d8b57b435243d161e3c655e83bc7b0ae480f9d6b884f55ff96e64c168924",
     "seed_experiment.js": "51cb63068c34701204b351399ec6affb3b5e7274c7c127d575a3939ce9d9ab12",
     "sequence_experiment.js": "bb0004cc1c1c65386ed8421bcf6f479f8acd4928e16d7fd8a7bea186ccff30b2"
   },
-  "scope": "Existing public aggregate exports; no new experiment or private-data verification.",
-  "uncertainty": "Published paired group-bootstrap intervals; not individual-model intervals.",
+  "scope": "Public aggregates from the completed full-title benchmark and the earlier seed-count and order studies.",
+  "uncertainty": "Paired group-bootstrap intervals for differences between methods.",
   "identity": "Exact Spotify track IDs; no verified recording crosswalk in the measured run.",
   "model_scope": {
-    "ranking_charts": "Original CF and 12-tag title benchmark; not the unified Studio ranker.",
+    "benchmark": "Standard 12-tag reranker fitted on all 804,485 training titles. This is the three-seed benchmark.",
+    "seed_charts": "Earlier CF/title seed-count study using its original fitted tagger and fixed references.",
     "sequence_chart": "Separate directed training-transition order-recovery study.",
     "teaching_tools": "Invented counts and rankings; not evaluation results.",
-    "unified_studio": "Implementation documented separately; evaluation outputs are not published in this bundle."
+    "unified_studio": "Deployed with expanded 19-tag profiles rebuilt from the full training split. Ranking quality requires a separate evaluation."
   },
   "protocols": {
     "benchmark": "Three seeds; 5000 test queries; every remaining track is a reference.",
@@ -31,7 +32,6 @@
     "BPR"
   ],
   "missing_public_evidence": [
-    "Full-million validation weight curve",
     "Raw EDA distributions",
     "Private model-array checksums",
     "Human listener study",
