@@ -119,7 +119,7 @@ test('playlist creation returns a link only after all tracks are saved and retri
   assert.equal(await app.save(draft), link);
   assert.equal(calls.filter(call => call.method === 'POST').length, 1);
   assert.equal(calls.length, 3);
-  assert.deepEqual(calls[0].body, {name: draft.title, public: false});
+  assert.deepEqual(calls[0].body, {name: draft.title, description: 'Generated with BeatX', public: false});
   assert.equal(calls[1].url, `https://api.spotify.com/v1/playlists/${playlistId}/items`);
   assert.deepEqual(calls[2].body.uris, draft.ids.map(id => 'spotify:track:' + id));
   assert.equal(app.savedPlaylist({...draft, ids: [...draft.ids].reverse()}), null);

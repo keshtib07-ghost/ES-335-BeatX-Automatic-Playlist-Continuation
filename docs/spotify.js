@@ -161,7 +161,11 @@ class SpotifyStudio {
     const previous = storedJson(this.store, spotifyStorage.playlist);
     let playlist = previous?.key === key && spotifyTrackId(previous.id) ? previous : null;
     if (!playlist) {
-      const created = await this.api('/me/playlists', 'POST', {name: title, public: false});
+      const created = await this.api('/me/playlists', 'POST', {
+        name: title,
+        description: 'Generated with BeatX',
+        public: false,
+      });
       if (!spotifyTrackId(created.id)) throw new Error('Spotify did not return a playlist ID.');
       playlist = {key, id: created.id, complete: false};
       this.store.setItem(spotifyStorage.playlist, JSON.stringify(playlist));
