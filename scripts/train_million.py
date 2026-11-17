@@ -18,7 +18,7 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('index', help='Index all training-playlist memberships in both directions')
     tags = commands.add_parser('tags', help='Fit the title classifier and aggregate training-only track evidence')
-    tags.add_argument('--title-training-limit', type=int, default=60_000)
+    tags.add_argument('--title-training-limit', type=int, help='Cap fitting at this many training titles (default: all)')
     selection = commands.add_parser('validate', help='Compare tag weights on a fixed validation sample and freeze the choice')
     selection.add_argument('--queries', type=int, default=5_000)
     commands.add_parser('test', help='Evaluate the frozen settings on fresh held-out playlists')
@@ -28,7 +28,7 @@ def main():
             if args.command == 'index':
                 result = build_index(data, args.run)
             elif args.command == 'tags':
-                if args.title_training_limit < 2:
+                if args.title_training_limit is not None and args.title_training_limit < 2:
                     raise ValueError('The title training limit must be at least two')
                 result = fit_tags(data, args.run, args.title_training_limit)
             elif args.command == 'validate':

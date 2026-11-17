@@ -9,7 +9,7 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 python scripts/track_profiles.py build
 ```
 
-The title classifier learns from up to 60,000 training titles labeled by the new rules. The profile builder processes all training playlists, combines the rule and classifier labels, honours explicit negation, and counts exact duplicate playlist groups once. The stored counts support a continuous, smoothed lift per context tag. For example, a lift of `2` means twice the training baseline for that tag after smoothing. A category with no evidence has an unknown lift. Party tags use all groups with at least one context label as the comparison set, so the broad parent tag can carry a signal. There is no percentage cutoff for tagging songs.
+The title classifier learns from every training title by default, using labels from the title rules. Use `build --title-limit 60000` to reproduce the previous fitting budget. When refitting with a different limit, give the builder a separate `--output` directory. The profile builder processes all training playlists, combines the rule and classifier labels, honours explicit negation, and counts exact duplicate playlist groups once. The stored counts support a continuous, smoothed lift per context tag. For example, a lift of `2` means twice the training baseline for that tag after smoothing. A category with no evidence has an unknown lift. Party tags use all groups with at least one context label as the comparison set, so the broad parent tag can carry a signal. There is no percentage cutoff for tagging songs.
 
 Year and tempo never come from playlist text. A decade in the title is a request about the desired playlist. A recording's era comes from its documented release date. The four requested eras are `80s`, `90s`, `00s`, and `10s`. `other` is a known release outside those decades. A blank era means the year is unknown.
 
@@ -19,7 +19,7 @@ Reports are written under `runs/million/profiles-v2/`.
 
 | File | What to inspect |
 | --- | --- |
-| `tag_report.json` | Number of tracks, training playlists, and validation titles flagged for review. |
+| `tag_report.json` | Number of training titles used to fit the classifier, plus track, playlist, and validation review counts. |
 | `tag_coverage.csv` | Per-tag training and validation counts. The F1 column measures agreement with keyword rules. It needs human-reviewed labels to represent tag accuracy. |
 | `title_tag_review.csv` | Ambiguous cues, rule/classifier disagreements and negated cues flagged in the sampled validation titles. The last column is blank for review notes. |
 | `tags/` | The classifier and disk-backed track vote counts. Keep these with the local run. |
