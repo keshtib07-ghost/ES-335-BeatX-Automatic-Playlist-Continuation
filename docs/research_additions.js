@@ -14,7 +14,7 @@
   const data = window.BEATX_RESEARCH_ADDITIONS || {};
   const $ = (id) => document.getElementById(id);
   const number = (v) => Number(v).toLocaleString('en-US');
-  const fixed = (v) => Number(v).toFixed(4);
+  const fixed = (v) => Number(v).toFixed(5);
   const percent = (v) => `${(100 * v).toFixed(2)}%`;
   const METRICS = {recall: 'Recall', ndcg: 'NDCG', precision: 'Precision', hit_rate: 'Hit rate'};
   const LABELS = {...METRICS, artist_diversity: 'Artist variety', catalogue_coverage: 'Catalogue coverage'};
@@ -169,7 +169,10 @@
     const methods = comparisons[$('studio-evaluation-comparison')?.value || 'main'];
     const rows = methods.map((name) => ({label: MODEL_LABELS[name], color: COLORS[report.methods.indexOf(name)], values: report.cutoffs.map((n) => cohort.cutoffs[n][name][metric])}));
     curves($('studio-evaluation-chart'), rows, metric, k);
-    table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => fixed(cohort.cutoffs[k][name][m]))]));
+    table($('studio-evaluation-table'), ['Method', ...Object.values(evaluationMetrics).map((m) => `${m}@${k}`)], methods.map((name) => [MODEL_LABELS[name], ...Object.keys(evaluationMetrics).map((m) => {
+      const value = cohort.cutoffs[k][name][m];
+      return m === 'catalogue_coverage' ? `${(100 * value).toFixed(4)}%` : fixed(value);
+    })]));
     const ci = report.paired_unified_minus_cf_ndcg_at_20_95_ci;
     $('studio-evaluation-note').textContent = `All-query paired 95% interval for Studio minus CF NDCG@20: [${ci.map(fixed).join(', ')}]. Across all queries, ${report.unified_failures.zero_hit_queries} had no recovered song and ${report.unified_failures.short_outputs} returned fewer than 20 songs. These counts and the interval describe the full cohort, including when the graph shows a subset.`;
   }

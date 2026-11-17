@@ -106,7 +106,7 @@ test('final result selectors use the exact saved cohort and K', () => {
   const rows = table.children.find(child => child.tagName === 'TBODY').children;
   assert.equal(rows.length, 2);
   const report = f.context.window.BEATX_RESEARCH_ADDITIONS.studio_evaluation;
-  assert.equal(rows[0].children[1].textContent, report.cohorts.all_queries.cutoffs['5'].unified.recall.toFixed(4));
+  assert.equal(rows[0].children[1].textContent, report.cohorts.all_queries.cutoffs['5'].unified.recall.toFixed(5));
   assert.match(rows[1].children[0].textContent, /BPM filter/);
   assert.deepEqual(f.errors, []);
 });

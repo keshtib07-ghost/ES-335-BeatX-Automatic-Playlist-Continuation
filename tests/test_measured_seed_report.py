@@ -4,6 +4,7 @@ import copy
 import csv
 import io
 import json
+import hashlib
 from pathlib import Path
 import unittest
 
@@ -67,6 +68,11 @@ class MeasuredSeedReportTests(unittest.TestCase):
     def test_browser_bundle_and_raw_report_are_identical(self):
         additions = read_public_script(ROOT / 'docs/research_extra_data.js', 'BEATX_RESEARCH_ADDITIONS')
         self.assertEqual(additions['studio_seed_study'], self.report)
+
+    def test_research_pages_load_the_current_data_bundle(self):
+        version = hashlib.sha256((ROOT / 'docs/research_extra_data.js').read_bytes()).hexdigest()[:12]
+        for name in ('research.html', 'research-deep-dive.html'):
+            self.assertIn(f'src="research_extra_data.js?v={version}"', (ROOT / 'docs' / name).read_text())
 
     def test_static_score_tables_match_the_measured_report(self):
         parser = export_tests.ResearchExportTests()
