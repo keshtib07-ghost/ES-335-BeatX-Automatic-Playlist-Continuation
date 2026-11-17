@@ -63,4 +63,4 @@ These scores measure withheld-track recovery. Playlist-title labels do not estab
 
 The study uses the Spotify Million Playlist Dataset from the RecSys Challenge 2018. See the [detailed study](guides/model-study.md) for source references and limitations.
 
-Codex assisted with implementation and documentation. The original title audit was AI-assisted and needs student review. Describe the team's own contributions and AI use in the course submission.
+Codex assisted with implementation and documentation. The pilot title audit used AI-assisted annotations.
