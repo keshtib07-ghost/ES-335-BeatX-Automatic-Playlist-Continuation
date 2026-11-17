@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="BeatX research in plain words: how the playlist model works, what was tested, the results and their limits. Open the Deep Dive for full detail.">
+  <meta name="description" content="BeatX research questions, methods and measured results. See how seed count and playlist context affect recommendations, with links to the full study.">
   <title>BeatX · Research Summary</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="research.css">
+  <link rel="stylesheet" href="research.css?v=clear-copy">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="research-summary.js" defer></script>
 </head>
@@ -24,63 +24,63 @@
   <main id="main">
     <span id="top"></span>
 <section class="section shell research-questions-first" id="proposal-questions" aria-labelledby="proposal-questions-title">
-      <div class="section-heading"><p class="eyebrow">Our proposal / Two research questions</p><h1 id="proposal-questions-title">Our research questions</h1></div>
+      <div class="section-heading"><p class="eyebrow">Research Summary</p><h1 id="proposal-questions-title">BeatX research</h1></div>
       <div class="research-grid two">
-        <article class="research-card"><span class="research-label">RQ1 / Seed count</span><h3>How does the number of seed songs affect the quality of generated playlists, and what is the minimum number of seed songs required to achieve effective recommendations?</h3><p>We compare the same playlists at each seed count. A validation rule defines “enough”; it is not a universal minimum.</p><a href="research-deep-dive.html#seed-study">See the seed-count results →</a></article>
-        <article class="research-card"><span class="research-label">RQ2 / Added context</span><h3>Does incorporating mood information and musical features into collaborative filtering improve playlist recommendation quality compared with traditional collaborative filtering methods?</h3><p>The main benchmark tests title-derived context. The final Studio protocol also tests a seed-tempo filter. Its scores need the trained-data run.</p><a href="research-deep-dive.html#results">See the context comparison →</a></article>
+        <article class="research-card"><span class="research-label">RQ1 / Seed count</span><h3>How many seed songs are needed?</h3><p>How does the number of seed songs affect the quality of generated playlists, and what is the minimum number of seed songs required to achieve effective recommendations?</p><p>We compare the same playlists at each seed count. A validation rule defines “enough”; it is not a universal minimum.</p><a href="research-deep-dive.html#seed-study">See the seed-count results →</a></article>
+        <article class="research-card"><span class="research-label">RQ2 / Added context</span><h3>Does playlist context help?</h3><p>Does incorporating mood information and musical features into collaborative filtering improve playlist recommendation quality compared with traditional collaborative filtering methods?</p><p>The main benchmark tests title-derived context. The final Studio protocol also tests a seed-tempo filter. Its scores need the trained-data run.</p><a href="research-deep-dive.html#results">See the context comparison →</a></article>
       </div>
       <details class="research-details"><summary>What counts as a prediction?</summary><p>One query is a held-out playlist. The user supplies visible seed songs and optional context. The model returns up to 20 additions. Hidden songs are used only to score the result.</p><dl class="research-task-facts"><div><dt>Data unit</dt><dd>One playlist; each matrix entry records whether a song belongs to it.</dd></div><div><dt>Prediction time</dt><dd>After the request, before new songs are selected.</dd></div><div><dt>Available information</dt><dd>The request and frozen training evidence.</dd></div><div><dt>Claim</dt><dd>Recovery of hidden songs. Listening satisfaction is not measured.</dd></div></dl></details>
     </section>
 
     <section class="section shell" id="summary-model" aria-labelledby="summary-model-title">
-      <div class="section-heading"><p class="eyebrow">01 / How it works</p><h2 id="summary-model-title">How BeatX works</h2></div>
+      <div class="section-heading"><p class="eyebrow">01 / How it works</p><h2 id="summary-model-title">How BeatX recommends songs</h2></div>
       <div class="research-grid two">
-        <article class="research-card"><h3>Three seeds seen in training</h3><ol class="research-brief-steps">
-          <li><strong>Find related songs.</strong> Item-based collaborative filtering (CF) finds songs that shared training playlists with your seeds. Cosine similarity adjusts for popularity; shrinkage reduces trust in rare pairs.</li>
-          <li><strong>Combine the evidence.</strong> Add neighbour scores across seeds, excluding the seeds themselves. Each seed contributes up to 200 neighbours.</li>
-          <li><strong>Use context and filters.</strong> Title rules and a text classifier infer tags. Song-tag associations provide context; selected tags, BPM and era constrain eligibility. A configured context boost can adjust the CF order.</li>
-          <li><strong>Return the playlist.</strong> Return up to 20 additions, with fewer when evidence or filters limit the options. Playback flow can reorder them; Spotify export saves them.</li>
+        <article class="research-card"><h3>When the model recognises your seeds</h3><ol class="research-brief-steps">
+          <li><strong>Find related songs.</strong> Collaborative filtering (CF) finds songs that appeared in playlists with your seeds. It adjusts for song popularity and gives less weight to pairs seen together only a few times.</li>
+          <li><strong>Combine the seed scores.</strong> Each seed supplies up to 200 related songs. We add their scores and exclude the seeds from the new recommendations.</li>
+          <li><strong>Apply context.</strong> The title and seed profiles suggest context tags. Your selected filters determine which songs are allowed. A configured context weight can also change their order.</li>
+          <li><strong>Return the results.</strong> Recommend up to 20 additions. Strict filters can produce fewer. Playback flow changes their order; Spotify export puts your seeds first, followed by the recommendations.</li>
         </ol></article>
-        <article class="research-card"><h3>Some seeds are unfamiliar</h3><p>Use any seeds with training evidence. Unknown seeds add no learned similarity. If none is usable, rank popular training songs using the title and selected context. If the title is vague too, fall back to training popularity, subject to active filters.</p><p>Recognized tracks supply similarity evidence. Explicit filters control eligibility, and candidate tracks come from the training catalogue.</p></article>
+        <article class="research-card"><h3>When seeds are missing from training</h3><p>Use the seeds the model knows. If it knows none, use the title and selected filters to rank popular songs from training. If the title yields no usable context either, use popularity alone. Active filters still apply.</p><p>The model cannot learn the sound of an unfamiliar seed from its name. Its recommendations come from songs seen during training.</p></article>
       </div>
-      <p class="research-caption"><a href="research-deep-dive.html#overview">Follow both paths step by step →</a></p>
+      <p class="research-caption"><a href="research-deep-dive.html#overview">Read the recommendation steps →</a></p>
     </section>
 
     <section class="section shell" id="summary-data" aria-labelledby="summary-data-title">
-      <div class="section-heading"><p class="eyebrow">02 / What we learned from</p><h2 id="summary-data-title">The dataset</h2><p>Spotify’s Million Playlist Dataset provides song identities, titles and playlist membership; not trusted audio mood, BPM or bass measurements.</p></div>
+      <div class="section-heading"><p class="eyebrow">02 / Dataset</p><h2 id="summary-data-title">Data and training split</h2><p>Spotify’s Million Playlist Dataset records which songs appeared in each playlist. It includes titles and track metadata. Verified mood labels and audio measurements must come from other sources.</p></div>
       <dl class="research-brief-counts"><div><dt>Training</dt><dd>804,485</dd></div><div><dt>Validation</dt><dd>97,704</dd></div><div><dt>Test</dt><dd>97,811</dd></div></dl>
-      <p class="research-brief-copy">Training learns relationships; validation chooses settings; test evaluates frozen choices. We split playlists, so a song can occur in both training and test. Repeated track IDs within a playlist are removed, and exact track-set duplicates share a split.</p>
-      <p class="research-brief-copy">We use all <strong>804,485 training playlists</strong> for collaborative filtering and all their titles to fit both text classifiers. The standard classifier uses 12 tags. Studio’s expanded classifier uses 19 tags and scores the training split to rebuild song-context associations. <a href="research-deep-dive.html#training-scope">Training details →</a></p>
+      <p class="research-brief-copy">We learn from the training playlists, choose settings on validation, then evaluate the fixed model on test playlists. A song may appear in more than one split. Repeated track IDs within a playlist count once, and playlists containing exactly the same track set stay together.</p>
+      <p class="research-brief-copy">CF uses all <strong>804,485 training playlists</strong>. Both text classifiers use all their titles. The benchmark classifier predicts 12 tags; Studio predicts 19 and rebuilds each song’s context profile from the training playlists. <a href="research-deep-dive.html#training-scope">Training details →</a></p>
     </section>
 
     <section class="section shell" id="summary-results" aria-labelledby="summary-results-title">
-      <div class="section-heading"><p class="eyebrow">03 / What the experiments found</p><h2 id="summary-results-title">The main results</h2><p>We hide songs from held-out playlists and check the top 20 recommendations. <strong>Recall</strong> measures the fraction recovered; <strong>NDCG</strong> also rewards putting recovered songs near the top.</p></div>
+      <div class="section-heading"><p class="eyebrow">03 / What the experiments found</p><h2 id="summary-results-title">What the experiments found</h2><p>For each test playlist, show the model a few songs and hide the rest. Recall@20 measures the fraction of hidden songs recovered in its first 20 recommendations. NDCG@20 also rewards placing those songs near the top.</p></div>
       <div class="research-card"><div class="table-wrap"><table id="summary-benchmark">
-        <caption>Full-title benchmark · 5,000 held-out queries · three seeds. These scores evaluate the standard 12-tag reranker with frozen weight 1.</caption>
+        <caption>Three-seed benchmark: 5,000 test playlists. These results use the 12-tag model and context weight 1, selected on validation.</caption>
         <thead><tr><th scope="col">Method</th><th scope="col">NDCG@20</th><th scope="col">Recall@20</th></tr></thead>
         <tbody><tr><th scope="row">Popularity</th><td>0.03723</td><td>0.01206</td></tr><tr><th scope="row">CF</th><td>0.24966</td><td>0.10024</td></tr><tr><th scope="row">CF + learned title</th><td>0.25126</td><td>0.10088</td></tr></tbody>
-      </table></div><p>Title context adds <strong>+0.00160 NDCG@20</strong> overall (paired 95% CI 0.00107 to 0.00212). The classifier assigned tags to <strong>657 of 5,000 titles</strong>.</p></div>
+      </table></div><p>Adding title context raises NDCG@20 by <strong>0.00160</strong>. The paired 95% confidence interval is 0.00107 to 0.00212. The classifier finds usable tags for <strong>657 of 5,000 titles</strong>.</p></div>
       <div class="research-grid two research-space">
-        <article class="research-card"><h3>More seeds helped in a separate study.</h3><p>The earlier seed-count experiment compares 1, 2, 3, 5, 10 and 20 seeds on 1,500 validation and 1,500 fresh test queries, keeping each query’s references fixed. Learned-title test NDCG rises from <strong>0.1284 to 0.3142</strong>.</p><p>A validation-only rule selects <strong>20 seeds</strong> as the smallest tested budget reaching 95% of peak validation NDCG. This is the largest budget tested; we did not establish an early plateau or a universal optimum.</p></article>
-        <article class="research-card"><h3>Context did not always help.</h3><p>Keyword and learned-title rankings were close in the earlier seed-count study. At 20 seeds, title reranking improves 84 queries, worsens 70 and leaves 1,346 unchanged. The tagged-query interval includes zero.</p><p>Recovery can improve while catalogue coverage falls. Artist variety, catalogue reach and popularity bias describe different tradeoffs; none directly measures listening satisfaction.</p></article>
+        <article class="research-card"><h3>More seeds improved recovery through 20</h3><p>A separate study tested six seed counts on 1,500 validation playlists and 1,500 fresh test playlists. Each playlist kept the same hidden songs for every seed count. Test NDCG@20 for CF with learned title tags rose from <strong>0.1284 at one seed to 0.3142 at 20</strong>.</p><p>We chose the smallest tested seed count reaching 95% of the best validation NDCG. That rule selected <strong>20 seeds</strong>, the largest count tested. We therefore cannot say that five or ten seeds are enough, or that 20 is optimal for every user.</p></article>
+        <article class="research-card"><h3>Title context sometimes made results worse</h3><p>The keyword and learned-title methods performed similarly in the seed-count study. With 20 seeds, learned title tags improved 84 playlists, worsened 70 and left 1,346 unchanged. The confidence interval for playlists with tagged titles includes zero, so that comparison does not establish an average gain.</p><p>Better recovery can come with lower catalogue coverage: the model finds more hidden songs while recommending fewer distinct tracks across the test sample. Artist variety and popularity bias measure other effects. We have not measured listening satisfaction.</p></article>
       </div>
-      <p class="research-note">The seed-count study used its own fitted tagger, query cohort and fixed references. The live Studio uses the rebuilt 19-tag profiles with extra filtering and ranking logic. Its relevance needs a separate evaluation.</p>
-      <details class="research-details"><summary>What else did we measure?</summary><p>The full-title benchmark’s tagged-query NDCG rises from 0.20355 to 0.21572. The report also includes Precision@20, hit rate, paired bootstrap intervals, marginal seed gains and actual diagnostic cases. B reserves 20 possible seeds; all other tracks form the fixed references. Unrevealed reserved seeds earn no recovery credit.</p><p>A separate order study holds the same 20 known songs and first song fixed. Training-transition ordering recovers 15.61% of original directed adjacencies versus 5.57% for a seeded shuffle, across 401 eligible sequences. This measures order recovery, not recommendation quality or perceived flow. <a href="research-deep-dive.html#seed-study">Explore every graph and comparison →</a></p></details>
+      <p class="research-note"><strong>Scope:</strong> the seed-count study used a different title model and test sample from the three-seed benchmark. The live Studio adds 19-tag profiles and different filtering rules. Its ranking quality still needs a separate published evaluation.</p>
+      <details class="research-details"><summary>Additional results and evaluation details</summary><p>In the three-seed benchmark, NDCG@20 for playlists with tagged titles rises from <strong>0.20355 to 0.21572</strong>. The full report also gives precision and hit rate, with confidence intervals and saved failure cases. In the seed-count study, 20 songs are reserved as possible seeds. All other songs form the fixed hidden set; recommending an unused reserved seed earns no credit.</p><p>A separate ordering study keeps the same 20 known songs and the first song fixed. Across 401 eligible playlists, learned transitions recover <strong>15.61%</strong> of original next-song pairs, compared with <strong>5.57%</strong> for a seeded shuffle. This tests recovery of the original order; it does not measure perceived flow. <a href="research-deep-dive.html#playback">See the ordering results →</a></p></details>
     </section>
 
     <section class="section shell" id="summary-limits" aria-labelledby="summary-limits-title">
-      <div class="section-heading"><p class="eyebrow">04 / What these results do not establish</p><h2 id="summary-limits-title">What the results do not show</h2></div>
+      <div class="section-heading"><p class="eyebrow">04 / Limitations</p><h2 id="summary-limits-title">What the results do not show</h2></div>
       <ul class="research-brief-limits">
-        <li><strong>Tags describe grouping.</strong> A Gym tag reflects workout-like playlist titles. Listeners did not verify workout suitability; titles can mislead, and sparse evidence may leave songs untagged.</li>
-        <li><strong>Unseen tracks remain a weakness.</strong> In the full-title test, 5,922 of 316,437 withheld occurrences (1.87%) are absent from training. They stay in the scoring denominator. Seven queries have all three seeds unseen.</li>
-        <li><strong>Offline recovery is only one test.</strong> Existing playlists are not a complete list of good recommendations or explicit dislikes. Exact Spotify IDs can also separate alternate releases of the same recording.</li>
-        <li><strong>New features need their own evidence.</strong> The deployed Studio loads the expanded profiles. Controlled comparisons would be needed to measure the ranking effects of the expanded profile logic, BPM, era, bass and treble.</li>
+        <li><strong>Tags come from titles.</strong> A Gym tag means a song appeared in playlists with workout-related titles. Listeners have not verified its suitability for exercise. Vague titles and limited evidence can produce incorrect or missing tags.</li>
+        <li><strong>Unseen songs cannot be recovered.</strong> In the three-seed test, 5,922 of 316,437 hidden song occurrences (1.87%) were absent from training. They still count when we calculate recall. Seven playlists had no seed seen during training.</li>
+        <li><strong>A missed match is not necessarily a bad recommendation.</strong> An existing playlist cannot list every suitable song. Alternate releases may also have different Spotify IDs, even when they contain the same recording.</li>
+        <li><strong>Studio’s extra features remain to be evaluated.</strong> Its expanded context profiles need a controlled ranking comparison. Separate tests are also needed for the audio and release-date filters.</li>
       </ul>
       <p class="research-brief-copy"><a href="research-deep-dive.html#eda">Inspect the measured data plots</a>. <a href="research-deep-dive.html#studio-audit">See the live Studio failure checks</a>. The <a href="research-deep-dive.html#studio-evaluation">final Studio comparison</a> has its own protocol.</p>
     </section>
 
     <section class="section shell" id="summary-next" aria-labelledby="summary-next-title">
-      <div class="research-card research-brief-cta"><div><p class="eyebrow">Want the full explanation?</p><h2 id="summary-next-title">Open the Research Deep Dive.</h2><p>Explore the validation scores, paired test intervals, seed-count charts, error cases and reproduction steps.</p></div><a class="button primary" href="research-deep-dive.html">Deep dive into the research <span aria-hidden="true">→</span></a></div>
+      <div class="research-card research-brief-cta"><div><p class="eyebrow">Methods and supporting results</p><h2 id="summary-next-title">Read the full study</h2><p>The full report explains the model settings and evaluation design. It includes interactive charts, saved error cases and instructions for reproducing the results.</p></div><a class="button primary" href="research-deep-dive.html">Deep dive into the research <span aria-hidden="true">→</span></a></div>
       <p class="research-caption"><a href="data/research/research_bundle.json">Download the saved evidence</a> · <a href="research-deep-dive.html#reproduce">Code, sources and AI disclosure</a>.</p>
     </section>
   </main>

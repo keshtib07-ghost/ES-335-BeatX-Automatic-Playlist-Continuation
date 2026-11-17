@@ -8,13 +8,13 @@
     { key: 'learned_title', label: 'CF + learned title', color: '#cefb70', dash: '' }
   ];
   const METRICS = {
-    ndcg_at_20: ['NDCG@20', 'Rank-sensitive recovery, normalized by the ideal ranking. Higher is better.'],
-    recall_at_20: ['Recall@20', 'Fraction of withheld reference tracks recovered in the top 20. Higher is better.'],
-    precision_at_20: ['Precision@20', 'Fraction of 20 recommendation slots that recover references. Higher is better.'],
-    hit_rate_at_20: ['Hit rate@20', 'Fraction of queries with at least one recovered reference. Higher is better.'],
-    artist_diversity: ['Artist diversity', 'Mean distinct known artists divided by known-artist slots. This is not acoustic diversity.'],
-    catalogue_coverage: ['Catalogue coverage', 'Unique recommended tracks across the sample divided by the training catalogue. Compare fixed sample sizes.'],
-    popular_track_share: ['Top 1% share', 'Mean share of recommendations in the training-frequency top 1%. Lower means less popularity concentration, not necessarily better recommendations.']
+    ndcg_at_20: ['NDCG@20', 'Rewards recovering hidden songs near the top. A perfect ranking scores 1. Higher is better.'],
+    recall_at_20: ['Recall@20', 'Fraction of hidden songs recovered in the first 20 recommendations. Higher is better.'],
+    precision_at_20: ['Precision@20', 'Fraction of the first 20 recommendations that match hidden songs. Higher is better.'],
+    hit_rate_at_20: ['Hit rate@20', 'Fraction of playlists with at least one hidden song recovered. Higher is better.'],
+    artist_diversity: ['Artist diversity', 'Distinct artists divided by songs with known artists, averaged across playlists. This measures artist variety.'],
+    catalogue_coverage: ['Catalogue coverage', 'Fraction of the training catalogue recommended at least once across the sample. Compare samples of the same size.'],
+    popular_track_share: ['Top 1% share', 'Share of recommendations from the most frequent 1% of training songs. Lower means fewer popular songs, which does not by itself mean better recommendations.']
   };
   const pct = (x, places = 2) => `${(100 * x).toFixed(places)}%`;
   const num = (x, places = 4) => Number(x).toFixed(places);
@@ -140,7 +140,7 @@
     $('shrinkage-value').value = alpha; $('tag-weight-value').value = num(weight, 2);
     const scores = toyScores(alpha, weight, known);
     table($('score-lab'), ['Rank / track', 'Frequency', 'Co-occurrence', 'Cosine', 'Shrink factor', 'CF score', 'Lift', 'Positive log lift', 'Final score'], scores.map((s, i) => [`${i + 1}. ${s.name}`, s.frequency, s.co, num(s.cosine), num(s.shrink), num(s.cf), s.lift, num(s.bonus), num(s.final)]));
-    $('score-lab-note').textContent = `${scores[0].name} ranks first. ${!known || weight === 0 ? 'Context contributes no boost, so the ordering is plain CF.' : 'Track B has positive context evidence; Track A’s below-baseline lift is not used as a penalty.'} Increasing α discounts low-support pairs more strongly. In the real model, evidence is summed over all visible seeds before the context multiplier.`;
+    $('score-lab-note').textContent = `${scores[0].name} ranks first. ${!known || weight === 0 ? 'Context adds no boost. The order follows CF scores.' : 'Context boosts Track B. Track A receives no context boost or penalty.'} Increasing α gives less weight to pairs seen together only a few times. With several seeds, the real model adds their CF scores before applying context.`;
   }
   function renderMetricLab(example = 'early') {
     const options = { early: ['R1', 'R2', 'X1', 'X2', 'X3'], late: ['X1', 'X2', 'X3', 'R1', 'R2'], none: ['X1', 'X2', 'X3', 'X4', 'X5'] };
@@ -149,7 +149,7 @@
     ranking.forEach((track, i) => { const node = el('li', track, result.hits[i] ? 'hit' : ''); node.append(el('small', result.hits[i] ? `hit · gain ${num(1 / Math.log2(i + 2), 3)}` : 'no credit')); $('metric-ranking').append(node); });
     $('metric-values').replaceChildren();
     [['Recall@5', result.recall], ['Precision@5', result.precision], ['Hit rate@5', result.hitRate], ['NDCG@5', result.ndcg]].forEach(([label, value]) => { const card = el('article'); card.append(el('strong', num(value)), el('span', label)); $('metric-values').append(card); });
-    $('metric-calculation').textContent = `${result.recovered} hits / 3 references = ${num(result.recall)} recall. DCG = ${num(result.dcg)}; ideal DCG for 3 hits = ${num(result.idcg)}; NDCG = ${num(result.ndcg)}. Moving the same hits changes NDCG but not Recall, Precision or Hit Rate.`;
+    $('metric-calculation').textContent = `${result.recovered} of 3 hidden songs recovered: Recall = ${num(result.recall)}. Discounted gain (DCG) = ${num(result.dcg)}. The ideal gain for 3 hits is ${num(result.idcg)}, so NDCG = ${num(result.ndcg)}. Moving the same hits changes NDCG; the other scores stay the same.`;
   }
 
   const experiment = window.NEXT_TRACK_EXPERIMENT, study = window.NEXT_TRACK_SEED_STUDY, sequence = window.NEXT_TRACK_SEQUENCE;
@@ -186,14 +186,14 @@
     const partition = $('seed-partition').value, metric = $('seed-metric').value, data = study[partition];
     const series = METHODS.map((m) => ({ ...m, values: budgets.map((n) => data.budgets[n].all_queries[m.key][metric]) }));
     linePlot($('seed-curve'), budgets, series, metric);
-    $('seed-description').textContent = `${count(data.queries)} ${partition} queries; ${count(data.title_tagged_queries)} tagged titles. ${METRICS[metric][1]} All four methods are shown; keyword and learned-title curves can overlap.`;
+    $('seed-description').textContent = `${count(data.queries)} ${partition} playlists; ${count(data.title_tagged_queries)} titles received tags. ${METRICS[metric][1]} All four methods are shown; keyword and learned-title curves can overlap.`;
     table($('seed-table'), ['Seeds', ...METHODS.map((m) => m.label)], budgets.map((n) => [n, ...METHODS.map((m) => format(metric, data.budgets[n].all_queries[m.key][metric]))]), `Experiment B · ${partition} · ${METRICS[metric][0]}`);
     const marginals = budgets.slice(1).map((n) => ({ n, ...data.budgets[n].marginal_seed_gain }));
     bars($('marginal-chart'), marginals.map((m) => ({ label: `${m.from_seeds} → ${m.n} seeds`, value: m.ndcg_per_added_seed, formatted: signed(m.ndcg_per_added_seed), color: '#cefb70' })));
     table($('marginal-table'), ['Seeds', 'Total ΔNDCG', '95% paired CI for total Δ', 'Δ per added seed'], marginals.map((m) => [`${m.from_seeds} → ${m.n}`, signed(m.ndcg_delta), `[${signed(m.paired_ndcg_95_ci[0])}, ${signed(m.paired_ndcg_95_ci[1])}]`, signed(m.ndcg_per_added_seed)]));
-    $('marginal-note').textContent = `NDCG change divided by added seeds; ${partition} partition. These intervals describe the total paired change across the step, not each model’s mean. This panel always uses NDCG, independently of the curve’s metric.`;
+    $('marginal-note').textContent = `Gain in NDCG per extra seed on ${partition}. The table’s confidence intervals describe the total change between seed counts. This panel always uses NDCG, even when you select another metric for the curve.`;
     const low = data.budgets[1].all_queries.learned_title.ndcg_at_20, high = data.budgets[20].all_queries.learned_title.ndcg_at_20;
-    $('seed-conclusion').textContent = `Learned-title NDCG rises from ${num(low)} at 1 seed to ${num(high)} at 20 on ${partition}. Marginal gain per added seed declines across these tested steps, but the gain from 10 to 20 is still positive. The published rule selects ${study.chosen_seed_budget} on validation; the largest measured budget is not evidence of a global optimum.`;
+    $('seed-conclusion').textContent = `With learned title tags, ${partition} NDCG rises from ${num(low)} at 1 seed to ${num(high)} at 20. Each extra seed adds less on average, but going from 10 to 20 still helps. The validation rule selects ${study.chosen_seed_budget}. We did not test larger seed counts.`;
   }
   function renderSeedRule() {
     const fraction = Number($('seed-threshold').value) / 100;
@@ -201,7 +201,7 @@
     const choice = chooseBudget(budgets, values, fraction);
     $('seed-threshold-value').value = pct(fraction, 0);
     const large = el('strong', `${choice.budget} seeds`);
-    $('seed-rule').replaceChildren(large, el('span', `First tested budget at or above ${num(choice.target)} NDCG (${pct(fraction, 0)} of validation peak ${num(choice.peak)}). Published choice: ${study.chosen_seed_budget} seeds at 95%.`));
+    $('seed-rule').replaceChildren(large, el('span', `Smallest tested count reaching ${num(choice.target)} NDCG (${pct(fraction, 0)} of the best validation score, ${num(choice.peak)}). The published 95% rule selects ${study.chosen_seed_budget} seeds.`));
   }
   let cohort = 'all_queries', metric = 'ndcg_at_20';
   const { eligible_queries_evaluated: benchmarkQueries, title_tagged_queries: taggedQueries } = experiment.sample;
@@ -209,9 +209,9 @@
     const names = [['popularity', 'Popularity', '#aab7c2'], ['collaborative_filtering', 'Collaborative filtering', '#84b8ff'], ['selected_tag_ranker', 'CF + learned title', '#cefb70']];
     const scores = experiment[cohort], cf = scores.collaborative_filtering[metric], hybrid = scores.selected_tag_ranker[metric];
     bars($('benchmark-chart'), names.map(([key, label, color]) => ({ label, color, value: scores[key][metric], formatted: format(metric, scores[key][metric]) })), 1);
-    const queryLabel = cohort === 'all_queries' ? `${count(benchmarkQueries)} test queries` : `${count(taggedQueries)} test queries with inferred tags`;
-    $('benchmark-description').textContent = `${queryLabel} · ${METRICS[metric][1]} Same three seeds and reference set for every method.`;
-    $('benchmark-delta').textContent = `Title minus CF: ${signed(hybrid - cf)} ${METRICS[metric][0]} (${signed(100 * (hybrid / cf - 1), 2)}% relative). ${metric === 'ndcg_at_20' ? 'Paired uncertainty for this metric is shown below.' : 'The public benchmark export includes paired intervals for NDCG only; no interval for this metric is inferred.'}`;
+    const queryLabel = cohort === 'all_queries' ? `${count(benchmarkQueries)} test playlists` : `${count(taggedQueries)} test playlists whose titles received tags`;
+    $('benchmark-description').textContent = `${queryLabel} · ${METRICS[metric][1]} Each method receives the same three seeds and is scored against the same hidden songs.`;
+    $('benchmark-delta').textContent = `Title minus CF: ${signed(hybrid - cf)} ${METRICS[metric][0]} (${signed(100 * (hybrid / cf - 1), 2)}% relative). ${metric === 'ndcg_at_20' ? 'The confidence interval for this difference is shown below.' : 'The saved benchmark has a confidence interval for NDCG only.'}`;
     pressed('data-cohort', cohort); pressed('data-metric', metric);
   }
   function renderIntervals() {
@@ -236,9 +236,9 @@
   }
   function renderAblation() {
     const n = Number($('ablation-budget').value), b = study.test.budgets[n];
-    table($('ablation-table'), ['Method', 'All-query NDCG', 'Tagged-query NDCG', 'All-query Recall', 'Artist diversity'], METHODS.map((m) => [m.label, num(b.all_queries[m.key].ndcg_at_20, 6), num(b.title_tagged_queries[m.key].ndcg_at_20, 6), num(b.all_queries[m.key].recall_at_20), pct(b.all_queries[m.key].artist_diversity)]), `1,500 test queries; 194 learned-tagger-positive titles · ${n} seeds`);
+    table($('ablation-table'), ['Method', 'All-query NDCG', 'Tagged-query NDCG', 'All-query Recall', 'Artist diversity'], METHODS.map((m) => [m.label, num(b.all_queries[m.key].ndcg_at_20, 6), num(b.title_tagged_queries[m.key].ndcg_at_20, 6), num(b.all_queries[m.key].recall_at_20), pct(b.all_queries[m.key].artist_diversity)]), `1,500 test playlists; 194 titles received tags · ${n} seeds`);
     const delta = b.all_queries.learned_title.ndcg_at_20 - b.all_queries.keyword_title.ndcg_at_20;
-    $('ablation-note').textContent = `Learned minus keyword NDCG: ${signed(delta, 6)} on all queries. The arms are very close; there is no published paired interval for this contrast, so this table does not establish a learned-tagger advantage. Untagged and weakly labeled titles limit what can be concluded.`;
+    $('ablation-note').textContent = `Classifier minus keyword-rule NDCG: ${signed(delta, 6)} across all playlists. The scores are close. Without a confidence interval for this difference, we cannot conclude that the classifier improves on the rules.`;
   }
   function renderTradeoff() {
     const method = METHODS.find((m) => m.key === $('tradeoff-method').value);
@@ -272,13 +272,13 @@
       const node = el('div'); const strong = el('strong', count(value)); strong.style.color = color; node.append(strong, el('span', `${label} · ${pct(value / study.test.queries, 1)}`)); $('effect-counts').append(node);
     });
     const ci = effect.paired_ndcg_95_ci_tagged;
-    $('effect-interval').textContent = `For the 194 tagged queries, the paired title-minus-CF NDCG 95% interval is [${signed(ci[0])}, ${signed(ci[1])}]. ${ci[0] <= 0 && ci[1] >= 0 ? 'It includes zero; this comparison does not establish a positive mean gain.' : 'It excludes zero in this sampled comparison.'} This belongs to Experiment B, independently of the three-seed benchmark above.`;
+    $('effect-interval').textContent = `For the 194 playlists with tagged titles, the 95% confidence interval for title minus CF NDCG is [${signed(ci[0])}, ${signed(ci[1])}]. ${ci[0] <= 0 && ci[1] >= 0 ? 'It includes zero, so this comparison does not establish an average improvement.' : 'It excludes zero for this sample.'} This is from the seed-count study, which uses a different sample from the three-seed benchmark.`;
   }
   function renderCase() {
     const key = $('case-select').value, data = study.test.cases[key];
     const summary = $('case-summary'); summary.replaceChildren();
     if (!data) { summary.textContent = 'No published case for this selection.'; $('case-ranks').replaceChildren(); return; }
-    [['Known seeds', `${data.known_seeds}/${data.seeds}`], ['References', data.withheld_tracks], ['Training-seen references', data.withheld_seen_in_training], ['References in CF pool', data.withheld_in_cf_candidates], ['Inferred tags', data.inferred_tag_count], ['ΔNDCG', signed(data.ndcg_delta)]].forEach(([label, value]) => { const node = el('span'); node.append(`${label}: `, el('strong', String(value))); summary.append(node); });
+    [['Known seeds', `${data.known_seeds}/${data.seeds}`], ['Hidden songs', data.withheld_tracks], ['Hidden songs seen in training', data.withheld_seen_in_training], ['Hidden songs in shortlist', data.withheld_in_cf_candidates], ['Inferred tags', data.inferred_tag_count], ['ΔNDCG', signed(data.ndcg_delta)]].forEach(([label, value]) => { const node = el('span'); node.append(`${label}: `, el('strong', String(value))); summary.append(node); });
     $('case-ranks').replaceChildren();
     [['Plain CF', data.plain_hit_ranks], ['CF + learned title', data.tagged_hit_ranks]].forEach(([label, ranks]) => {
       const line = el('div', undefined, 'research-rank-line'); line.append(el('p', `${label} · ${ranks.length} hits`));
@@ -287,9 +287,9 @@
       line.append(cells); $('case-ranks').append(line);
     });
     $('case-reason').textContent = {
-      largest_gain: 'The same candidate pool contains 23 of 25 references. Reranking promotes more of them into the first 20 and brings hits forward. The stored data demonstrates this movement, but cannot establish why the inferred title was semantically correct.',
-      largest_loss: 'Retrieval contains 33 of 34 references, yet title reranking reduces and delays recovered hits. Context can conflict with seed evidence. The saved counts support a ranking failure; attributing it to a particular tag error would require the missing title and score trace.',
-      first_zero_hit: 'All four references exist in training, but none enters the CF candidate pool. With no inferred tag and no relevant candidate to promote, reranking cannot repair this retrieval failure. More seed familiarity does not guarantee candidate recall.'
+      largest_gain: 'The shortlist contains 23 of the 25 hidden songs. Title reranking brings more into the first 20 and moves recovered songs higher. The saved results show the ranking improvement, but do not tell us whether the inferred tags correctly describe the title.',
+      largest_loss: 'The shortlist contains 33 of the 34 hidden songs. Title reranking recovers fewer of them and moves hits lower. The problem occurs during ranking. To identify a specific tag error, we would need the original title and each song’s score details.',
+      first_zero_hit: 'All four hidden songs appeared in training, but none reaches the shortlist. The title receives no tags. Changing the order cannot recover a song missing from the list; the model needs a better way to find candidates.'
     }[key];
   }
   function renderSequence() {
@@ -298,7 +298,7 @@
       { label: 'Seeded shuffle', value: data.random_adjacency_recall, formatted: pct(data.random_adjacency_recall), color: '#aab7c2' },
       { label: 'Training-transition order', value: data.ordered_adjacency_recall, formatted: pct(data.ordered_adjacency_recall), color: '#cefb70' }
     ], 1);
-    $('sequence-note').textContent = `${data.eligible_test_sequences} of ${data.sampled_playlists} sampled test playlists were eligible. Directed adjacency recall improves by ${num(100 * (data.ordered_adjacency_recall - data.random_adjacency_recall), 2)} percentage points. ${pct(data.ordered_transitions_with_training_evidence)} of ordered transitions have training evidence. Different task, different denominator: do not compare these numbers with recommendation Recall@20.`;
+    $('sequence-note').textContent = `${data.eligible_test_sequences} of ${data.sampled_playlists} sampled test playlists were eligible. Directed adjacency recall improves by ${num(100 * (data.ordered_adjacency_recall - data.random_adjacency_recall), 2)} percentage points. ${pct(data.ordered_transitions_with_training_evidence)} of ordered transitions have training evidence. This scores next-song pairs among a fixed set of songs. Recommendation Recall@20 scores recovered hidden songs, so the two percentages are not comparable.`;
   }
   try {
     METHODS.forEach((m) => { const label = el('span'), swatch = el('i'); swatch.style.setProperty('--legend-color', m.color); label.append(swatch, m.label); $('seed-legend').append(label); });
