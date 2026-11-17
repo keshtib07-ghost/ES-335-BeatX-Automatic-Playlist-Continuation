@@ -154,8 +154,11 @@ def build_index(data, run):
     return summary
 
 
-def fit_tags(data, run, title_limit, *, groups=TAG_GROUPS, rules=weak_tags, taxonomy_version=None, predict=None,
+def fit_tags(data, run, title_limit=None, *, groups=TAG_GROUPS, rules=weak_tags, taxonomy_version=None, predict=None,
              cross_category_baseline=()):
+    train_size = data.sizes['train']
+    if title_limit is None:
+        title_limit = train_size
     target = run / 'tags'
     files = ('title_tagger.joblib', 'track_tag_votes.npy', 'track_axis_totals.npy', 'tag_priors.npy')
     identity = {**data.identity, 'title_training_limit': title_limit, 'validation_title_limit': 5000}
@@ -165,7 +168,12 @@ def fit_tags(data, run, title_limit, *, groups=TAG_GROUPS, rules=weak_tags, taxo
     if prior := completed(target, identity, files):
         return prior
     run.mkdir(parents=True, exist_ok=True)
-    train_titles = [title for (title,) in data.sample('train', 'p.title', title_limit, salt=335)]
+    training_rows = (data.rows('train', 'p.title') if title_limit >= train_size
+                     else data.sample('train', 'p.title', title_limit, salt=335))
+    train_titles = [title for (title,) in training_rows]
+    fit_count = len(train_titles)
+    if fit_count != min(train_size, title_limit):
+        raise ValueError('Title fitting row count disagrees with the training partition or sample limit')
     val_titles = [title for (title,) in data.sample('validation', 'p.title', 5000, salt=336)]
     tags = tuple(tag for group in groups.values() for tag in group)
     group_columns = np.split(np.arange(len(tags)), np.cumsum([len(group) for group in groups.values()])[:-1])
@@ -173,7 +181,7 @@ def fit_tags(data, run, title_limit, *, groups=TAG_GROUPS, rules=weak_tags, taxo
     tag_axis = np.repeat(np.arange(len(groups)), [len(group) for group in groups.values()])
     train_labels = label_matrix(map(rules, train_titles), tags)
     val_labels = label_matrix(map(rules, val_titles), tags)
-    print(f'Training the TF-IDF title model on {len(train_titles):,} sampled training titles', flush=True)
+    print(f'Training the TF-IDF title model on {fit_count:,}/{train_size:,} training titles', flush=True)
     tagger = TitleTagger(tags).fit(train_titles, train_labels)
     tagger.select_thresholds(val_titles, val_labels)
     validation_agreement = classification_metrics(val_labels, tagger.predict(val_titles), tags)
@@ -239,7 +247,7 @@ def fit_tags(data, run, title_limit, *, groups=TAG_GROUPS, rules=weak_tags, taxo
         axes.flush()
         np.save(path / files[3], priors)
         joblib.dump(tagger, path / files[0], compress=3)
-        summary = {'identity': identity, 'classifier_training_titles': min(data.sizes['train'], title_limit),
+        summary = {'identity': identity, 'classifier_training_titles': fit_count,
                    'title_label_source': 'weak title rules', 'train_playlists_scored_for_song_tags': row_count,
                    'validation_rule_agreement': validation_agreement,
                    'classifier_thresholds': dict(zip(tags, map(float, tagger.thresholds))),

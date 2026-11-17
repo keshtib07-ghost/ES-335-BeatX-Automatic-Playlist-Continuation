@@ -83,6 +83,7 @@ def build(data, output, title_limit, expanded=False):
                        cross_category_baseline=('party',))
     tagger = joblib.load(output / 'tags/title_tagger.joblib')
     result = {'catalogue_track_ids': data.track_count, 'taxonomy': version,
+              'classifier_training_titles': summary['classifier_training_titles'],
               'training_playlists': summary['train_playlists_scored_for_song_tags'],
               **audit_titles(data, tagger, summary, output, expanded)}
     write_json(output / 'tag_report.json', result)
@@ -316,7 +317,7 @@ def main():
     parser.add_argument('--allow-partial-source', action='store_true')
     commands = parser.add_subparsers(dest='command', required=True)
     builder = commands.add_parser('build')
-    builder.add_argument('--title-limit', type=int, default=60_000)
+    builder.add_argument('--title-limit', type=int, help='Cap fitting at this many training titles (default: all)')
     builder.add_argument('--expanded-title-cues', action='store_true')
     commands.add_parser('export-flags')
     inspector = commands.add_parser('inspect')
@@ -350,7 +351,7 @@ def main():
             return
         with open_dataset(args.source, args.split, args.allow_partial_source) as data:
             if args.command == 'build':
-                if args.title_limit < 2:
+                if args.title_limit is not None and args.title_limit < 2:
                     raise ValueError('Title limit must be at least two.')
                 result = build(data, args.output, args.title_limit, args.expanded_title_cues)
             elif args.command == 'export-flags':
