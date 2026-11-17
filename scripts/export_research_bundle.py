@@ -45,11 +45,16 @@ def build_exports(source_dir):
     benchmark, study = reports['benchmark'], reports['seed_study']
     source_hashes = {filename: hashlib.sha256((source_dir / filename).read_bytes()).hexdigest()
                      for filename, _ in SOURCES.values()}
+    additions_path = source_dir / 'research_extra_data.js'
+    additions = (read_public_script(additions_path, 'BEATX_RESEARCH_ADDITIONS')
+                 if additions_path.is_file() else {})
+    if additions:
+        source_hashes['research_extra_data.js'] = hashlib.sha256(additions_path.read_bytes()).hexdigest()
     provenance = {
         'schema_version': 1,
         'generator': 'scripts/export_research_bundle.py',
         'source_sha256': source_hashes,
-        'scope': 'Public aggregates from the completed full-title benchmark and the earlier seed-count and order studies.',
+        'scope': 'Full-title benchmark, earlier seed/order studies and measured research additions. Each report states its own cohort.',
         'uncertainty': 'Paired group-bootstrap intervals for differences between methods.',
         'identity': 'Exact Spotify track IDs; no verified recording crosswalk in the measured run.',
         'model_scope': {
@@ -57,7 +62,12 @@ def build_exports(source_dir):
             'seed_charts': 'Earlier CF/title seed-count study using its original fitted tagger and fixed references.',
             'sequence_chart': 'Separate directed training-transition order-recovery study.',
             'teaching_tools': 'Invented counts and rankings; not evaluation results.',
-            'unified_studio': 'Deployed with expanded 19-tag profiles rebuilt from the full training split. Ranking quality requires a separate evaluation.',
+            'cutoff_cases': 'Actual saved hit ranks rescored at K=1..20. Individual cases, not model averages.',
+            'eda': (additions.get('eda') or {}).get('scope', 'Not available'),
+            'studio_audit': 'Prespecified requests to the live API. Functional behavior, not held-out relevance.',
+            'unified_studio': ('Frozen expanded-profile pipeline measured in the separate Studio report.'
+                              if additions.get('studio_evaluation') else
+                              'Deployed expanded profiles. Live functional audit published; held-out relevance scores await the trained-data run.'),
         },
         'protocols': {
             'benchmark': 'Three seeds; 5000 test queries; every remaining track is a reference.',
@@ -68,8 +78,11 @@ def build_exports(source_dir):
             'Unified Studio ranker', 'Expanded song profiles', 'BPM', 'Bass', 'Treble', 'Release era', 'ALS', 'BPR',
         ],
         'missing_public_evidence': [
-            'Raw EDA distributions', 'Private model-array checksums', 'Human listener study',
-            'Unified evaluation and tuning outputs (unified-evaluation.json, unified-tuning.json)',
+            *([] if (additions.get('eda') or {}).get('kind') == 'full_staging_eda' else
+              ['Full-dataset EDA by split; verified 20,000-playlist training-pilot EDA is available']),
+            *([] if additions.get('studio_evaluation') else
+              ['Frozen unified Studio held-out evaluation and full artifact hashes']),
+            'Human listener study',
         ],
     }
     outputs = {}
@@ -100,7 +113,7 @@ def build_exports(source_dir):
                                            'ndcg_per_added_seed', 'paired_total_delta_ci_low',
                                            'paired_total_delta_ci_high'], marginal_rows)
     outputs['provenance.json'] = json.dumps(provenance, indent=2, ensure_ascii=False, allow_nan=False) + '\n'
-    outputs['research_bundle.json'] = json.dumps({'provenance': provenance, **reports}, indent=2,
+    outputs['research_bundle.json'] = json.dumps({'provenance': provenance, **reports, 'additions': additions}, indent=2,
                                                 ensure_ascii=False, allow_nan=False) + '\n'
     return outputs
 

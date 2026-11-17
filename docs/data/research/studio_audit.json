@@ -1,0 +1,394 @@
+{
+  "schema_version": 1,
+  "kind": "live_functional_audit",
+  "measured_utc": "2026-11-17T16:25:40.398698+00:00",
+  "api": "https://beatx-api-keshav.centralindia.cloudapp.azure.com",
+  "model_id": "eafaf74516ea8e0e2fbc5ae0aadc1bee991379e2adc06673fd430a07c1ca633c",
+  "cases": [
+    {
+      "case": "title_only_study",
+      "request": {
+        "title": "Rainy Night Study",
+        "seeds": [],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 0,
+      "applied_context": [
+        "rainy",
+        "study_focus"
+      ],
+      "note": "No seed co-occurrence evidence. Used title or selected context with training popularity.",
+      "artist_diversity": 0.85,
+      "largest_artist_share": 0.15,
+      "known_bpm_results": 16,
+      "seconds": 8.209,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "bd123a227c4005b8c15218d45ac83d3831cc0df048b6d6d049044cd37f2071b5"
+    },
+    {
+      "case": "title_only_gym",
+      "request": {
+        "title": "Gym workout",
+        "seeds": [],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 0,
+      "applied_context": [
+        "gym"
+      ],
+      "note": "No seed co-occurrence evidence. Used title or selected context with training popularity.",
+      "artist_diversity": 0.8,
+      "largest_artist_share": 0.15,
+      "known_bpm_results": 19,
+      "seconds": 8.224,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "78451f7d3ac237c6fca0a4c36c3036345176dfeef5a1adae53352e6a3f92380e"
+    },
+    {
+      "case": "no_context",
+      "request": {
+        "title": "My playlist",
+        "seeds": [],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 0,
+      "applied_context": [],
+      "note": "No usable seed or context evidence. Used training popularity.",
+      "artist_diversity": 0.85,
+      "largest_artist_share": 0.15,
+      "known_bpm_results": 19,
+      "seconds": 7.818,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "0dfd4f4e9608892c44c332117f93781cb88fff95d5c1065000db6faba84dd14b"
+    },
+    {
+      "case": "unknown_seed",
+      "request": {
+        "title": "Gym workout",
+        "seeds": [
+          "ZZZZZZZZZZZZZZZZZZZZZZ"
+        ],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 0,
+      "applied_context": [
+        "gym"
+      ],
+      "note": "1 seed(s) outside the model catalogue. No seed co-occurrence evidence. Used title or selected context with training popularity.",
+      "artist_diversity": 0.8,
+      "largest_artist_share": 0.15,
+      "known_bpm_results": 19,
+      "seconds": 8.165,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "78451f7d3ac237c6fca0a4c36c3036345176dfeef5a1adae53352e6a3f92380e"
+    },
+    {
+      "case": "mixed_seeds",
+      "request": {
+        "title": "Study focus",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "ZZZZZZZZZZZZZZZZZZZZZZ"
+        ],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 1,
+      "applied_context": [
+        "chill",
+        "rainy",
+        "romantic",
+        "sad",
+        "study_focus"
+      ],
+      "note": "1 seed(s) outside the model catalogue.",
+      "artist_diversity": 0.45,
+      "largest_artist_share": 0.35,
+      "known_bpm_results": 11,
+      "seconds": 8.151,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "ac46d1d93db410e4eac560103527e16bc28182aa21340f584e549daf489f4abd"
+    },
+    {
+      "case": "known_study",
+      "request": {
+        "title": "Study focus",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "3YYKrn3iGOAel605Znt3ai",
+          "64fGW0tyU2caV8ddFLUUBj"
+        ],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 3,
+      "applied_context": [
+        "chill",
+        "rainy",
+        "romantic",
+        "sad",
+        "study_focus"
+      ],
+      "note": "",
+      "artist_diversity": 0.7,
+      "largest_artist_share": 0.2,
+      "known_bpm_results": 12,
+      "seconds": 6.367,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "378d26c148f1043d256e9223594d54ad741ba8cea408936f1e0333915fa0931f"
+    },
+    {
+      "case": "conflicting_title",
+      "request": {
+        "title": "Gym workout",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "3YYKrn3iGOAel605Znt3ai",
+          "64fGW0tyU2caV8ddFLUUBj"
+        ],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 3,
+      "applied_context": [
+        "chill",
+        "gym",
+        "rainy",
+        "romantic",
+        "sad"
+      ],
+      "note": "Title took priority over conflicting seeds tags.",
+      "artist_diversity": 0.7,
+      "largest_artist_share": 0.2,
+      "known_bpm_results": 12,
+      "seconds": 7.826,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "bc3d56459c9834f9356c07063a49ae952169c2adf496d1f90265ba93889b842c"
+    },
+    {
+      "case": "explicit_gym",
+      "request": {
+        "title": "Gym workout",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "3YYKrn3iGOAel605Znt3ai",
+          "64fGW0tyU2caV8ddFLUUBj"
+        ],
+        "method": "unified",
+        "filters": {
+          "tags": [
+            "gym"
+          ]
+        }
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 3,
+      "applied_context": [
+        "chill",
+        "gym",
+        "rainy",
+        "romantic",
+        "sad"
+      ],
+      "note": "Title took priority over conflicting seeds tags.",
+      "artist_diversity": 0.65,
+      "largest_artist_share": 0.25,
+      "known_bpm_results": 15,
+      "seconds": 8.198,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "bd80a28641767523ceedd154627526d2a98934aca25c22d4368909dcd8b0753e"
+    },
+    {
+      "case": "explicit_conflict",
+      "request": {
+        "title": "Gym workout",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "3YYKrn3iGOAel605Znt3ai",
+          "64fGW0tyU2caV8ddFLUUBj"
+        ],
+        "method": "unified",
+        "filters": {
+          "tags": [
+            "study_focus"
+          ]
+        }
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 20,
+      "known_seeds": 3,
+      "applied_context": [
+        "chill",
+        "gym",
+        "rainy",
+        "romantic",
+        "sad",
+        "study_focus"
+      ],
+      "note": "Title took priority over conflicting seeds tags.",
+      "artist_diversity": 0.7,
+      "largest_artist_share": 0.2,
+      "known_bpm_results": 12,
+      "seconds": 7.988,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "bc3d56459c9834f9356c07063a49ae952169c2adf496d1f90265ba93889b842c"
+    },
+    {
+      "case": "restrictive_tempo",
+      "request": {
+        "title": "Study focus",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "3YYKrn3iGOAel605Znt3ai",
+          "64fGW0tyU2caV8ddFLUUBj"
+        ],
+        "method": "unified",
+        "filters": {
+          "min_bpm": 299,
+          "max_bpm": 300
+        }
+      },
+      "http_status": 200,
+      "expected_http_status": 200,
+      "results": 0,
+      "known_seeds": 3,
+      "applied_context": [
+        "chill",
+        "rainy",
+        "romantic",
+        "sad",
+        "study_focus"
+      ],
+      "note": "BPM filters require a known tempo. Fewer than 20 songs matched the active filters and context.",
+      "artist_diversity": null,
+      "largest_artist_share": null,
+      "known_bpm_results": 0,
+      "seconds": 9.611,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true,
+        "uses_unified_method": true
+      },
+      "ranking_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "duplicate_seeds",
+      "request": {
+        "title": "Study focus",
+        "seeds": [
+          "7fnqltLx83HsYLQajzCYRk",
+          "7fnqltLx83HsYLQajzCYRk"
+        ],
+        "method": "unified",
+        "filters": {}
+      },
+      "http_status": 400,
+      "expected_http_status": 400,
+      "results": 0,
+      "known_seeds": null,
+      "applied_context": [],
+      "note": "Select distinct Spotify track IDs.",
+      "artist_diversity": null,
+      "largest_artist_share": null,
+      "known_bpm_results": 0,
+      "seconds": 8.156,
+      "checks": {
+        "expected_http_status": true,
+        "no_duplicate_track_ids": true,
+        "seeds_excluded": true,
+        "at_most_20": true
+      },
+      "ranking_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "comparison": {
+    "same_seed_different_title_overlap_at_20": 20,
+    "same_seed_different_title_same_order": false
+  },
+  "all_contract_checks_passed": true,
+  "scope": "Prespecified constructed requests against the deployed API. No hidden references or listener judgments. This is not Recall, NDCG or a population failure rate."
+}

@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "kind": "verified_training_pilot_eda",
+  "scope": "All 20,000 playlists in the original pinned training pilot. These slices were forced into training. This is a descriptive subset, not an estimate of the full MPD distribution.",
+  "source": {
+    "repository": "https://github.com/DevinOgrady/spotify_million_playlist_dataset",
+    "commit": "63a10af75e411955f44f8e373dcafadcaf3f3e9a",
+    "git_blob_sha1": {
+      "mpd.slice.0-999.json": "b5af2506b31f79342b6ed12579167281a4ed9d87",
+      "mpd.slice.1000-1999.json": "eb0b47bb1257e7a0b12248400a4bdfe71a92a6f8",
+      "mpd.slice.114000-114999.json": "e758a9d45ba2ebe6476d12f4f007dad341b54f02",
+      "mpd.slice.216000-216999.json": "c355b9992fe46de7c171bf9c7ff08f8ea2e2d933",
+      "mpd.slice.22000-22999.json": "72a066a852a31adeb23d3bfecc64b8c14a1ec03f",
+      "mpd.slice.3000-3999.json": "63a856de18bfc6e9a233a113285cb9c0f465ff8b",
+      "mpd.slice.38000-38999.json": "92fc2d9ca4f05473a2d0a5b0d83d6e61fa60c08a",
+      "mpd.slice.43000-43999.json": "9c646cc16ee497c486a06b7cb43cdee7947e915d",
+      "mpd.slice.45000-45999.json": "02cc57340c50c83b2dc108e219133038461bd4fb",
+      "mpd.slice.47000-47999.json": "593803c410ce1ecd54fa94ad1f5f4111b27d3115",
+      "mpd.slice.49000-49999.json": "d2b164f545b91b702c64c794b1e1fcdacae5bfe5",
+      "mpd.slice.62000-62999.json": "1c1af8260aee0d1bb6e5e370fbb58a9430d425b9",
+      "mpd.slice.64000-64999.json": "77c62a20a57985267bcb5ebd199ec13ec625f732",
+      "mpd.slice.66000-66999.json": "c393f5f0f218125bc0fe1fe70223b22ee6c6438e",
+      "mpd.slice.68000-68999.json": "02139fdd46ed8ed64238ca24ad53f01a1b820924",
+      "mpd.slice.7000-7999.json": "5fd29de99babbdb77d049af1ff881b9beca08dc1",
+      "mpd.slice.70000-70999.json": "5f1f375899a26efe509f6e9f0c72fd8fd243d52f",
+      "mpd.slice.72000-72999.json": "2364f5515a76655b5b5f045523674d002f7b8456",
+      "mpd.slice.74000-74999.json": "4111e9b4b7f3d14c6baf7cd728ea8733943c9b94",
+      "mpd.slice.75000-75999.json": "8ca9b9e65d9a74bb8b1634b838b28145c6a0ef87"
+    }
+  },
+  "playlists": 20000,
+  "raw_occurrences": 1345066,
+  "repeat_occurrences_removed": 18469,
+  "invalid_occurrences": 0,
+  "all_playlists": {
+    "playlist_length": {
+      "labels": [
+        "0\u20139",
+        "10\u201319",
+        "20\u201339",
+        "40\u201359",
+        "60\u201399",
+        "100\u2013149",
+        "150\u2013199",
+        "200\u2013299",
+        "300+"
+      ],
+      "counts": [
+        696,
+        2522,
+        4929,
+        3401,
+        4038,
+        2504,
+        1225,
+        685,
+        0
+      ],
+      "total": 20000
+    },
+    "track_support": {
+      "labels": [
+        "0\u20130",
+        "1\u20131",
+        "2\u20134",
+        "5\u20139",
+        "10\u201319",
+        "20\u201349",
+        "50\u201399",
+        "100\u2013999",
+        "1000\u20139999",
+        "10000\u2013999999",
+        "1000000+"
+      ],
+      "counts": [
+        0,
+        165710,
+        63636,
+        18899,
+        9769,
+        6354,
+        2397,
+        2010,
+        0,
+        0,
+        0
+      ],
+      "total": 268775
+    },
+    "title_length": {
+      "labels": [
+        "0\u20130",
+        "1\u20134",
+        "5\u20139",
+        "10\u201319",
+        "20\u201339",
+        "40\u201379",
+        "80+"
+      ],
+      "counts": [
+        0,
+        4547,
+        10045,
+        5238,
+        154,
+        16,
+        0
+      ],
+      "total": 20000
+    },
+    "duplicate_group_size": {
+      "labels": [
+        "1\u20131",
+        "2\u20132",
+        "3\u20134",
+        "5\u20139",
+        "10\u201319",
+        "20\u201349",
+        "50+"
+      ],
+      "counts": [
+        19974,
+        4,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      "total": 19983
+    },
+    "playlist_length_quantiles": {
+      "min": 4.0,
+      "q25": 26.0,
+      "median": 50.0,
+      "q75": 92.0,
+      "max": 250.0
+    },
+    "distinct_tracks": 268775,
+    "memberships": 1326597,
+    "top_one_percent_membership_share": 0.3353957531940748,
+    "singleton_tracks": 165710,
+    "empty_titles": 0,
+    "non_ascii_titles": 427,
+    "extra_exact_group_members": 17,
+    "text_note": "Character/script summaries are not language identification."
+  },
+  "metadata": {
+    "bpm_in_raw_mpd": false,
+    "bass_in_raw_mpd": false,
+    "note": "Raw MPD does not provide verified BPM or spectral bass. Enrichment coverage needs a separate source-backed audit."
+  }
+}

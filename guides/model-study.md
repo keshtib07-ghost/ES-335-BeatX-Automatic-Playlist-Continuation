@@ -4,14 +4,14 @@ This is a clean implementation for ES 335. It asks whether automatically inferre
 
 ## Million-playlist run and website
 
-BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-BeatX-Automatic-Playlist-Continuation/) from its [Research page](https://keshtib07-ghost.github.io/ES-335-BeatX-Automatic-Playlist-Continuation/research.html). The Studio connects to a Python model API for real inference. Training completion does not deploy that API: the existing GitHub Pages URL still needs a running backend and its trained artifacts. The Studio reports an unavailable model instead of generating illustrative rankings. See [live model deployment](deployment.md) and [website setup](website.md).
+BeatX separates its [Playlist Studio](https://keshtib07-ghost.github.io/ES-335-BeatX-Automatic-Playlist-Continuation/) from its [Research page](https://keshtib07-ghost.github.io/ES-335-BeatX-Automatic-Playlist-Continuation/research.html). The Studio connects to a Python model API for real inference. The deployed Azure API loads the frozen full-title run. A new local training run still needs a separate deployment. The Studio reports an unavailable model instead of generating illustrative rankings. See [live model deployment](deployment.md) and [website setup](website.md).
 
 - [Prepare and split the full MPD](data-preparation.md)
 - [Train, validate, and evaluate the full model](training.md)
 - [Run the local trained demo and publish the static site](website.md)
 - [Compare six seed budgets, title methods, and playback order](experiments.md)
 
-The full run processed 1,000,000 playlists and trained collaborative filtering on 804,485. On a fixed sample of 5,000 fresh test playlists with three visible seeds, NDCG@20 was 0.0372 for popularity, 0.2497 for collaborative filtering, and 0.2513 for the selected title-aware ranker. Among the 660 queries with inferred tags, the last two scores were 0.2041 and 0.2166. These scores measure recovery of withheld tracks. The original 20,000-playlist pilot is documented below as a separate run.
+The full run processed 1,000,000 playlists and trained collaborative filtering on 804,485. On a fixed sample of 5,000 fresh test playlists with three visible seeds, NDCG@20 was 0.0372 for popularity, 0.2497 for collaborative filtering, and 0.2513 for the selected title-aware ranker. Among the 657 queries with inferred tags, the last two scores were 0.20355 and 0.21572. These scores measure recovery of withheld tracks. The original 20,000-playlist pilot is documented below as a separate run.
 
 ## 1. Set up the local environment
 

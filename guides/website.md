@@ -30,7 +30,7 @@ To inspect the static interface without a Python model, serve just the `docs/` d
 python3 -m http.server 8001 --directory docs
 ```
 
-Open `http://127.0.0.1:8001`. The Studio should report a disconnected model unless `docs/config.js` points to a running API. Open `research.html` for the summary, then choose **Deep Dive** and change the cohort in **Results** to switch between 5,000 and 660 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. Update the report and summary together when publishing results from a different experiment.
+Open `http://127.0.0.1:8001`. The Studio should report a disconnected model unless `docs/config.js` points to a running API. Open `research.html` for the summary, then choose **Deep Dive** and change the cohort in **Results** to switch between 5,000 and 657 queries. The result exporter writes only aggregates, with no playlist titles, IDs, file paths, or model artifacts. Update the report and summary together when publishing results from a different experiment.
 
 ## Publish when ready
 

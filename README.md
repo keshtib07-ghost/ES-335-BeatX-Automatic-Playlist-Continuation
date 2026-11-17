@@ -53,6 +53,12 @@ python -m unittest discover -s tests -v
 node --test tests/*.cjs
 ```
 
+## Research updates
+
+The two proposal questions lead both Research pages. The report includes a K explorer based on actual saved cases. Measured pilot distributions explain the data. Eleven live Studio requests document fallback and filtering limits.
+
+[Finish the frozen Studio evaluation and full EDA](guides/final-research.md). The Azure command uses the active model in a separate read-only evaluation process. No new Studio accuracy is claimed until that run finishes.
+
 ## Recorded evidence
 
 Collaborative filtering and both title classifiers use the full split of 804,485 training playlists. On 5,000 held-out queries with three seeds, NDCG@20 was 0.03723 for popularity, 0.24966 for CF and 0.25126 for the standard title-aware ranker. The unified Studio pipeline uses expanded profiles and has a separate evaluation protocol.

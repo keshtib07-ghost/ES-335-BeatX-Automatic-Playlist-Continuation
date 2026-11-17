@@ -5,7 +5,7 @@
     'overview', 'known-seeds', 'unknown-seeds', 'questions', 'features',
     'training-scope', 'evaluation', 'method', 'studio-pipeline', 'metrics',
     'seed-study', 'results', 'findings', 'limitations', 'what-tags-mean',
-    'method-status', 'conclusion', 'rubric', 'viva', 'reproduce', 'playback'
+    'eda', 'studio-evaluation', 'studio-audit', 'method-status', 'conclusion', 'rubric', 'viva', 'reproduce', 'playback'
   ]);
   function openReportSection() {
     let section;

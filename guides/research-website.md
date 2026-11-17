@@ -46,3 +46,9 @@ python scripts/export_research_bundle.py --check
 ```
 
 The additional checks cover download fidelity/staleness, safe parsing, metric arithmetic, context abstention, validation-only budget selection, and saved marginal-gain claims. Browser review should exercise all selectors, ranges, metric examples and error cases at desktop and mobile widths, check links/downloads, and inspect console errors and page overflow. Chart data tables provide exact values alongside accessible SVG descriptions. Charts may scroll within their own figure on narrow screens to preserve readable axes.
+
+## Current additions
+
+The proposal questions appear first. `research_additions.js` renders K-dependent case metrics and measured EDA. It also displays the live Studio audit. `research_extra_data.js` contains those measured reports.
+
+See [final-research.md](final-research.md) to score the exact deployed pipeline. The command publishes true mean metrics at every K and full EDA by split. It keeps the older experiments separate.
