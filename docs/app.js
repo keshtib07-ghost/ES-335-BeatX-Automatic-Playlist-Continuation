@@ -9,6 +9,7 @@ let searchGeneration = 0;
 let recommendGeneration = 0;
 let nextOffset = 0;
 let lastResult = null;
+let playlistSeeds = [];
 let playbackMode = false;
 const maxSeeds = 20;
 const filterUI = setupFilters();
@@ -80,14 +81,15 @@ function trackRow(track) {
 
 function spotifyDraft() {
   return {title: select('generated-title').textContent, ids: orderedTracks().map((track) => track.id),
-    result: lastResult, playbackMode, seedTracks: selected, realMode, modelId: modelStatus?.model_id || 'local',
+    result: lastResult, playbackMode, seedTracks: [...playlistSeeds], realMode, modelId: modelStatus?.model_id || 'local',
     filters: filterUI.read()};
 }
 
 function restoreStudioDraft(draft) {
   if (!realMode || draft?.realMode !== true || draft.modelId !== (modelStatus?.model_id || 'local') ||
       !draft.result || !Array.isArray(draft.seedTracks)) return false;
-  selected = draft.seedTracks;
+  selected = [...draft.seedTracks];
+  playlistSeeds = [...draft.seedTracks];
   lastResult = draft.result;
   playbackMode = Boolean(draft.playbackMode);
   select('playlist-title').value = draft.title;
@@ -138,7 +140,8 @@ async function saveSpotify(draft = spotifyDraft()) {
     status.textContent = 'Creating your Spotify playlist…';
     await spotify.save(draft);
     if (spotify.playlistKey(draft) === spotify.playlistKey(spotifyDraft())) {
-      status.textContent = `Saved ${draft.ids.length} recommended tracks to Spotify.`;
+      const seedNote = draft.seedTracks?.length ? ' Seed songs come first.' : '';
+      status.textContent = `Saved ${spotifyPlaylistIds(draft).length} tracks to Spotify.${seedNote}`;
     }
   } catch (error) {
     status.textContent = `${error.message} Use Save to Spotify to retry.`;
@@ -231,7 +234,8 @@ function renderPlaylist() {
   select('playback-order').disabled = lastResult.transition_evidence === null;
   const support = realMode ? ` · ${lastResult.known_seeds}/${lastResult.seed_count} seeds seen in training` : '';
   const transitions = playbackMode ? ` · ${lastResult.transition_evidence}/${list.length} transitions supported,${lastResult.has_seed_anchor ? ', including the last known seed' : ''}` : '';
-  select('generation-evidence').textContent = `${list.length} additions${support}${transitions}`;
+  const seeds = playlistSeeds.length ? `${playlistSeeds.length} seed${playlistSeeds.length === 1 ? '' : 's'} + ` : '';
+  select('generation-evidence').textContent = `${seeds}${list.length} additions${support}${transitions}`;
 }
 
 function showContext(result) {
@@ -254,8 +258,9 @@ async function recommend(event) {
   button.disabled = true;
   try {
     const title = select('playlist-title').value;
+    const seedTracks = [...selected];
     const result = await modelApi.recommend({
-      title, seeds: selected.map((track) => track.id), method: 'unified', filters: filterUI.read()
+      title, seeds: seedTracks.map((track) => track.id), method: 'unified', filters: filterUI.read()
     });
     if (generation !== recommendGeneration) return;
     select('generated-title').textContent = title.trim() || 'Your playlist';
@@ -263,6 +268,7 @@ async function recommend(event) {
     showSpotifyLink(null);
     select('spotify-status').textContent = '';
     lastResult = result;
+    playlistSeeds = seedTracks;
     playbackMode = false;
     renderPlaylist();
   } catch (error) {

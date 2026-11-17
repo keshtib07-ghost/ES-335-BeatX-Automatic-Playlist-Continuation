@@ -7,6 +7,11 @@ const spotifyStorage = {auth: 'beatx.spotify.auth', token: 'beatx.spotify.token'
 // Keep native fetch on Window when called through a Spotify client instance.
 const spotifyFetch = (input, init) => globalThis.fetch(input, init);
 
+function spotifyPlaylistIds(draft) {
+  const seedIds = (draft.seedTracks || []).map((track) => track?.id);
+  return [...new Set([...seedIds, ...draft.ids])];
+}
+
 function storedJson(store, key) {
   try { return JSON.parse(store.getItem(key) || 'null'); } catch { return null; }
 }
@@ -142,7 +147,7 @@ class SpotifyStudio {
   }
 
   playlistKey(draft) {
-    return JSON.stringify([this.clientId, draft.title, draft.ids]);
+    return JSON.stringify([this.clientId, draft.title, spotifyPlaylistIds(draft)]);
   }
 
   savedPlaylist(draft) {
@@ -152,9 +157,11 @@ class SpotifyStudio {
   }
 
   async save(draft) {
-    const {title, ids} = draft;
+    const {title, ids, seedTracks = []} = draft;
     if (typeof title !== 'string' || !title.trim() || !Array.isArray(ids) || !ids.length ||
-        ids.length > 20 || !ids.every(spotifyTrackId) || new Set(ids).size !== ids.length) {
+        ids.length > 20 || !ids.every(spotifyTrackId) || new Set(ids).size !== ids.length ||
+        !Array.isArray(seedTracks) || seedTracks.length > 20 ||
+        !seedTracks.every((track) => spotifyTrackId(track?.id))) {
       throw new Error('Generate a playlist with valid Spotify songs before saving.');
     }
     const key = this.playlistKey(draft);
@@ -172,7 +179,7 @@ class SpotifyStudio {
     }
     if (!playlist.complete) {
       await this.api(`/playlists/${playlist.id}/items`, 'PUT',
-        {uris: ids.map((id) => `spotify:track:${id}`)});
+        {uris: spotifyPlaylistIds(draft).map((id) => `spotify:track:${id}`)});
       playlist.complete = true;
       this.store.setItem(spotifyStorage.playlist, JSON.stringify(playlist));
     }

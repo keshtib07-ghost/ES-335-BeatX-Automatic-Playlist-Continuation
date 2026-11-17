@@ -20,7 +20,7 @@ function fixture(request = async () => { throw new Error('Unexpected network req
     location: {href: redirect, assign: (url) => { navigation.destination = url; }},
     history: {replaceState: (_, __, url) => { navigation.cleaned = url; }},
     sessionStorage: store, fetch: request});
-  vm.runInContext(source + '\nthis.api = {SpotifyStudio, SpotifyArtwork, spotifyRedirectUri, spotifyImageUrl, spotifyStorage};', context);
+  vm.runInContext(source + '\nthis.api = {SpotifyStudio, SpotifyArtwork, spotifyRedirectUri, spotifyImageUrl, spotifyStorage, spotifyPlaylistIds};', context);
   return {api: context.api, store, navigation, browserGlobal: vm.runInContext('globalThis', context)};
 }
 
@@ -121,8 +121,100 @@ test('playlist creation returns a link only after all tracks are saved and retri
   assert.equal(calls.length, 3);
   assert.deepEqual(calls[0].body, {name: draft.title, description: 'Generated with BeatX', public: false});
   assert.equal(calls[1].url, `https://api.spotify.com/v1/playlists/${playlistId}/items`);
-  assert.deepEqual(calls[2].body.uris, draft.ids.map(id => 'spotify:track:' + id));
+  const expectedUris = [...draft.seedTracks.map(track => track.id), ...draft.ids].map(id => 'spotify:track:' + id);
+  assert.deepEqual(calls[1].body.uris, expectedUris);
+  assert.deepEqual(calls[2].body.uris, expectedUris);
   assert.equal(app.savedPlaylist({...draft, ids: [...draft.ids].reverse()}), null);
+});
+
+test('three seed songs stay first and twenty additions produce a 23-track Spotify playlist', async () => {
+  const calls = [];
+  const f = fixture(async (url, options) => {
+    calls.push({url, body: JSON.parse(options.body)});
+    return options.method === 'POST' ? ok({id: playlistId}) : ok({}, 204);
+  });
+  const app = new f.api.SpotifyStudio(clientId);
+  connected(app);
+  const seeds = ['Z', 'Y', 'X'].map(letter => ({id: letter.repeat(22)}));
+  const additions = Array.from({length: 20}, (_, i) => String(i).padStart(22, '0'));
+  await app.save({...draft, seedTracks: seeds, ids: additions});
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls[1].body.uris,
+    [...seeds.map(track => track.id), ...additions].map(id => 'spotify:track:' + id));
+  assert.equal(calls[1].body.uris.length, 23);
+});
+
+test('overlapping and repeated seeds are saved once at their first position', async () => {
+  const writes = [];
+  const f = fixture(async (_, options) => {
+    if (options.method === 'POST') return ok({id: playlistId});
+    writes.push(JSON.parse(options.body));
+    return ok({}, 204);
+  });
+  const app = new f.api.SpotifyStudio(clientId);
+  connected(app);
+  await app.save({...draft, seedTracks: [draft.seedTracks[0], {id: draft.ids[1]}, draft.seedTracks[0]]});
+  assert.deepEqual(writes[0].uris,
+    [draft.seedTracks[0].id, draft.ids[1], draft.ids[0]].map(id => 'spotify:track:' + id));
+});
+
+test('a playlist without seeds still saves its recommendations in order', async () => {
+  let uris;
+  const f = fixture(async (_, options) => {
+    if (options.method === 'POST') return ok({id: playlistId});
+    uris = JSON.parse(options.body).uris;
+    return ok({}, 204);
+  });
+  const app = new f.api.SpotifyStudio(clientId);
+  connected(app);
+  await app.save({...draft, seedTracks: []});
+  assert.deepEqual(uris, draft.ids.map(id => 'spotify:track:' + id));
+});
+
+test('twenty seeds plus twenty additions are not truncated to twenty tracks', async () => {
+  let uris;
+  const f = fixture(async (_, options) => {
+    if (options.method === 'POST') return ok({id: playlistId});
+    uris = JSON.parse(options.body).uris;
+    return ok({}, 204);
+  });
+  const app = new f.api.SpotifyStudio(clientId);
+  connected(app);
+  const ids = Array.from({length: 40}, (_, i) => String(i).padStart(22, '0'));
+  await app.save({...draft, seedTracks: ids.slice(0, 20).map(id => ({id})), ids: ids.slice(20)});
+  assert.deepEqual(uris, ids.map(id => 'spotify:track:' + id));
+});
+
+test('saved playlist identity includes seed songs and their order and ignores old additions-only saves', async () => {
+  const f = fixture(async (_, options) => options.method === 'POST' ? ok({id: playlistId}) : ok({}, 204));
+  const app = new f.api.SpotifyStudio(clientId);
+  connected(app);
+  const seeded = {...draft, seedTracks: [...draft.seedTracks, {id: 'D'.repeat(22)}]};
+  f.store.setItem(f.api.spotifyStorage.playlist, JSON.stringify({
+    key: JSON.stringify([clientId, draft.title, draft.ids]), id: playlistId, complete: true,
+  }));
+  assert.equal(app.savedPlaylist(seeded), null);
+  await app.save(seeded);
+  assert.equal(app.savedPlaylist(seeded), 'https://open.spotify.com/playlist/' + playlistId);
+  assert.equal(app.savedPlaylist({...seeded, seedTracks: [...seeded.seedTracks].reverse()}), null);
+  assert.equal(app.savedPlaylist({...seeded, seedTracks: draft.seedTracks}), null);
+});
+
+test('saving after the OAuth round trip writes restored seed songs before the recommendations', async () => {
+  let uris;
+  const f = fixture(async (url, options) => {
+    if (url === 'https://accounts.spotify.com/api/token') return ok({access_token: 'unit-test-token', expires_in: 3600});
+    if (options.method === 'POST') return ok({id: playlistId});
+    uris = JSON.parse(options.body).uris;
+    return ok({}, 204);
+  });
+  await new f.api.SpotifyStudio(clientId).authorize(draft, true);
+  const saved = JSON.parse(f.store.getItem(f.api.spotifyStorage.auth));
+  const returned = new f.api.SpotifyStudio(clientId);
+  const session = await returned.completeAuthorization(redirect + '?code=unit-test-code&state=' + saved.state);
+  await returned.save(session.draft);
+  assert.deepEqual(uris,
+    [...draft.seedTracks.map(track => track.id), ...draft.ids].map(id => 'spotify:track:' + id));
 });
 
 test('expired authorization is cleared after Spotify rejects the session', async () => {
@@ -141,6 +233,9 @@ test('invalid or repeated track IDs never create a Spotify playlist', async () =
   connected(app);
   await assert.rejects(app.save({...draft, ids: ['demo-1']}), /valid Spotify songs/);
   await assert.rejects(app.save({...draft, ids: [draft.ids[0], draft.ids[0]]}), /valid Spotify songs/);
+  for (const seedTracks of [null, 'invalid', [{}], [null], [{id: 'demo-1'}], Array(21).fill(draft.seedTracks[0])]) {
+    await assert.rejects(app.save({...draft, seedTracks}), /valid Spotify songs/);
+  }
 });
 
 
