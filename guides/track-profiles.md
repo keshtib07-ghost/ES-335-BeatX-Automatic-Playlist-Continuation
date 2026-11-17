@@ -38,7 +38,7 @@ Run this separately from the offline build. The contact is sent as part of the M
 
 ```bash
 python scripts/track_profiles.py enrich --limit 30 \
-  --contact 'https://github.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify'
+  --contact 'https://github.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation'
 ```
 
 The pilot accepts a provisional match only when one MusicBrainz recording agrees on exact normalized title and artist, comparable version, and duration within two seconds. It uses MusicBrainz's `first-release-date` and AcousticBrainz's recording analysis when present. Bass and treble figures are low/high-band mean energy divided by the same analysis document's total mean spectral energy. The original Essentia version is recorded when available. Missing or invalid figures stay blank. Review matches manually before using them for strict decade filters or merging different Spotify IDs.
@@ -57,7 +57,7 @@ Run an individual song-and-artist search without opening the MPD databases:
 
 ```bash
 PYTHONPATH=src python scripts/track_profiles.py lookup-name 'Run Away - Radio Edit' 'Sunstroke Project' \
-  --contact 'https://github.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify'
+  --contact 'https://github.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation'
 ```
 
 The lookup accepts accent and punctuation differences and allows an MPD artist to be the primary artist on a joint credit. A search with just the title and artist marks a unique result `candidate_without_duration`. Include `--duration-ms` and `--album` when available to check the edition and duration. The title-and-artist fallback accepts duration differences up to five seconds in either direction, and keeps multiple eligible recordings unresolved. Reported `known_release_year` comes from a linked release and is distinct from the recording's first release date. Audio values come from AcousticBrainz when it has data for the selected recording.
@@ -101,7 +101,7 @@ PYTHONPATH=src python -m scripts.enrich_catalogue \
   --spotify-parquet private-data/spotify-audio.parquet \
   --musicbrainz private-data/mb-recording.tar.xz \
   --acoustic-online-limit 400 \
-  --contact 'https://github.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify'
+  --contact 'https://github.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation'
 ```
 
 Every staged Spotify ID gets one `profiles` row in `runs/million/catalogue-enrichment/catalogue_enrichment.sqlite3`. The report gives the number of tracks with all four fields together. An exact Spotify ID takes precedence over a title-and-artist match. The metadata fallback needs compatible version cues, a duration difference of at most five seconds, and a unique candidate. AcousticBrainz supplies measurements by MusicBrainz recording ID. Online audio lookups use batches of at most 25 and reuse the results already in `acoustic_web_cache.sqlite3` on a rerun.

@@ -16,7 +16,7 @@ Download the read-only inventory script without pulling changes into the messy w
 
 ```bash
 cd ~/projects/playlist-model
-curl -fL https://raw.githubusercontent.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify/main/scripts/local_inventory.py -o /tmp/beatx-local-inventory.py
+curl -fL https://raw.githubusercontent.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation/main/scripts/local_inventory.py -o /tmp/beatx-local-inventory.py
 python3 /tmp/beatx-local-inventory.py --root "$PWD" --output /tmp/beatx-local-inventory.json
 ```
 

@@ -18,7 +18,7 @@ When available, the server loads expanded title tags and the existing `runs/mill
 
 Album artwork loads without Spotify sign-in through Spotify’s public oEmbed endpoint. Catalogue artwork is looked up and cached for the page session. Missing or unavailable artwork retains a placeholder.
 
-To create a Spotify playlist, register `http://127.0.0.1:8000/` as a redirect URI in your Spotify app and start the server with `--spotify-client-id YOUR_CLIENT_ID`. On GitHub Pages, register `https://keshtib07-ghost.github.io/ES-335-Nextrack-for-Spotify/` and set the public Client ID in `docs/config.js`. A visitor can also enter a Client ID in the one-time setup dialog. No Client Secret is used. Spotify account authorization uses PKCE with `playlist-modify-private`.
+To create a Spotify playlist, register `http://127.0.0.1:8000/` as a redirect URI in your Spotify app and start the server with `--spotify-client-id YOUR_CLIENT_ID`. On GitHub Pages, register `https://keshtib07-ghost.github.io/ES-335-BeatX-Automatic-Playlist-Continuation/` and set the public Client ID in `docs/config.js`. A visitor can also enter a Client ID in the one-time setup dialog. No Client Secret is used. Spotify account authorization uses PKCE with `playlist-modify-private`.
 
 Use **Create Spotify playlist** or **Generate & save to Spotify**. The draft survives the authorization redirect. After Spotify confirms every recommended track was saved in the displayed order, the app shows **Open in Spotify** and **Copy playlist link**. A failed item write can be retried without creating a duplicate playlist. The generated playlist contains the recommended additions shown in the output panel. Actual account authorization and playlist creation require an enabled Spotify app and an eligible account.
 

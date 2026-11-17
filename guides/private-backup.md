@@ -9,7 +9,7 @@ Two untracked local files also need preserving: `export_song_batch.py` and `song
 Wait for any training or database-enrichment job to finish. Keep the existing project folder intact. The standalone helper creates new archives outside that folder, then verifies the content of each archived file against its SHA-256.
 
 ```bash
-curl -fL https://raw.githubusercontent.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify/main/scripts/backup_workspace.py -o /tmp/beatx-backup.py
+curl -fL https://raw.githubusercontent.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation/main/scripts/backup_workspace.py -o /tmp/beatx-backup.py
 python3 /tmp/beatx-backup.py create \
   --root "$HOME/projects/playlist-model" \
   --output "$HOME/beatx-private-backup"

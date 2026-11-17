@@ -44,7 +44,7 @@ def retry_delay(value):
 
 class MetadataClient:
     def __init__(self, contact):
-        self.user_agent = f'NextTrack-ES335/1.0 ({contact})'
+        self.user_agent = f'BeatX-ES335/1.0 ({contact})'
         self.next_request = 0.
         self.unavailable = {}
 

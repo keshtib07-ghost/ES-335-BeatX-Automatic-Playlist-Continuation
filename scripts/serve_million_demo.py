@@ -237,7 +237,7 @@ def main():
     cli.add_argument('--profiles', type=Path)
     cli.add_argument('--catalogue-profiles', type=Path,
                      help='Bulk catalogue_enrichment.sqlite3 file. Uses the existing default output if present.')
-    cli.add_argument('--spotify-client-id', default=os.environ.get('NEXT_TRACK_SPOTIFY_CLIENT_ID'))
+    cli.add_argument('--spotify-client-id', default=os.environ.get('BEATX_SPOTIFY_CLIENT_ID') or os.environ.get('NEXT_TRACK_SPOTIFY_CLIENT_ID'))
     cli.add_argument('--port', type=int, default=8000)
     cli.add_argument('--allow-partial-source', action='store_true', help='Allow a verified pilot-sized database')
     args = cli.parse_args()

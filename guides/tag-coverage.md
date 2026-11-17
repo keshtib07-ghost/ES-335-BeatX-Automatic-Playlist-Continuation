@@ -20,7 +20,7 @@ Run the [metadata enrichment pilot](track-profiles.md) against the same profiles
 
 ```bash
 python scripts/track_profiles.py --output "$EXPANDED" enrich --limit 30 \
-  --contact 'https://github.com/keshtib07-ghost/ES-335-Nextrack-for-Spotify'
+  --contact 'https://github.com/keshtib07-ghost/ES-335-BeatX-Automatic-Playlist-Continuation'
 ```
 
 ## Archived graph experiment
